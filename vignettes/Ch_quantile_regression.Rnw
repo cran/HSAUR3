@@ -1,0 +1,684 @@
+
+
+
+\documentclass{chapman}
+
+%%% copy Sweave.sty definitions
+
+%%% keeps `sweave' from adding `\usepackage{Sweave}': DO NOT REMOVE
+%\usepackage{Sweave} 
+
+
+\RequirePackage[T1]{fontenc}
+\RequirePackage{graphicx,ae,fancyvrb}
+\IfFileExists{upquote.sty}{\RequirePackage{upquote}}{}
+\usepackage{relsize}
+
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{fontfamily=courier,
+                                              fontshape=it,
+                                              fontsize=\relsize{-1}}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{}
+\newenvironment{Schunk}{}{}
+
+%%% environment for raw output
+\newcommand{\SchunkRaw}{\renewenvironment{Schunk}{}{}
+    \DefineVerbatimEnvironment{Soutput}{Verbatim}{fontfamily=courier,
+                                                  fontshape=it,
+                                                  fontsize=\small}
+    \rawSinput
+}
+
+%%% environment for labeled output
+\newcommand{\nextcaption}{}
+\newcommand{\SchunkLabel}{
+  \renewenvironment{Schunk}{\begin{figure}[ht] }{\caption{\nextcaption}
+  \end{figure} }
+  \DefineVerbatimEnvironment{Sinput}{Verbatim}{frame = topline}
+  \DefineVerbatimEnvironment{Soutput}{Verbatim}{frame = bottomline, 
+                                                samepage = true,
+                                                fontfamily=courier,
+                                                fontshape=it,
+                                                fontsize=\relsize{-1}}
+}
+
+
+%%% S code with line numbers
+\DefineVerbatimEnvironment{Sinput}
+{Verbatim}
+{
+%%  numbers=left
+}
+
+\newcommand{\numberSinput}{
+    \DefineVerbatimEnvironment{Sinput}{Verbatim}{numbers=left}
+}
+\newcommand{\rawSinput}{
+    \DefineVerbatimEnvironment{Sinput}{Verbatim}{}
+}
+
+
+%%% R / System symbols
+\newcommand{\R}{\textsf{R}}
+\newcommand{\rR}{{R}}
+\renewcommand{\S}{\textsf{S}}
+\newcommand{\SPLUS}{\textsf{S-PLUS}}
+\newcommand{\rSPLUS}{{S-PLUS}}
+\newcommand{\SPSS}{\textsf{SPSS}}
+\newcommand{\EXCEL}{\textsf{Excel}}
+\newcommand{\ACCESS}{\textsf{Access}}
+\newcommand{\SQL}{\textsf{SQL}}
+%%\newcommand{\Rpackage}[1]{\hbox{\rm\textit{#1}}}
+%%\newcommand{\Robject}[1]{\hbox{\rm\texttt{#1}}}
+%%\newcommand{\Rclass}[1]{\hbox{\rm\textit{#1}}}
+%%\newcommand{\Rcmd}[1]{\hbox{\rm\texttt{#1}}}
+\newcommand{\Rpackage}[1]{\index{#1 package@{\fontseries{b}\selectfont #1} package} {\fontseries{b}\selectfont #1}}
+\newcommand{\rpackage}[1]{{\fontseries{b}\selectfont #1}}
+\newcommand{\Robject}[1]{\texttt{#1}}
+\newcommand{\Rclass}[1]{\index{#1 class@\textit{#1} class}\textit{#1}}
+\newcommand{\Rcmd}[1]{\index{#1 function@\texttt{#1} function}\texttt{#1}}
+\newcommand{\Roperator}[1]{\texttt{#1}}
+\newcommand{\Rarg}[1]{\texttt{#1}}
+\newcommand{\Rlevel}[1]{\texttt{#1}}
+
+
+%%% other symbols
+\newcommand{\file}[1]{\hbox{\rm\texttt{#1}}}
+%%\newcommand{\stress}[1]{\index{#1}\textit{#1}} 
+\newcommand{\stress}[1]{\textit{#1}} 
+\newcommand{\booktitle}[1]{\textit{#1}} %%'
+
+%%% Math symbols
+\usepackage{amstext}
+\usepackage{amsmath}
+\newcommand{\E}{\mathsf{E}}   
+\newcommand{\Var}{\mathsf{Var}}   
+\newcommand{\Cov}{\mathsf{Cov}}   
+\newcommand{\Cor}{\mathsf{Cor}}   
+\newcommand{\x}{\mathbf{x}}   
+\newcommand{\y}{\mathbf{y}}   
+\renewcommand{\a}{\mathbf{a}}
+\newcommand{\W}{\mathbf{W}}   
+\newcommand{\C}{\mathbf{C}}   
+\renewcommand{\H}{\mathbf{H}}   
+\newcommand{\X}{\mathbf{X}}   
+\newcommand{\B}{\mathbf{B}}   
+\newcommand{\V}{\mathbf{V}}   
+\newcommand{\I}{\mathbf{I}}   
+\newcommand{\D}{\mathbf{D}}   
+\newcommand{\bS}{\mathbf{S}}   
+\newcommand{\N}{\mathcal{N}}   
+\renewcommand{\L}{L}   
+\renewcommand{\P}{\mathsf{P}}   
+\newcommand{\K}{\mathbf{K}}
+\newcommand{\m}{\mathbf{m}}
+\newcommand{\argmin}{\operatorname{argmin}\displaylimits}
+\newcommand{\argmax}{\operatorname{argmax}\displaylimits}
+
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\bbeta}{\mathbf{\beta}}
+
+
+%%% links
+\usepackage{hyperref}
+
+\hypersetup{%
+  pdftitle = {A Handbook of Statistical Analyses Using R (3rd Edition)},
+  pdfsubject = {Book},
+  pdfauthor = {Torsten Hothorn and Brian S. Everitt},
+  colorlinks = {black},
+  linkcolor = {black},
+  citecolor = {black},
+  urlcolor = {black},
+  hyperindex = {true},
+  linktocpage = {true},
+}
+
+
+%%% captions & tables
+%% <FIXME>: conflics with figure definition in chapman.cls
+%%\usepackage[format=hang,margin=10pt,labelfont=bf]{caption}
+%% </FIMXE>
+\usepackage{longtable}
+\usepackage[figuresright]{rotating}
+
+%%% R symbol in chapter 1
+\usepackage{wrapfig}
+
+%%% Bibliography
+\usepackage[round,comma]{natbib}
+\renewcommand{\refname}{References \addcontentsline{toc}{chapter}{References}}
+\citeindexfalse
+
+%%% texi2dvi complains that \newblock is undefined, hm...
+\def\newblock{\hskip .11em plus .33em minus .07em}
+
+%%% Example sections
+\newcounter{exercise}[chapter]
+\setcounter{exercise}{0}
+\newcommand{\exercise}{\stepcounter{exercise} \item{Ex.~\arabic{chapter}.\arabic{exercise} }}
+
+
+%% URLs
+\newcommand{\curl}[1]{\begin{center} \url{#1} \end{center}}
+
+%%% for manual corrections
+%\renewcommand{\baselinestretch}{2}
+
+%%% plot sizes
+\setkeys{Gin}{width=0.95\textwidth}
+
+%%% color
+\usepackage{color}
+
+%%% hyphenations
+\hyphenation{drop-out}
+\hyphenation{mar-gi-nal}
+
+%%% new bidirectional quotes need 
+\usepackage[utf8]{inputenc}
+
+%\usepackage{setspace}
+\definecolor{sidebox_todo}{rgb}{1,1,0.2}
+\newcommand{\todo}[1]{
+        \hspace{0pt}%
+        \marginpar{% 
+                        \fcolorbox{black}{sidebox_todo}{%
+                                \parbox{\marginparwidth} {
+
+\raggedright\sffamily\footnotesize{TODO: #1}%
+                                }
+                        }%
+        }
+}
+\begin{document}
+
+%% Title page
+
+\title{A Handbook of Statistical Analyses Using \R{} --- 3rd Edition}
+
+\author{Torsten Hothorn and Brian S. Everitt}
+
+\maketitle
+%%\VignetteIndexEntry{Chapter Quantile Regression}
+%%\VignetteDepends{lattice,quantreg}
+\setcounter{chapter}{11}
+
+
+\SweaveOpts{prefix.string=figures/HSAUR,eps=FALSE,keep.source=TRUE} 
+
+<<setup, echo = FALSE, results = hide>>=
+rm(list = ls())
+s <- search()[-1]
+s <- s[-match(c("package:base", "package:stats", "package:graphics", "package:grDevices",
+                "package:utils", "package:datasets", "package:methods", "Autoloads"), s)]
+if (length(s) > 0) sapply(s, detach, character.only = TRUE)
+if (!file.exists("tables")) dir.create("tables")
+if (!file.exists("figures")) dir.create("figures")
+set.seed(290875)
+options(prompt = "R> ", continue = "+  ",
+    width = 63, # digits = 4, 
+    show.signif.stars = FALSE,
+    SweaveHooks = list(leftpar = function() 
+        par(mai = par("mai") * c(1, 1.05, 1, 1)),
+        bigleftpar = function()
+        par(mai = par("mai") * c(1, 1.7, 1, 1))))
+HSAURpkg <- require("HSAUR3")
+if (!HSAURpkg) stop("cannot load package ", sQuote("HSAUR2"))
+rm(HSAURpkg)
+ ### </FIXME> hm, R-2.4.0 --vanilla seems to need this
+a <- Sys.setlocale("LC_ALL", "C")
+ ### </FIXME>
+book <- TRUE
+refs <- cbind(c("AItR", "DAGD", "SI", "CI", "ANOVA", "MLR", "GLM", 
+                "DE", "RP", "GAM", "SA", "ALDI", "ALDII", "SIMC", "MA", "PCA", 
+                "MDS", "CA"), 1:18)
+ch <- function(x) {
+    ch <- refs[which(refs[,1] == x),]
+    if (book) {
+        return(paste("Chapter~\\\\ref{", ch[1], "}", sep = ""))
+    } else {
+        return(paste("Chapter~", ch[2], sep = ""))
+    }
+}
+if (file.exists("deparse.R"))
+    source("deparse.R")
+
+setHook(packageEvent("lattice", "attach"), function(...) {
+    lattice.options(default.theme = 
+        function()
+            standard.theme("pdf", color = FALSE))
+    })
+@
+
+\pagestyle{headings}
+<<singlebook, echo = FALSE>>=
+book <- FALSE
+@
+%% lower png resolution for vignettes
+\SweaveOpts{resolution = 100}
+
+<<QR-setup, echo = FALSE, results = hide>>=
+library("lattice")
+trellis.par.set(list(plot.symbol = list(col=1,pch=20, cex=0.7),
+                     box.rectangle = list(col=1),
+                     plot.line = list(col = 1, lwd = 1),
+                     box.umbrella = list(lty=1, col=1),
+                     strip.background = list(col = "white")))
+ltheme <- canonical.theme(color = FALSE)     ## in-built B&W theme
+ltheme$strip.background$col <- "transparent" ## change strip bg
+lattice.options(default.theme = ltheme)
+data("db", package = "gamlss.data")
+nboys <- with(db, sum(age > 2))
+@
+
+\chapter[Quantile Regression]{Quantile Regression: 
+Head Circumference for Age\label{QR}}
+
+\section{Introduction}
+
+
+\section{Quantile Regression}
+
+
+\section{Analysis Using \R{}}
+
+We begin with a graphical inspection of the influence of age on head
+circumference by means of a scatterplot. Plotting all pairs of age and
+head circumference in one panel gives more weight to the teens and 20s,
+so we produce one plot for younger boys between two and nine years old and
+one additional plot for boys older than nine years (or $>108$ months, 
+to be precise). The \Rcmd{cut} function is very convenient for constructing
+a factor representing these two groups 
+<<QR-db, echo = TRUE>>=
+summary(db)
+db$cut <- cut(db$age, breaks = c(2, 9, 23), 
+              labels = c("2-9 yrs", "9-23 yrs"))
+@
+which can then be used as a 
+conditioning variable for conditional scatterplots produced with the
+\Rcmd{xyplot} function \citep[package \Rpackage{lattice}]{PKG:lattice}. 
+Because we draw $\Sexpr{nboys}$ points in total, we use transparent shading
+(via \Rcmd{rgb(.1, .1, .1, .1)}) in order to obtain a clearer picture
+for the more populated areas in the plot.
+
+\begin{figure}
+\begin{center}
+<<QR-db-plot, echo = TRUE, fig = TRUE, pdf = FALSE, png = TRUE, height = 4>>=
+db$cut <- cut(db$age, breaks = c(2, 9, 23), 
+              labels = c("2-9 yrs", "9-23 yrs"))
+xyplot(head ~ age | cut, data = db, xlab = "Age (years)", 
+       ylab = "Head circumference (cm)",
+       scales = list(x = list(relation = "free")),
+       layout = c(2, 1), pch = 19, 
+       col = rgb(.1, .1, .1, .1))
+@
+\caption{Scatterplot of age and head circumference for $\Sexpr{nboys}$ 
+         Dutch boys. \label{QR-db-plot}}
+\end{center}
+\end{figure}
+
+Figure~\ref{QR-db-plot}, as expected, shows that head circumference
+increases with age.  It also shows that there is considerable variation and
+also quite a number of extremely large or small head circumferences in the
+respective age cohorts.  It should be noted that each point corresponds to
+one boy participating in the study due to its cross-sectional study design. 
+No longitudinal measurements (cf.~Chapter~\ref{ALDI}) were taken and we can
+safely assume independence between observations.
+
+We start with a simple linear model, computed separately for the younger and
+older boys, for regressing the mean head circumference on age
+<<QR-db-lm2.9.23, echo = TRUE>>=
+(lm2.9 <- lm(head ~ age, data = db, subset = age < 9))
+(lm9.23 <- lm(head ~ age, data = db, subset = age > 9))
+@
+This approach is equivalent to fitting two intercepts and two slopes in 
+the joint model
+<<QR-db-lm, echo = TRUE>>=
+(lm_mod <- lm(head ~ age:I(age < 9) + I(age < 9) - 1, 
+              data = db))
+@
+while omitting the global intercept. Because the median of the
+normal distribution is equal to its mean, the two models can be interpreted
+as conditional median models under the normal assumption. The model
+states that within one year, the head circumference increases by
+$\Sexpr{round(coef(lm_mod)["age:I(age < 9)TRUE"], 3)}$ cm for boys less than nine years old 
+and by $\Sexpr{round(coef(lm_mod)["age:I(age < 9)FALSE"], 3)}$ for older boys.
+
+We now relax this distributional assumption and compute a median
+regression model using the \Rcmd{rq} function from package \Rpackage{quantreg} 
+\citep{PKG:quantreg}:
+<<QR-db-median, echo = TRUE>>=
+library("quantreg")
+(rq_med2.9 <- rq(head ~ age, data = db, tau = 0.5, 
+                 subset = age < 9))
+(rq_med9.23 <- rq(head ~ age, data = db, tau = 0.5, 
+                  subset = age > 9))
+@
+When we construct confidence intervals for the 
+intercept and slope parameters from both models for the younger boys
+<<QR-db-lmrq2.9, echo = TRUE>>=
+cbind(coef(lm2.9)[1], confint(lm2.9, parm = "(Intercept)"))
+cbind(coef(lm2.9)[2], confint(lm2.9, parm = "age"))
+summary(rq_med2.9, se = "rank")
+@
+we see that the two intercepts are almost identical but there seems to be 
+a larger slope parameter for age in the median regression model. 
+For the older boys, we get the confidence intervals via
+<<QR-db-lmrq9.23, echo = TRUE>>=
+cbind(coef(lm9.23)[1], confint(lm9.23, parm = "(Intercept)"))
+cbind(coef(lm9.23)[2], confint(lm9.23, parm = "age"))
+summary(rq_med9.23, se = "rank")
+@
+with again almost identical intercepts and only a slightly increased
+slope for age in the median regression model.
+
+Since one of our aims was the construction of growth curves, we first use the
+linear models regressing head circumference on age to plot such curves. 
+Based on the two normal linear models, we can compute the quantiles of head
+circumference for age.  For the following values of $\tau$
+<<QR-db-tau, echo = TRUE>>=
+tau <- c(.01, .1, .25, .5, .75, .9, .99)
+@
+and a grid of age values
+<<QR-db-age, echo = TRUE>>=  
+gage <- c(2:9, 9:23)
+i <- 1:8
+@
+(the index \Rcmd{i} denoting younger boys), we compute the
+standard prediction intervals 
+\index{Prediction interval}
+taking the randomness of the estimated
+intercept, slope, and variance parameters into account. We first set up
+a data frame with our grid of age values and then use the \Rcmd{predict}
+function for a linear model to compute prediction intervals, here
+with a coverage of $50\%$. The lower limit of such a $50\%$ prediction
+interval is equivalent to the conditional $25\%$ quantile for the given age
+and the upper limit corresponds to the $75\%$ quantile. The conditional 
+mean is also reported and is equivalent to the conditional median:
+<<QR-db-lm-fit_05, echo = TRUE>>=
+idf <- data.frame(age = gage[i])
+p <- predict(lm2.9, newdata = idf, level = 0.5,
+             interval = "prediction")
+colnames(p) <- c("0.5", "0.25", "0.75")
+p
+@
+We now proceed with $80\%$ prediction intervals for constructing the
+$10\%$ and $90\%$ quantiles, and with $98\%$ prediction intervals
+corresponding to the $1\%$ and $99\%$ quantiles and repeat the exercise
+also for the older boys:
+<<QR-db-lm-fit, echo = TRUE>>=
+p <- cbind(p, predict(lm2.9, newdata = idf, level = 0.8,
+                      interval = "prediction")[,-1])
+colnames(p)[4:5] <- c("0.1", "0.9")
+p <- cbind(p, predict(lm2.9, newdata = idf, level = 0.98, 
+                      interval = "prediction")[,-1])
+colnames(p)[6:7] <- c("0.01", "0.99")
+p2.9 <- p[, c("0.01", "0.1", "0.25", "0.5", 
+              "0.75", "0.9", "0.99")]
+idf <- data.frame(age = gage[-i])
+p <- predict(lm9.23, newdata = idf, level = 0.5, 
+             interval = "prediction")
+colnames(p) <- c("0.5", "0.25", "0.75")
+p <- cbind(p, predict(lm9.23, newdata = idf, level = 0.8, 
+                      interval = "prediction")[,-1])
+colnames(p)[4:5] <- c("0.1", "0.9")
+p <- cbind(p, predict(lm9.23, newdata = idf, level = 0.98, 
+                      interval = "prediction")[,-1])
+colnames(p)[6:7] <- c("0.01", "0.99")
+@
+We now reorder the columns of this table and get the following
+conditional quantiles, estimated under the normal assumption of
+head circumference:
+<<QR-db-lm-fit2, echo = TRUE>>=
+p9.23 <- p[, c("0.01", "0.1", "0.25", "0.5", 
+               "0.75", "0.9", "0.99")]
+round((q2.23 <- rbind(p2.9, p9.23)), 3)
+@
+We can now superimpose these conditional quantiles on our scatterplot.
+To do this, we need to write our own little panel function that
+produces the scatterplot using the \Rcmd{panel.xyplot} function and then
+adds the just computed conditional quantiles by means of the 
+\Rcmd{panel.lines} function called for every column of $\Robject{q2.23}$.
+
+Figure~\ref{QR-db-lm-plot} shows parallel lines owing to the fact that the
+linear model assumes an error variance independent from age; this is the
+so-called variance homogeneity.  Compared to a plot with only a single
+(mean) regression line, we plotted a whole bunch of conditional
+distributions here, one for each value of age. Of course, we did so
+under extremely simplifying assumptions like linearity and variance
+homogeneity that we're going to drop now.
+
+\begin{figure}
+\begin{center}
+<<QR-db-lm-plot, echo = TRUE, fig = TRUE, pdf = FALSE, png = TRUE, height = 4>>=
+pfun <- function(x, y, ...) {
+    panel.xyplot(x = x, y = y, ...)
+    if (max(x) <= 9) {
+        apply(q2.23, 2, function(x) 
+              panel.lines(gage[i], x[i]))
+    } else {
+        apply(q2.23, 2, function(x) 
+              panel.lines(gage[-i], x[-i]))
+    }
+    panel.text(rep(max(db$age), length(tau)), 
+               q2.23[nrow(q2.23),], label = tau, cex = 0.9) 
+    panel.text(rep(min(db$age), length(tau)), 
+               q2.23[1,], label = tau, cex = 0.9)
+}
+xyplot(head ~ age | cut, data = db, xlab = "Age (years)", 
+       ylab = "Head circumference (cm)", pch = 19,
+       scales = list(x = list(relation = "free")),
+       layout = c(2, 1), col = rgb(.1, .1, .1, .1), 
+       panel = pfun)
+@
+\caption{Scatterplot of age and head circumference for $\Sexpr{nboys}$
+         Dutch boys with superimposed normal quantiles. 
+         \label{QR-db-lm-plot}}     
+\end{center}
+\end{figure}
+
+For the production of a nonparametric version of our growth curves, 
+we start with fitting not only one but multiple quantile regression models,
+one for each value of $\tau$. We start with the younger boys
+<<QR-db-rq2.9, echo = TRUE>>=
+(rq2.9 <- rq(head ~ age, data = db, tau = tau, 
+             subset = age < 9))
+@
+and continue with the older boys
+<<QR-db-rq9.23, echo = TRUE>>=
+(rq9.23 <- rq(head ~ age, data = db, tau = tau, 
+              subset = age > 9))
+@
+Naturally, the intercept parameters vary but there is also a considerable
+variation in the slopes, with the largest value 
+for the $1\%$ quantile regression model for younger boys. 
+The parameters $\beta_\tau$ have to be interpreted with care.
+In general, they cannot be interpreted on an individual-specific level.  A
+boy who happens to be at the $\tau \times 100\%$ quantile of head circumference
+conditional on his age would not be at the same
+quantile anymore when he gets older.  When knowing
+$\beta_\tau$, the only conclusion that can be drawn is how the $\tau
+\times 100\%$ quantile of a population with a specific age 
+differs from the $\tau \times 100\%$ quantile of a population with a
+different age.
+
+Because the linear functions estimated by linear quantile regression,
+here in model \Robject{rq9.23}, directly correspond to the conditional
+quantiles of interest, we can use the \Rcmd{predict} function to compute
+the estimated conditional quantiles:
+<<QR-db-rq-fit, echo = TRUE>>=
+p2.23 <- rbind(predict(rq2.9, 
+                   newdata = data.frame(age = gage[i])),
+               predict(rq9.23, 
+                   newdata = data.frame(age = gage[-i])))
+@
+It is important to note that these numbers were obtained without assuming
+anything about the continuous distribution of head circumference given any
+age.  Again, we produce a scatterplot with superimposed quantiles, this time
+each line corresponds to a specific model.  For the sake of comparison with
+the linear model, we add the linear model quantiles as dashed lines to
+Figure~\ref{QR-db-rq-plot}.  For the older boys, there seems to be almost no
+difference but the more extreme $1\%$ and $99\%$ quantiles for the younger
+boys differ considerably.  So, at least for the younger boys, we might want
+to allow for age-specific variability in the distribution of head
+circumference.
+
+\begin{figure}
+\begin{center}
+<<QR-db-rq-plot, echo = TRUE, fig = TRUE, pdf = FALSE, png = TRUE, height = 4>>=
+pfun <- function(x, y, ...) {
+    panel.xyplot(x = x, y = y, ...)
+    if (max(x) <= 9) {
+        apply(q2.23, 2, function(x) 
+              panel.lines(gage[i], x[i], lty = 2))
+        apply(p2.23, 2, function(x) 
+              panel.lines(gage[i], x[i]))
+    } else {
+        apply(q2.23, 2, function(x) 
+              panel.lines(gage[-i], x[-i], lty = 2))
+        apply(p2.23, 2, function(x) 
+              panel.lines(gage[-i], x[-i]))
+    }
+    panel.text(rep(max(db$age), length(tau)), 
+               p2.23[nrow(p2.23),], label = tau, cex = 0.9)
+    panel.text(rep(min(db$age), length(tau)), 
+               p2.23[1,], label = tau, cex = 0.9)
+}
+xyplot(head ~ age | cut, data = db, xlab = "Age (years)",
+       ylab = "Head circumference (cm)", pch = 19,
+       scales = list(x = list(relation = "free")),
+       layout = c(2, 1), col = rgb(.1, .1, .1, .1),
+       panel = pfun)
+@
+\caption{Scatterplot of age and head circumference for $\Sexpr{nboys}$
+         Dutch boys with superimposed regression quantiles (solid lines) and 
+         normal quantiles (dashed lines). \label{QR-db-rq-plot}}     
+\end{center}
+\end{figure}
+
+Still, with the quantile regression models shown in
+Figure~\ref{QR-db-rq-plot} we assume that the quantiles of head
+circumference depend on age in a linear way.  Additive quantile regression
+is one way to approach the estimation of non-linear quantile functions. By
+considering two different models for younger and older boys, we allowed
+for a certain type of non-linear function in the results shown so far.
+Additive quantile regression should be able to deal with this problem
+and we therefore fit these models to all boys simultaneously.
+For our different choices of $\tau$, we fit one additive quantile regression model
+using the \Rcmd{rqss} function from the \Rpackage{quantreg} and allow
+smooth quantile functions of age via the \Rcmd{qss} function in the
+right-hand side of the model formula.
+Note that we transformed age by the third root prior to model fitting. This
+does not affect the model since it is a monotone transformation, however, it
+helps to avoid fitting a function with large derivatives for very young
+boys resulting in a low penalty parameter $\lambda$:
+<<QR-db-rqss-fit, echo = TRUE>>=
+rqssmod <- vector(mode = "list", length = length(tau))
+db$lage <- with(db, age^(1/3))
+for (i in 1:length(tau))
+    rqssmod[[i]] <- rqss(head ~ qss(lage, lambda = 1),
+                         data = db, tau = tau[i])
+@
+For the analysis of the head circumference, we choose a penalty parameter
+$\lambda = 1$, which is the default for the \Rcmd{qss} function.  Simply
+using the default without a careful hyperparameter tuning, for example using
+crossvalidation or similar procedures, is almost always a mistake. 
+By visual inspection (Figure~\ref{QR-db-rqss-plot}) we find this choice
+appropriate but ask the readers to make a second guess (Exercise 3).
+
+
+For a finer grid of age values, we compute the conditional quantiles
+from the \Rcmd{predict} function:
+<<QR-db-rqss-pred, echo = TRUE>>=
+gage <- seq(from = min(db$age), to = max(db$age), 
+            length = 50)
+p <- sapply(1:length(tau), function(i) {
+    predict(rqssmod[[i]], 
+        newdata = data.frame(lage = gage^(1/3)))
+})
+@
+
+Using very similar code as for plotting linear quantiles, we produce again a
+scatterplot of age and head circumference but this time overlaid with
+non-linear regression quantiles.  Given that the results from the linear
+models presented in Figure~\ref{QR-db-rq-plot} looked pretty convincing, the
+quantile curves in Figure~\ref{QR-db-rqss-plot} shed a surprising new light
+on the data.  For the younger boys, we expected to see a larger variability
+than for boys between two and three years old, but in fact the distribution seems
+to be more complex.  The distribution seems to be positively skewed with a
+heavy lower tail and the degree of skewness varies with age (note that 
+the median is almost linear for boys older than four years).
+
+Also in the right part of Figure~\ref{QR-db-rqss-plot}, we see an age-varying
+skewness, although less pronounced as for the younger boys.  The median
+increases up to 16 years but then the growth rate is much smaller.  This
+does not seem to be the case for the $1\%, 10\%, 90\%$, and $99\%$
+quantiles.  Note that the discontinuity in the quantiles between the two age
+groups is only due to the overlapping abscissae.
+
+However, the deviations between the growth curves obtained from a linear
+model under normality assumption on the one hand and quantile regression on the
+other hand as shown in Figures~\ref{QR-db-rq-plot} and \ref{QR-db-rqss-plot} 
+are hardly dramatic for the head circumference data. 
+
+\begin{figure}
+\begin{center}
+<<QR-db-rqss-plot, echo = TRUE, fig = TRUE, pdf = FALSE, png = TRUE, height = 4>>=
+pfun <- function(x, y, ...) {
+    panel.xyplot(x = x, y = y, ...)
+    apply(p, 2, function(x) panel.lines(gage, x))
+    panel.text(rep(max(db$age), length(tau)), 
+               p[nrow(p),], label = tau, cex = 0.9)
+    panel.text(rep(min(db$age), length(tau)), 
+               p[1,], label = tau, cex = 0.9)
+}
+xyplot(head ~ age | cut, data = db, xlab = "Age (years)",
+       ylab = "Head circumference (cm)", pch = 19,
+       scales = list(x = list(relation = "free")),
+       layout = c(2, 1), col = rgb(.1, .1, .1, .1),
+       panel = pfun)
+@
+\caption{Scatterplot of age and head circumference for $\Sexpr{nboys}$
+         Dutch boys with superimposed non-linear regression quantiles.
+         \label{QR-db-rqss-plot}}     
+\end{center}
+\end{figure}
+
+\section{Summary of Findings}
+
+We can conclude that the whole distribution of head circumference changes
+with age and that assumptions like symmetry and variance homogeneity might be
+questionable for such type of analysis.
+
+One alternative to the estimation of conditional quantiles is the estimation
+of conditional distributions.  One very interesting parametric approach are
+generalized additive models for location, scale, and shape
+\citep[GAMLSS,][]{HSAUR:RigbyStasinopoulos2005}.  In
+\cite{HSAUR:StasinopoulosRigby2007}, an analysis of the age and head
+circumference by means of the \Rpackage{gamlss} package can be found.
+
+One practical problem associated with contemporary methods in quantile
+regression is quantile crossing. Because we fitted one quantile regression model
+for each of the quantiles of interest, we cannot guarantee that the conditional
+quantile functions are monotone, so the $90\%$ quantile may well be larger than the
+$95\%$ quantile in some cases. Postprocessing of the estimated quantile curves
+may help in this situation \citep{HSAUR:DetteVolgushev2008}.
+
+\section{Final Comments}
+
+When estimating regression models, we have to be aware of the implications
+of model assumptions when interpreting the results.  Symmetry, linearity,
+and variance homogeneity are among the strongest but common assumptions. 
+Quantile regression, both in its linear and additive formulation, is an
+intellectually stimulating and practically very useful framework where such
+assumptions can be relaxed.  At a more basic level, one should always ask
+\stress{Am I really interested in the mean?} before using the regression models
+discussed in other chapters of this book.
+
+
+
+
+\bibliographystyle{LaTeXBibTeX/refstyle}
+\bibliography{LaTeXBibTeX/HSAUR}   
+\end{document}

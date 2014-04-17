@@ -1,0 +1,530 @@
+
+\input{HSAUR_title}
+
+\SweaveOpts{prefix.string=figures/HSAUR,eps=FALSE,keep.source=TRUE}
+
+<<setup, echo = FALSE, results = hide>>=
+source("setup.R")
+@
+
+
+\frame{
+\begin{center}
+\Large{Part 2: Graphical Displays}
+\end{center}
+
+introduces some basic however very useful graphical
+techniques for extracting information about
+Malignant Melanoma and Chinese Health and Family Life.
+
+}
+
+\section{Introduction}
+
+\begin{frame}
+  \frametitle{USmelanoma: Malignant Melanoma in the USA}
+
+\cite{HSAUR:FisherBelle1993} report mortality rates due to malignant melanoma of 
+the skin for white males during the period 1950--1969, for each state on the US 
+mainland. The include 
+the number of deaths due to malignant melanoma in the corresponding state, 
+the longitude and latitude of the geographic centre of each state, 
+and a binary variable indicating contiguity to an ocean, that is,
+if the state borders one of the oceans. 
+Questions of interest about these data include: how do the mortality rates 
+compare for ocean and non-ocean states? and how are mortality rates affected 
+by latitude and longitude?
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{CHFLS: Chinese Health and Family Life Survey}
+
+The Chinese Health and Family Life Survey sampled
+$60$ villages and urban neighbourhoods chosen in such a way
+as to represent the full geographical and socioeconomic
+range of contemporary China excluding Hong Kong and
+Tibet. Eighty-three individuals were chosen at random for
+each location from official registers of adults aged between
+$20$ and $64$ years to target a sample of $5000$ individuals in
+total. Here, we restrict our attention to women with current male partners
+and the following variables:
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{CHFLS: Chinese Health and Family Life Survey}
+
+
+\begin{description}
+\item[\Robject{R\_edu}]: level of education of the responding woman,
+\item[\Robject{R\_income}]: monthly income (in yuan) of the responding woman,
+\item[\Robject{R\_health}]: health status of the responding woman in the last year,
+\item[\Robject{R\_happy}]: how happy was the responding woman in the last year,
+\item[\Robject{A\_edu}]: level of education of the woman's partner,
+\item[\Robject{A\_income}]: monthly income (in yuan) of the woman's partner.
+\end{description}
+
+Here, we focus on graphical displays for inspecting 
+the relationship of these health and socioeconomic variables of heterosexual women 
+and their partners.  
+
+\end{frame}
+
+\section{Initial Data Analysis}
+
+\begin{frame}
+  \frametitle{Initial Data Analysis}
+
+According to \cite{HSAUR:Chambersetal1983}, ``there is no statistical tool that is as 
+powerful as a well chosen graph'':
+\begin{itemize}
+\item In comparison with other types of presentation, well-designed charts 
+      are more effective in creating interest and in appealing to 
+      the attention of the reader.
+\item Visual relationships as portrayed by charts and graphs are more 
+      easily grasped and more easily remembered.
+\item The use of charts and graphs saves time, since the essential meaning 
+      of large measures of statistical data can be visualised at a glance.
+\item Charts and graphs provide a comprehensive picture of a problem that 
+      makes for a more complete and better balanced understanding than 
+      could be derived from tabular or textual forms of presentation.
+\item Charts and graphs can bring out hidden facts and relationships and 
+      can stimulate, as well as aid, analytical thinking and investigation.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{A Word of Warning}
+
+The following caveat from 
+the late Carl Sagan (in his book \booktitle{Contact}) should be kept in mind:
+\begin{quote}
+Humans are good at discerning subtle patterns that are really there, but equally so at 
+imagining them when they are altogether absent.
+\end{quote}
+
+\end{frame}
+
+\section{Analysis Using R}
+
+\subsection{Malignant Melanoma}
+
+\begin{frame}[fragile]
+  \frametitle{Malignant Melanoma: boxplot \& histogram}
+
+We might begin to examine the malignant melanoma data 
+by constructing a histogram or boxplot for \stress{all} the mortality rates.
+Using these
+relatively simple technique 
+we have to make sure that the $x$-axis is the same in both graphs. This can be done 
+by computing a plausible range of the data, later to be specified in a plot via the \Rcmd{xlim}
+argument:
+<<DAGD-USmelanoma-histbox, echo = TRUE>>=
+xr <- range(USmelanoma$mortality) * c(0.9, 1.1)
+xr
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\small{
+\begin{figure}
+\begin{center}
+<<DAGD-USmelanoma-histbox, echo = TRUE, fig = TRUE, width = 8>>=
+layout(matrix(1:2, nrow = 2))
+par(mar = par("mar") * c(0.8, 1, 1, 1))
+boxplot(USmelanoma$mortality, ylim = xr, 
+    horizontal = TRUE, xlab = "Mortality")
+hist(USmelanoma$mortality, xlim = xr, xlab = "", 
+    main = "", axes = FALSE, ylab = "")
+axis(1)
+@
+\end{center}
+\end{figure}
+}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Malignant Melanoma: Comparing states}
+
+Looking at the characteristics of all the mortality rates is a useful 
+beginning but for these data we might be more interested in comparing 
+mortality rates for ocean and non-ocean states. So we might construct 
+two histograms or two boxplots. Such a \stress{parallel boxplot}, visualising
+the conditional distribution of a numeric variable in groups as given by
+a categorical variable, are easily computed using the \Rcmd{boxplot} function.
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+
+\begin{figure}
+\begin{center}
+<<DAGD-USmelanoma-boxocean, echo = TRUE, fig = TRUE, width = 8>>=
+plot(mortality ~ ocean, data = USmelanoma, 
+     xlab = "Contiguity to an ocean", 
+     ylab = "Mortality")
+@
+\end{center}
+\end{figure}
+
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Malignant Melanoma: density plots}
+
+Histograms are generally used for two purposes: counting and displaying the 
+distribution of a variable; according to \cite{HSAUR:Wilkinson1992}, 
+``they are effective for neither''. Histograms can often be misleading for 
+displaying distributions because of their dependence on the number of classes chosen. 
+
+An alternative is to formally estimate the density function of a variable and 
+then plot the resulting estimate.
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\small{
+\begin{figure}
+\begin{center}
+<<DAGD-USmelanoma-dens, echo = TRUE, fig = TRUE, width = 8>>=
+dyes <- with(USmelanoma, density(mortality[ocean == "yes"]))
+dno <- with(USmelanoma, density(mortality[ocean == "no"]))
+plot(dyes, lty = 1, xlim = xr, main = "", ylim = c(0, 0.018))
+lines(dno, lty = 2)
+legend("topleft", lty = 1:2, legend = c("Coastal State", 
+       "Land State"), bty = "n")
+@
+\end{center}
+\end{figure}
+}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Malignant Melanoma: the whole picture}
+
+
+Now we might move on to look at how mortality rates are related to the 
+geographic location of a state as represented by the latitude and longitude 
+of the centre of the state. Here the main graphic will be the scatterplot.
+The simple $xy$ scatterplot has been in use since at least the eighteenth 
+century and has many virtues -- indeed according to \cite{HSAUR:Tufte1983}:
+\begin{quote}
+The relational graphic -- in its barest form the scatterplot and its 
+variants -- is the greatest of all graphical designs. It links at least two 
+variables, encouraging and even imploring the viewer to assess the 
+possible causal relationship between the plotted variables. It confronts 
+causal theories that $x$  causes $y$ with empirical evidence as to the actual 
+relationship between $x$ and $y$.
+\end{quote}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+
+\begin{figure}  
+\begin{center}
+<<DAGD-USmelanoma-xy, echo = TRUE, fig = TRUE, height = 5, width = 8>>=
+layout(matrix(1:2, ncol = 2))
+plot(mortality ~ longitude, data = USmelanoma)
+plot(mortality ~ latitude, data = USmelanoma)
+@
+\end{center}
+\end{figure} 
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+Since mortality rate is clearly related only to latitude we can now produce 
+scatterplots of mortality rate against latitude separately for ocean and non-ocean 
+states. Instead of producing two displays, one can choose different plotting
+symbols for either states. 
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+
+
+\begin{figure}  
+\begin{center}
+<<DAGD-USmelanoma-lat, echo = TRUE, fig = TRUE>>=
+plot(mortality ~ latitude, data = USmelanoma, 
+     pch = as.integer(USmelanoma$ocean))
+legend("topright", legend = c("Land state", 
+     "Coast state"), pch = 1:2, bty = "n")
+@
+\end{center}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+
+
+This scatterplot highlights that
+the mortality is lowest in the northern land states. Coastal states show
+a higher mortality than land states at roughly the same latitude. The highest
+mortalities can be observed for the south coastal states with latitude less than
+$32^\circ$, say, that is
+<<DAGD-USmelanoma-south, echo = TRUE>>=
+subset(USmelanoma, latitude < 32)
+@
+
+\end{frame}
+
+\subsection{Chinese Health and Family Life}
+
+\begin{frame}[fragile]
+  \frametitle{Chinese Health and Family Life}
+
+
+One part of the questionnaire the Chinese Health and Family Life
+Survey focuses on is the self-reported health status. Two
+questions are interesting for us. The first one is ``Generally speaking,
+do you consider the condition of your health to be excellent,
+good, fair, not good, or poor?''.
+The second question is ``Generally speaking, in the past twelve months,
+how happy were you?''. The distribution of such variables is commonly
+visualised using barcharts where for each category the
+total or relative number of observations is displayed. 
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\begin{figure}
+<<DAGD-CHFLS-happy, echo = TRUE, fig = TRUE, width = 8>>=
+barplot(xtabs(~ R_happy, data = CHFLS))
+@
+\end{figure}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Chinese Health and Family Life: Two variables}
+
+The visualisation of two categorical variables could be 
+done by conditional barcharts, i.e., barcharts of the
+first variable within the categories of the second variable.
+An attractive alternative for displaying such two-way tables
+are \stress{spineplots} \citep{HSAUR:Friendly1994,HSAUR:HofmannTheus2005,HSAUR:Chenetal2008}.
+
+Before constructing such a plot, we produce a two-way table of the health status
+and self-reported happiness using the \Rcmd{xtabs} function:
+<<DAGD-CHFLS-health_happy_xtabs, echo = TRUE>>=
+xtabs(~ R_happy + R_health, data = CHFLS)
+@
+<<DAGD-CHFLS-health_happy_xtabs2, echo = FALSE>>=
+hh <- xtabs(~ R_health + R_happy, data = CHFLS)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Chinese Health and Family Life: spineplots}
+
+A \stress{spineplot} is a group of rectangles, each representing
+one cell in the two-way contingency table. The area of the
+rectangle is proportional with the number of observations 
+in the cell. Here, we produce a mosaic plot of health status and happiness:
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\begin{figure}
+<<DAGD-CHFLS-health_happy, echo = TRUE, fig = TRUE, width = 8, height = 8>>=
+plot(R_happy ~ R_health, data = CHFLS)
+@
+\end{figure}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Chinese Health and Family Life: spinogram}
+
+When the association of a categorical and a continuous variable
+is of interest, say the monthly income and self-reported happiness,
+we are interested in the 
+conditional distribution of happiness given income.
+One possibility to produce a more appropriate plot
+is called \stress{spinogram}. Here, the continuous $x$-variable is
+categorised first. Within each of these categories, the conditional
+frequencies of the response variable are given by stacked barcharts, 
+in a way similar to spineplots. 
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\begin{figure}
+<<DAGD-CHFLS-happy_income, echo = TRUE, fig = TRUE, width = 8, height = 5>>=
+layout(matrix(1:2, ncol = 2))
+plot(R_happy ~ log(R_income + 1), data = CHFLS)
+cdplot(R_happy ~ log(R_income + 1), data = CHFLS)
+@
+\end{figure}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Chinese Health and Family Life: conditional plots}
+
+
+For our last example we return to scatterplots for inspecting
+the association between a woman's monthly income and the
+income of her partner. In addition, we want to
+study the relationship between both monthly incomes conditional
+on the woman's education. Such conditioning plots are called
+\stress{trellis} plots and are implemented in the package 
+\Rpackage{lattice} \citep{PKG:lattice, HSAUR:Sarkar2008}.
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+
+\begin{figure}
+<<DAGD-CHFLS-RAincome3, echo = TRUE, eval = FALSE>>=
+xyplot(jitter(log(A_income + 0.5)) ~ 
+    jitter(log(R_income + 0.5)) | R_edu, data = CHFLS)
+@
+<<DAGD-CHFLS-RAincome3, echo = FALSE, fig = TRUE, width = 8>>=
+library("lattice")
+lattice.options(default.theme =
+        function()
+            standard.theme("pdf", color = FALSE))
+print(xyplot(jitter(log(A_income + 0.5)) ~ jitter(log(R_income + 0.5)) | R_edu, data = CHFLS))
+@
+\end{figure}
+
+Four constellations can 
+be identified: both partners have zero income, the partner has no income,
+the woman has no income or both partners have a positive income.
+
+\end{frame}
+
+\section{Summary}
+
+\begin{frame}
+  \frametitle{Summary}
+
+
+Producing publication-quality graphics is one of the major strengths
+of the \R{} system and almost anything is possible since graphics
+are programmable in \R{}. Naturally, this chapter can be only a very
+brief introduction to some commonly used displays and the reader is
+referred to specialised books, most important 
+\cite{HSAUR:Murrell2005}, \cite{HSAUR:Sarkar2008}, and
+\cite{HSAUR:Chenetal2008}. Interactive 3D-graphics are available
+from package \Rpackage{rgl} \citep{PKG:rgl}.
+
+\end{frame}
+
+\section*{Exercises}
+
+\begin{frame}
+\frametitle{Exercises}
+
+\begin{itemize}
+
+\item 
+The \Robject{household} data are part of a data set collected 
+from a survey of household expenditure and give the expenditure of $20$ single men 
+and $20$ single women on four commodity groups. The units of expenditure are 
+Hong Kong dollars, and the four commodity groups are
+\begin{description}
+\item[\Robject{housing}]: housing, including fuel and light,
+\item[\Robject{food}]: foodstuffs, including alcohol and tobacco,
+\item[\Robject{goods}]: other goods, including clothing, footwear and durable goods,
+\item[\Robject{service}]: services, including transport and vehicles.
+\end{description}
+The aim of the survey was to investigate how the division of household 
+expenditure between the four commodity groups depends on total expenditure 
+and to find out whether this relationship differs for men and women.
+Use appropriate graphical methods to answer these questions
+and state your conclusions.
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Exercises}
+
+\begin{itemize}
+
+\item
+The data set \Robject{USstates} contains values 
+of seven variables for ten states in the US. The seven variables are
+\begin{description}
+\item[\Robject{Population}]: population size divided by $1000$,
+\item[\Robject{Income}]: average per capita income,
+\item[\Robject{Illiteracy}]: illiteracy rate (\% population),
+\item[\Robject{Life.Expectancy}]: life expectancy (years),
+\item[\Robject{Homicide}]: homicide rate (per $1000$),
+\item[\Robject{Graduates}]: percentage of high school graduates,
+\item[\Robject{Freezing}]: average number of days per below freezing.
+\end{description}
+With these data
+\begin{enumerate}
+\item Construct a scatterplot matrix of the data labelling the 
+      points by state name (using function \Rcmd{text}).
+\item Construct a plot of life expectancy and homicide rate 
+      conditional on average per capita income.
+\end{enumerate}
+
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Exercises}
+
+\begin{itemize}
+
+\item
+Mortality rates per $100,000$ from male suicides for a number of 
+age groups and a number of countries are given in \Robject{suicides2}.
+Construct side-by-side box plots for the data from different age 
+groups, and comment on what the graphic tells us about the data.
+
+\item
+\cite{HSAUR:FluryRiedwyl1988} report data that give various lengths 
+measurements on $200$ Swiss bank notes. The \Robject{banknote} data are available
+from package \Rpackage{alr3} \citep{PKG:alr3}.
+Use whatever graphical techniques you think are appropriate
+to investigate whether there is any `pattern'
+or structure in the data. Do you observe something suspicious?
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{References}
+\tiny
+<<bibfiles, echo = FALSE, results = tex>>=   
+src <- system.file(package = "HSAUR3")
+style <- file.path(src, "LaTeXBibTeX", "refstyle")
+bst <- file.path(src, "LaTeXBibTeX", "HSAUR")
+cat(paste("\\bibliographystyle{", style, "}", sep = ""), "\n \n")
+cat(paste("\\bibliography{", bst, "}", sep = ""), "\n \n")
+@
+
+\end{frame}
+
+\end{document}

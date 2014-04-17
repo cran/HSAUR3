@@ -1,0 +1,461 @@
+
+\input{HSAUR_title}
+
+\SweaveOpts{prefix.string=figures/HSAUR,eps=FALSE,keep.source=TRUE}
+
+<<setup, echo = FALSE, results = hide>>=
+source("setup.R")
+@
+
+\setkeys{Gin}{width=0.95\textheight}
+
+\frame{
+\begin{center}
+\Large{Part 11: Analysing Longitudinal Data I}
+\end{center}
+
+focuses on mixed effects models for repeated measurements.
+
+}
+\section{Introduction}
+
+<<ALDI-setup, echo = FALSE, results = hide>>=
+library("Matrix")
+library("lme4")
+@
+
+\begin{frame}
+\frametitle{Beat the Blues}
+
+
+Depression is a major public health problem across the
+world. Antidepressants are the front line treatment,
+but many
+patients either do not respond to them, or do not like taking
+them. The main alternative is psychotherapy, and the modern
+`talking treatments' such as \stress{cognitive behavioural therapy} (CBT) %%'
+have been shown to be as effective as drugs, and probably more
+so when it comes to relapse. 
+
+The data to be used in this chapter arise from a clinical trial of
+an interactive, multimedia program known as `Beat the Blues' %%'
+designed to deliver cognitive behavioural therapy
+to depressed patients via a computer terminal.
+
+In a randomised controlled trial
+of the program, patients with depression recruited in primary
+care were randomised to either the Beating the Blues program,
+or to `Treatment as Usual' (TAU). 
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Beat the Blues}
+
+
+Here, we concentrate on the \stress{Beck Depression Inventory
+II} (BDI). Measurements on this variable were
+made on the following five occasions:
+\begin{itemize}
+\item Prior to treatment,
+\item Two months after treatment began and
+\item At one, three and six months follow-up, i.e., at three,
+      five and eight months after treatment.
+%%%better: At two, four and six months follow-up, i.e. at four, six and eight
+%%%months after treatment
+\end{itemize}
+
+There is interest here in assessing the effect of taking antidepressant
+drugs (\Robject{drug}, yes or no) and length of the current episode of
+depression (\Robject{length}, less or more than six months).
+
+\end{frame}
+
+\section{Analysing Longitudinal Data}
+
+\begin{frame}
+    \frametitle{Analysing Longitudinal Data}
+
+Because
+several observations of the response variable are made on the
+same individual, it is likely that the measurements will be correlated
+rather than independent, even after conditioning on the explanatory
+variables. 
+
+Consequently repeated measures data require special
+methods of analysis and models for such data need to include
+parameters linking the explanatory variables to the repeated
+measurements, parameters analogous to those in the usual multiple
+regression model and, in addition parameters
+that account for the correlational structure of the repeated
+measurements. 
+
+In this chapter: linear mixed effects models.
+
+Next chapter: generalised estimating equations.
+
+\end{frame}
+
+\section{Linear Mixed Effects Models}
+
+\begin{frame}
+    \frametitle{Linear Mixed Effects Models}
+
+Linear mixed effects models for repeated measures data formalise
+the sensible idea that an individual's pattern of responses is %%'
+likely to depend on many characteristics of that individual,
+including some that are unobserved. These unobserved variables
+are then included in the model as random variables, i.e., random
+effects. The essential feature of such models is that correlation
+amongst the repeated measurements on the same unit arises from
+shared, unobserved variables. Conditional on the values of the
+random effects, the repeated measurements are assumed to be independent,
+the so-called \stress{local independence} assumption.
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Random Intercept Model}
+
+Let $y_{ij}$ represent the observation made at time $t_j$ on individual $i$.
+A possible model for the observation $y_{ij}$ might be
+\begin{eqnarray*}
+y_{ij} = \beta_0 + \beta_1 t_j + u_i + \varepsilon_{ij}.
+\end{eqnarray*}
+Here the total residual that would be present in
+the usual linear regression model has been partitioned into a
+subject-specific random component $u_i$ which is constant over time
+plus a residual $\varepsilon_{ij}$ which varies randomly over time.
+
+$\E(u_i) = 0$ and $\Var(u) = \sigma^2_u$, $\E(\varepsilon_{ij}) = 0$ 
+with $\Var(\varepsilon_{ij}) = \sigma^2$; $u_i$ and $\varepsilon_{ij}$ 
+independent of each other and of time $t_j$.
+
+\begin{eqnarray*}
+\Var(y_{ij}) = \Var(u_i + \varepsilon_{ij}) = \sigma^2_u + \sigma^2
+\end{eqnarray*}
+``variance components''
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Random Intercept Model}
+
+The covariance between the total residuals at two time points $j$ and
+$k$ in the same individual is
+$\Cov(u_i + \varepsilon_{ij}, u_i + \varepsilon_{ik}) = \sigma^2_u$.
+
+Note that these covariances are induced by the
+shared random intercept; for individuals with $u_i > 0$,
+the total residuals will tend to be greater than the mean,
+for individuals with $u_i < 0$ they will tend to be less than the mean.
+\begin{eqnarray*}
+\Cor(u_i + \varepsilon_{ij}, u_i + \varepsilon_{ik})
+     = \frac{\sigma^2_u}{\sigma^2_u + \sigma^2}.
+\end{eqnarray*}
+This is an \stress{intra-class correlation}
+interpreted
+as the proportion of the total residual variance that is due
+to residual variability between subjects.
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Random Intercept and Slope Model}
+
+In this model there are two types of random effects,
+the first modelling heterogeneity in intercepts, $u_i$,
+and the second modelling heterogeneity in slopes, $v_i$:
+\begin{eqnarray*}
+y_{ij} = \beta_0 + \beta_1 t_j + u_i + v_i t_j + \varepsilon_{ij}
+\end{eqnarray*}
+The two random effects are assumed to have a bivariate
+normal distribution with zero means for both variables and variances
+$\sigma^2_u$ and $\sigma^2_v$ with covariance
+$\sigma_{uv}$:
+\begin{eqnarray*}
+\Var(u_i + v_i t_j + \varepsilon_{ij}) =
+  \sigma^2_u + 2 \sigma_{uv} t_j + \sigma^2_v t_j^2 + \sigma^2
+\end{eqnarray*}
+which is no longer constant for different values of $t_j$.
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Random Intercept and Slope Model}
+
+\begin{eqnarray*}
+\Cov(u_i + v_i t_j + \varepsilon_{ij},
+     u_i + v_i t_{k} + \varepsilon_{ik}) =
+    \sigma^2_u + \sigma_{uv} (t_j - t_{k}) +
+    \sigma^2_v t_jt_{k}
+\end{eqnarray*}
+is not constrained to be the same for all pairs $t_j$ and $t_{k}$.
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Mixed Effects Models}
+
+Linear mixed-effects models can be estimated by maximum likelihood.
+However, this method tends to underestimate
+the variance components. A modified version of maximum likelihood,
+known as \stress{restricted maximum likelihood}
+is therefore
+often recommended; this provides consistent estimates of the
+variance components. 
+
+Competing linear mixed-effects models can be compared
+using a likelihood ratio test. If however the models have been
+estimated by restricted maximum likelihood this test can only
+be used if both models have the same set of fixed effects.
+
+\end{frame}
+
+\section{Analysis Using R}
+
+\begin{frame}[fragile]
+    \frametitle{Beat the Blues}
+
+\begin{center}
+<<ALDI-plot-BtheB, echo = FALSE, fig = TRUE, height = 4>>=
+data("BtheB", package = "HSAUR3")
+layout(matrix(1:2, nrow = 1))
+ylim <- range(BtheB[,grep("bdi", names(BtheB))],
+              na.rm = TRUE)
+tau <- subset(BtheB, treatment == "TAU")[,
+    grep("bdi", names(BtheB))]
+boxplot(tau, main = "Treated as usual", ylab = "BDI",
+        xlab = "Time (in months)", names = c(0, 2, 4, 6, 8),
+        ylim = ylim)
+btheb <- subset(BtheB, treatment == "BtheB")[,
+    grep("bdi", names(BtheB))]
+boxplot(btheb, main = "Beat the Blues", ylab = "BDI",
+        xlab = "Time (in months)", names = c(0, 2, 4, 6, 8),
+        ylim = ylim)
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Beat the Blues}
+
+Fit model to the data including the baseline BDI values
+(\Robject{pre.bdi}), \Robject{treatment} group,
+\Robject{drug} and \Robject{length} as fixed effect covariates. 
+
+First, a rearrangement of the data is necessary from
+the `wide form' in which they appear in the \Robject{BtheB} data frame %%'
+into the `long form' in which each separate repeated measurement %%'
+and associated covariate values appear as a separate row in a
+\Rclass{data.frame}.
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Beat the Blues}
+
+<<ALDI-long-BtheB, echo = TRUE>>=
+data("BtheB", package = "HSAUR3")         
+BtheB$subject <- factor(rownames(BtheB))
+nobs <- nrow(BtheB)
+BtheB_long <- reshape(BtheB, idvar = "subject",
+    varying = c("bdi.2m", "bdi.3m", "bdi.5m", "bdi.8m"),
+    direction = "long")
+BtheB_long$time <- rep(c(2, 3, 5, 8), rep(nobs, 4))
+names(BtheB_long)[names(BtheB_long) == "treatment"] <- "trt"
+@
+The resulting \Rclass{data.frame} \Robject{BtheB\_long} contains a number
+of missing values!
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Random Intercept and Slope}
+
+<<ALDI-fit-BtheB, echo = TRUE>>=
+library("lme4")
+BtheB_lmer1 <- lmer(bdi ~ bdi.pre + time + trt + 
+    drug + length + (1 | subject), data = BtheB_long,
+    method = "ML", na.action = na.omit)
+BtheB_lmer2 <- lmer(bdi ~ bdi.pre + time + trt + 
+    drug + length + (time | subject), data = BtheB_long,
+    method = "ML", na.action = na.omit)
+anova(BtheB_lmer1, BtheB_lmer2)
+@
+\end{frame}
+
+\begin{frame}
+    \frametitle{Model Checking}
+
+We can check the assumptions of the final model fitted to
+the \Robject{BtheB} data, i.e., the normality of the random effect terms
+and the residuals, by first using the \Rcmd{ranef} method
+to \stress{predict} the former and the \Rcmd{residuals} method
+to calculate the differences between the observed data values
+and the fitted values, and then using normal probability plots
+on each. 
+
+There appear to be no large departures from linearity in either plot.
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Model Checking}
+
+\begin{center}
+<<ALDI-qqnorm-BtheB, echo = FALSE, fig = TRUE, height = 4, width = 7>>=
+layout(matrix(1:2, ncol = 2))
+qint <- ranef(BtheB_lmer1)$subject[["(Intercept)"]]
+qres <- residuals(BtheB_lmer1)
+qqnorm(qint, ylab = "Estimated random intercepts",
+       xlim = c(-3, 3), ylim = c(-20, 20),
+       main = "Random intercepts")
+qqline(qint)
+qqnorm(qres, xlim = c(-3, 3), ylim = c(-20, 20),
+       ylab = "Estimated residuals",
+       main = "Residuals")
+qqline(qres)
+@
+\end{center}
+
+\end{frame}
+
+\section{Prediction of Random Effects}
+
+\begin{frame}
+    \frametitle{Prediction of Random Effects}
+
+The random effects are not estimated as part of the model. However,
+having estimated the model, we can \stress{predict} the values of the
+random effects. According to Bayes' Theorem, the \stress{posterior  %'
+probability} of the random effects is given by
+\begin{eqnarray*}
+\P(u | y, x) = f(y | u, x) g(u)
+\end{eqnarray*}
+where $f(y | u, x)$ is the conditional density of the responses given
+the random effects and covariates (a product of normal densities) and
+$g(u)$ is the \stress{prior} density of the random effects (multivariate
+normal). The means of this posterior distribution can be used
+as estimates of the random effects and are known as \stress{empirical Bayes
+estimates}.
+
+\end{frame}
+
+\section{The Problem of Dropouts}
+
+\begin{frame}
+    \frametitle{The Problem of Dropouts}
+
+\begin{itemize}
+\item[Dropout completely at random (DCAR)]
+here the probability
+that a patient drops out does not depend on either the observed
+or missing values of the response. 
+
+\item[\stress{Dropout at random} (DAR)]
+The dropout at random mechanism
+occurs when the probability of dropping out depends on the outcome
+measures that have been observed in the past, but given this
+information is conditionally independent of all the future (unrecorded)
+values of the outcome variable following dropout. 
+
+\item[\stress{Non-ignorable} dropout]
+The final type of dropout mechanism is one where the probability
+of dropping out depends on the unrecorded missing values -- observations
+are likely to be missing when the outcome values that would have
+been observed had the patient not dropped out, are systematically
+higher or lower than usual.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{The Problem of Dropouts}
+
+Under what type of dropout mechanism are the mixed effects
+models considered in this chapter valid? The good news is that
+such models can be shown to give valid results under the relatively
+weak assumption that the dropout mechanism is DAR.
+
+When the missing values are thought to be informative,
+any analysis is potentially problematical. 
+
+\end{frame}
+
+\section{Summary}
+
+\begin{frame}
+    \frametitle{Summary}
+
+Mixed effects models allow the correlations between
+the repeated measurements to be accounted for so that correct
+inferences can be drawn about the effects of covariates of interest
+on the repeated response values. In this chapter we have concentrated
+on responses that are continuous and conditional on the explanatory
+variables and random effects have a normal distribution. But
+random effects models can also be applied to non-normal responses,
+for example binary variables.
+
+\end{frame}
+
+\section*{Exercises}
+
+\begin{frame}
+  \frametitle{Exercises}
+
+\begin{itemize}
+
+\item 
+Use the \Rcmd{lm} function to fit a model to the Beat the Blues data
+that assumes that the repeated measurements are independent.
+Compare the results to those from fitting the random intercept
+model \Robject{BtheB\_lmer1}.
+
+\item 
+Investigate whether there is any evidence of an interaction
+between treatment and time for the Beat the Blues data.
+
+\item
+Construct a plot of the mean profiles of both groups in the
+Beat the Blues data, showing also standard deviation bars at each
+time point.
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Exercises}
+\begin{itemize}
+
+\item
+The \Robject{phosphate} data
+show the plasma inorganic phosphate
+levels for $33$ subjects, $20$ of whom are controls and $13$ of whom
+have been classified as obese \citep{HSAUR:Davis2002}.
+Produce separate plots of the
+profiles of the individuals in each group, and guided by these
+plots fit what you think might be sensible linear mixed effects
+models.
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{References}
+\tiny
+
+<<bibfiles, echo = FALSE, results = tex>>=
+src <- system.file(package = "HSAUR3")
+style <- file.path(src, "LaTeXBibTeX", "refstyle")
+bst <- file.path(src, "LaTeXBibTeX", "HSAUR")
+cat(paste("\\bibliographystyle{", style, "}", sep = ""), "\n \n")
+cat(paste("\\bibliography{", bst, "}", sep = ""), "\n \n")
+@
+
+\end{frame}  
+
+\end{document}

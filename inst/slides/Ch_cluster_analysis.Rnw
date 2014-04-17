@@ -1,0 +1,490 @@
+
+
+\input{HSAUR_title}
+
+\SweaveOpts{prefix.string=figures/HSAUR,eps=FALSE,keep.source=TRUE}
+
+<<setup, echo = FALSE, results = hide>>=
+source("setup.R")
+library("mclust")
+library("mvtnorm")
+mai <- par("mai")
+options(SweaveHooks = list(rmai = function() { par(mai = mai * c(1,1,1,2))}))
+@
+
+\frame{
+\begin{center}
+\Large{Part 16: Cluster Analysis}
+\end{center}
+
+focuses on finding homogeneous groups of observations.
+}
+
+\section{Introduction}
+
+\begin{frame}
+    \frametitle{Exoplanets classification}
+
+Exoplanets are planets outside the Solar System.
+Since 1995 over a hundred exoplanets
+have been discovered, nearly all being detected indirectly, using
+the gravitational influence they exert on their associated central
+stars. 
+
+From the properties of the exoplanets found up to now it
+appears that the theory of planetary development constructed
+for the planets of the Solar System may need to be reformulated.
+
+The exoplanets are not at all like the nine local planets that
+we know so well. A first step in the process of understanding
+the exoplanets might be to try to classify them with respect
+to their known properties.
+
+The data gives
+the mass (in Jupiter mass), the period (in earth days) 
+and the eccentricity (\Robject{eccent})
+of the exoplanets discovered up until October 2002.
+
+\end{frame}
+
+\section{Cluster Analysis}
+
+\begin{frame}
+    \frametitle{Cluster analysis}
+
+Cluster analysis refers to methods for uncovering
+or discovering groups or clusters of observations that are homogeneous
+and separated from other groups, for example
+in medicine (microarray data) or marketing (groups of customers).
+
+Clustering techniques essentially try to formalise what human
+observers do so well in two or three dimensions. Consider, for
+example, the following scatterplot.
+
+We concentrate on two types of clustering procedures: $k$-means type
+and classification maximum likelihood methods.
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Cluster analysis}
+
+\begin{center}
+<<CA-scplot, echo = FALSE, fig = TRUE>>=
+dat <- rbind(rmvnorm(25, mean = c(3,3)),
+             rmvnorm(20, mean = c(10, 8)),
+             rmvnorm(10, mean = c(20, 1)))
+plot(abs(dat), xlab = expression(x[1]), ylab = expression(x[2]))
+@
+\end{center}
+
+
+\end{frame}
+
+\subsection{$k$-Means Clustering}
+
+\begin{frame}
+    \frametitle{$k$-means clustering}
+
+The $k$-means clustering technique seeks to partition
+a set of data into a specified number of groups, $k$, by
+minimising some numerical criterion, low values of which are
+considered indicative of a `good' solution. The most commonly  %%'
+used approach, for example, is to try to find the partition of
+the $n$ individuals into $k$ groups, which minimises
+the within-group sum of squares over all variables. 
+
+The problem
+then appears relatively simple; namely, consider every possible
+partition of the $n$ individuals into $k$ groups,
+and select the one with the lowest within-group sum of squares.
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{$k$-means clustering}
+
+
+Unfortunately, the problem in practice is not so straightforward.
+The numbers involved are so vast that complete enumeration of
+\stress{every} possible partition remains impossible even with the fastest
+computer:
+
+\begin{center}
+\begin{tabular}{rrl}
+$n$   & $k$ & Number of possible partitions \\ \hline
+$15$  & $3$ & $2,375,101$  \\
+$20$  & $4$ & $45,232,115,901$  \\
+$25$  & $8$ & $690,223,721,118,368,580$  \\
+$100$ & $5$ & $10^{68}$ \\
+\end{tabular}
+\end{center}
+
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Heuristical approach}
+
+\begin{enumerate}
+\item Find some initial partition of the individuals into the required
+      number of groups. 
+\item Calculate the change in the clustering criterion produced
+      by `moving' each individual from its own to another cluster. %%'
+\item Make the change that leads to the greatest improvement in
+      the value of the clustering criterion.
+\item Repeat steps 2 and 3 until no move of an individual causes
+      the clustering criterion to improve.
+\end{enumerate}
+When variables are on very different scales (as they are for
+the exoplanets data) some form of standardization will be
+needed before applying $k$-means clustering.
+
+Note: $k$ has to be fixed in advance and can hardly be estimated.
+
+\end{frame}
+
+\subsection{Model-based Clustering}
+
+\begin{frame}
+    \frametitle{Model-based Clustering}
+
+It is assumed that the population from
+which the observations arise consists of $c$ subpopulations
+each corresponding to a cluster, and that the density of a $q$-dimensional
+observation $\x^\top = (x_1, \dots, x_q)$
+from the $j$th subpopulation is $f_j(\x, \vartheta_j), j = 1,
+\dots, c$, for some unknown vector of parameters, $\vartheta_j$.
+
+We also introduce a vector $\gamma = (\gamma_1, \dots, \gamma_n)$,
+where $\gamma_i = j$ of $\x_i$ is from the $j$ subpopulation. The $\gamma_i$
+label the subpopulation for each observation $i = 1, \dots, n$.
+
+The clustering problem now becomes that of choosing $\vartheta =
+(\vartheta_1, \dots, \vartheta_c)$ and $\gamma$ to maximise
+the likelihood function associated with such
+assumptions. 
+
+\end{frame}
+
+\subsection{Classification Maximum Likelihood}
+
+\begin{frame}
+    \frametitle{Classification Maximum Likelihood}
+
+$\gamma = (\gamma_1, \dots, \gamma_n)$
+gives the labels of the subpopulation to which the observation belongs: so
+$\gamma_i = j$ if $\x_i$ is from the $j$th population.
+
+The clustering problem becomes that of choosing $\vartheta =
+(\vartheta_1, \dots, \vartheta_c)$ and $\gamma$ to maximise the likelihood
+\begin{eqnarray*}
+L(\vartheta, \gamma) = \prod_{i = 1}^n f_{\gamma_i}(\x_i,
+\vartheta_{\gamma_i}).
+\end{eqnarray*}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Normal Distribution}
+
+If $f_j(\x, \vartheta_j)$ is taken as the multivariate normal density with
+mean vector $\mu_j$ and covariance matrix $\Sigma_j$, this likelihood has
+the form
+\begin{eqnarray*}
+L(\vartheta, \gamma) = \prod_{j = 1}^c \prod_{i: \gamma_i = j}
+|\Sigma_j|^{-1/2} \exp\left(-\frac{1}{2} (\x_i - \mu_j)^\top \Sigma_j^{-1} (\x_i -
+\mu_j)\right).
+\end{eqnarray*}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Normal Distribution}
+
+The maximum likelihood estimator of $\mu_j$ is 
+\begin{eqnarray*}
+\hat{\mu}_j = n_j^{-1} \sum_{i: \gamma_i = j} \x_i
+\end{eqnarray*}
+where the number of observations in each
+subpopulation is $n_j = \sum_{i = 1}^n I(\gamma_i = j)$.
+Replacing $\mu_j$ in the likelihood yields the following log-likelihood
+\begin{eqnarray*}
+l(\vartheta, \gamma) = -\frac{1}{2} \sum_{j = 1}^c \text{trace}(\W_j
+\Sigma_j^{-1} + n \log |\Sigma_j|)
+\end{eqnarray*}
+where $\W_j$ is the $q \times q$ matrix of sums of squares and cross-products
+of the variables for subpopulation $j$.
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Normal Distribution}
+
+
+If the
+covariance matrix $\Sigma_j$ is $\sigma^2$ times the identity matrix for all
+populations $j = 1, \dots, c$,
+then the likelihood is maximised by choosing $\gamma$ to minimise
+trace$(\W)$, where 
+\begin{eqnarray*}
+\W = \sum_{j = 1}^c \W_j,
+\end{eqnarray*}
+i.e., minimisation of the
+written group sum of squares. Use
+of this criterion in a cluster analysis will lend to produce
+spherical clusters of largely equal sizes.
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Normal Distribution}
+
+If $\Sigma_j = \Sigma$ for $j = 1, \dots, c$, then the likelihood is maximised by choosing
+$\gamma$ to minimise $|\W|$.
+Use of this criterion in a cluster analysis will lend to produce
+clusters with the same elliptical slope.
+
+If $\Sigma_j$ is not constrained, the likelihood is maximised by choosing
+$\gamma$ to minimise $\sum_{j = 1}^c n_j \log | \W_j | / n_j$.
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Determining $c$}
+
+Model selection is a combination
+of choosing the appropriate clustering model and the optimal number of clusters.
+A Bayesian approach is used \citep[see][]{HSAUR:FraleyRaftery1999},
+using what is known as the \stress{Bayesian Information Criterion} (BIC).
+
+\end{frame}
+
+\section{Analysis Using R}
+
+\begin{frame}[fragile]
+    \frametitle{Analysis Using R}
+
+\begin{center}
+<<CA-planets-scatter, echo = FALSE, fig = TRUE, rmai = TRUE>>=
+data("planets", package = "HSAUR3")
+library("scatterplot3d")
+scatterplot3d(log(planets$mass), log(planets$period),
+    log(planets$eccen), type = "h", angle = 55,
+    pch = 16, y.ticklabs = seq(0, 10, by = 2),
+    y.margin.add = 0.1, scale.y = 0.7)
+@
+\end{center}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{$k$-means}
+
+<<CA-planet-ss, echo = TRUE, fig = FALSE>>=
+rge <- apply(planets, 2, max) - apply(planets, 2, min)
+planet.dat <- sweep(planets, 2, rge, FUN = "/")
+n <- nrow(planet.dat)
+wss <- rep(0, 10)
+wss[1] <- (n - 1) * sum(apply(planet.dat, 2, var))
+for (i in 2:10)
+    wss[i] <- sum(kmeans(planet.dat,
+                         centers = i)$withinss)
+plot(1:10, wss, type = "b", xlab = "Number of groups",
+     ylab = "Within groups sum of squares")
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{$k$-means}
+
+\begin{center}
+<<CA-planet-ss-plot, echo = FALSE, fig = TRUE>>=
+plot(1:10, wss, type = "b", xlab = "Number of groups",
+     ylab = "Within groups sum of squares")
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{$k$-means: three clusters}
+
+<<CA-planets-kmeans3, echo = TRUE>>=
+planet_kmeans3 <- kmeans(planet.dat, centers = 3)
+table(planet_kmeans3$cluster)
+@
+The centers of the clusters for the untransformed data can be computed using
+a small convenience function
+<<CA-planets-ccent, echo = TRUE>>=
+ccent <- function(cl) {
+    f <- function(i) colMeans(planets[cl == i,])
+    x <- sapply(sort(unique(cl)), f)
+    colnames(x) <- sort(unique(cl))
+    return(x)
+}
+ccent(planet_kmeans3$cluster)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{$k$-means: five clusters}
+
+<<CA-planets-kmeans5, echo = TRUE>>=
+planet_kmeans5 <- kmeans(planet.dat, centers = 5)
+table(planet_kmeans5$cluster)
+ccent(planet_kmeans5$cluster)
+@
+
+\end{frame}
+
+\subsection{Model-based Clustering in R}
+
+\begin{frame}[fragile]
+    \frametitle{Model-based Clustering}
+
+<<CA-planets-mclust, echo = TRUE>>=
+library("mclust")
+planet_mclust <- Mclust(planet.dat)
+plot(planet_mclust, planet.dat, what = "BIC", 
+     col = "black", ylab = "-BIC", 
+     ylim = c(0, 350))
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Model-based Clustering}
+
+\begin{center}
+<<CA-planets-mclust-plot, echo = FALSE, fig = TRUE>>=
+plot(planet_mclust, planet.dat, what = "BIC", col = "black",
+     ylab = "-BIC", ylim = c(0, 350))
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Model-based Clustering}
+
+Different shape of clusters possible:
+\begin{enumerate}
+\item Spherical, equal volume,
+\item Spherical, unequal volume,
+\item Diagonal equal volume, equal shape,
+\item Diagonal varying volume, varying shape,
+\item Ellipsoidal, equal volume, shape and orientation,
+\item Ellipsoidal, varying volume, shape and orientation.
+\end{enumerate}
+The BIC selects model $4$ (diagonal varying volume and varying shape) with
+three clusters as the best solution:
+<<CA-planets-mclust-print, echo = TRUE>>=
+print(planet_mclust)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Visualizing Results}
+
+\begin{center}
+<<CA-planets-mclust-scatter, echo = TRUE, fig = TRUE, results = hide>>=
+clPairs(planet.dat,
+    classification = planet_mclust$classification,
+    symbols = 1:3, col = "black")
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Visualizing Results}
+
+\begin{center}
+<<CA-planets-mclust-scatterclust, echo = FALSE, fig = TRUE, rmai = TRUE>>=
+scatterplot3d(log(planets$mass), log(planets$period),
+    log(planets$eccen), type = "h", angle = 55,
+    scale.y = 0.7, pch = planet_mclust$classification,
+    y.ticklabs = seq(0, 10, by = 2), y.margin.add = 0.1)
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Clusters}
+
+<<CA-planets-mclust-mu, echo = TRUE>>=
+table(planet_mclust$classification)
+ccent(planet_mclust$classification)
+@
+
+\end{frame}
+
+\section{Summary}
+
+\begin{frame}
+    \frametitle{Summary}
+
+Cluster analysis techniques provide a rich source of possible
+strategies for exploring complex multivariate data. But the use
+of cluster analysis in practice does not involve simply the application
+of one particular technique to the data under investigation,
+but rather necessitates a series of steps, each of which may
+be dependent on the results of the preceding one. 
+
+The final, extremely important, stage concerns the
+evaluation of the clustering solutions obtained. Are the clusters
+`real' or merely artefacts of the algorithms? Do other solutions %%'
+exist that are better in some sense? Can the clusters be given
+a convincing interpretation? 
+\end{frame}
+
+\section*{Exercises}
+
+\begin{frame}
+  \frametitle{Exercises}
+
+\begin{itemize}
+
+\item
+The \Robject{pottery}-data give the chemical composition
+of $48$ specimens of Romano-British pottery, determined by atomic
+absorption spectrophotometry, for nine oxides.
+Analyse the pottery data using \Rcmd{Mclust}. To
+what model in \Rcmd{Mclust} does the $k$-mean approach
+approximate?
+
+\item
+Construct a three-dimensional drop-line scatterplot of
+the planets data in which the points are labelled with a suitable
+cluster label.
+
+\item
+Write a general \R{} function that will display a particular partition
+from the $k$-means cluster method on both a scatterplot matrix
+of the original data and a scatterplot or scatterplot matrix
+of a selected number of principal components of the data.
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{References}
+\tiny
+<<bibfiles, echo = FALSE, results = tex>>=   
+src <- system.file(package = "HSAUR3")
+style <- file.path(src,  "LaTeXBibTeX", "refstyle")
+bst <- file.path(src, "LaTeXBibTeX", "HSAUR")
+cat(paste("\\bibliographystyle{", style, "}", sep = ""), "\n \n")
+cat(paste("\\bibliography{", bst, "}", sep = ""), "\n \n")
+@
+
+\end{frame}
+
+\end{document}

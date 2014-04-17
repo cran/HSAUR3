@@ -1,0 +1,143 @@
+
+%%% copy Sweave.sty definitions
+
+%%% keeps `sweave' from adding `\usepackage{Sweave}': DO NOT REMOVE
+%\usepackage{Sweave} 
+
+
+\RequirePackage[T1]{fontenc}
+\RequirePackage{graphicx,ae,fancyvrb}
+\IfFileExists{upquote.sty}{\RequirePackage{upquote}}{}
+\usepackage{relsize}
+
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{fontfamily=courier,
+                                              fontshape=it,
+                                              fontsize=\relsize{-1}}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{}
+\newenvironment{Schunk}{}{}
+
+%%% environment for raw output
+\newcommand{\SchunkRaw}{\renewenvironment{Schunk}{}{}
+    \DefineVerbatimEnvironment{Soutput}{Verbatim}{fontfamily=courier,
+                                                  fontshape=it,
+                                                  fontsize=\small}
+    \rawSinput
+}
+
+%%% environment for labeled output
+\newcommand{\nextcaption}{}
+\newcommand{\SchunkLabel}{
+  \renewenvironment{Schunk}{\begin{figure}[ht] }{\caption{\nextcaption}
+  \end{figure} }
+  \DefineVerbatimEnvironment{Sinput}{Verbatim}{frame = topline}
+  \DefineVerbatimEnvironment{Soutput}{Verbatim}{frame = bottomline, 
+                                                samepage = true,
+                                                fontfamily=courier,
+                                                fontshape=it,
+                                                fontsize=\relsize{-1}}
+}
+
+
+%%% S code with line numbers
+\DefineVerbatimEnvironment{Sinput}
+{Verbatim}
+{
+%%  numbers=left
+}
+
+\newcommand{\numberSinput}{
+    \DefineVerbatimEnvironment{Sinput}{Verbatim}{numbers=left}
+}
+\newcommand{\rawSinput}{
+    \DefineVerbatimEnvironment{Sinput}{Verbatim}{}
+}
+
+
+%%% R / System symbols
+\newcommand{\R}{\textsf{R}}
+\newcommand{\rR}{{R}}
+\renewcommand{\S}{\textsf{S}}
+\newcommand{\SPLUS}{\textsf{S-PLUS}}
+\newcommand{\rSPLUS}{{S-PLUS}}
+\newcommand{\SPSS}{\textsf{SPSS}}
+\newcommand{\EXCEL}{\textsf{Excel}}
+\newcommand{\ACCESS}{\textsf{Access}}
+\newcommand{\SQL}{\textsf{SQL}}
+%%\newcommand{\Rpackage}[1]{\hbox{\rm\textit{#1}}}
+%%\newcommand{\Robject}[1]{\hbox{\rm\texttt{#1}}}
+%%\newcommand{\Rclass}[1]{\hbox{\rm\textit{#1}}}
+%%\newcommand{\Rcmd}[1]{\hbox{\rm\texttt{#1}}}
+\newcommand{\Rpackage}[1]{\index{#1 package@\textit{#1} package}\textit{#1}}
+\newcommand{\Robject}[1]{\texttt{#1}}
+\newcommand{\Rclass}[1]{\index{#1 class@\textit{#1} class}\textit{#1}}
+\newcommand{\Rcmd}[1]{\index{#1 function@\texttt{#1} function}\texttt{#1}}
+\newcommand{\Roperator}[1]{\texttt{#1}}
+\newcommand{\Rarg}[1]{\texttt{#1}}
+\newcommand{\Rlevel}[1]{\texttt{#1}}
+
+
+%%% other symbols
+\newcommand{\file}[1]{\hbox{\rm\texttt{#1}}}
+%%\newcommand{\stress}[1]{\index{#1}\textit{#1}} 
+\newcommand{\stress}[1]{\textit{#1}} 
+\newcommand{\booktitle}[1]{`#1'} %%'
+
+%%% Math symbols
+\newcommand{\E}{\mathsf{E}}   
+\newcommand{\Var}{\mathsf{Var}}   
+\newcommand{\Cov}{\mathsf{Cov}}   
+\newcommand{\Cor}{\mathsf{Cor}}   
+\newcommand{\x}{\mathbf{x}}   
+\newcommand{\y}{\mathbf{y}}   
+\renewcommand{\a}{\mathbf{a}}
+\newcommand{\W}{\mathbf{W}}   
+\newcommand{\C}{\mathbf{C}}   
+\renewcommand{\H}{\mathbf{H}}   
+\newcommand{\X}{\mathbf{X}}   
+\newcommand{\B}{\mathbf{B}}   
+\newcommand{\V}{\mathbf{V}}   
+\newcommand{\I}{\mathbf{I}}   
+\newcommand{\D}{\mathbf{D}}   
+\newcommand{\bS}{\mathbf{S}}   
+\newcommand{\N}{\mathcal{N}}   
+\renewcommand{\P}{\mathsf{P}}   
+\usepackage{amstext}
+
+%%% links
+\usepackage{hyperref}
+
+%%% captions & tables
+%% <FIXME>: conflics with figure definition in chapman.cls
+%%\usepackage[format=hang,margin=10pt,labelfont=bf]{caption}
+%% </FIMXE>
+\usepackage{longtable}
+\usepackage{rotating}
+
+%%% Bibliography
+\usepackage[round,comma]{natbib}
+
+%%% texi2dvi complains that \newblock is undefined, hm...
+\def\newblock{\hskip .11em plus .33em minus .07em}
+
+%%% Example sections
+
+%% URLs
+\newcommand{\curl}[1]{\begin{center} \url{#1} \end{center}}
+
+%%% for manual corrections
+%\renewcommand{\baselinestretch}{2}
+
+%%% plot sizes
+\setkeys{Gin}{width=0.65\textwidth}
+
+%%% color
+\usepackage{color}
+
+%%% hyphenations
+\hyphenation{drop-out}
+
+%%% local definitions
+\setlength{\parskip}{\parsep}
+
+\usepackage[utf8]{inputenc}

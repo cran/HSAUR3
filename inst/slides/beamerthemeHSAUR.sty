@@ -1,0 +1,45 @@
+\ProvidesPackageRCS $Header: /home/cvs/CVSroot/RHandbook/HSAUR/slides/beamerthemeHSAUR.sty,v 1.1 2006/05/08 09:16:39 hothorn Exp $
+
+% Copyright 2003 by Till Tantau <tantau@users.sourceforge.net>
+%
+% This program can be redistributed and/or modified under the terms
+% of the GNU Public License, version 2.
+
+%%\usepackage[names]{color}
+
+\DeclareOptionBeamer{hideothersubsections}{\PassOptionsToPackage{hideothersubsections}{beamerouterthemesidebar}}
+\DeclareOptionBeamer{hideallsubsections}{\PassOptionsToPackage{hideallsubsections}{beamerouterthemesidebar}}
+
+\PassOptionsToPackage{right}{beamerouterthemesidebar}
+\PassOptionsToPackage{width=2cm}{beamerouterthemesidebar}
+
+\DeclareOptionBeamer{width}{\PassOptionsToPackage{width=#1}{beamerouterthemesidebar}}
+\DeclareOptionBeamer{left}{\PassOptionsToPackage{left}{beamerouterthemesidebar}}
+\DeclareOptionBeamer{right}{\PassOptionsToPackage{right}{beamerouterthemesidebar}}
+
+\ProcessOptionsBeamer
+
+\mode<presentation>
+
+\useoutertheme[height=0pt]{sidebar}
+
+%\setbeamercolor{structure}{fg=Mahogany}
+\setbeamercolor{structure}{fg=red!70!green!150}
+%\setbeamercolor{structure}{bg=red!70!green!50}
+
+\setbeamercolor{sidebartab}{fg=white}
+
+{\usebeamercolor{structure}}
+{\usebeamercolor{sidebartab}}
+
+
+\definecolor{lilahell}{rgb}{0.43,0.16,0.41}
+\definecolor{liladunkel}{rgb}{0.12,0.12,0.13}
+
+
+\setbeamertemplate{sidebar canvas \beamer@sidebarside}[vertical shading][top=lilahell,bottom=lilahell]
+
+\insertpagenumber
+
+\mode
+<all>

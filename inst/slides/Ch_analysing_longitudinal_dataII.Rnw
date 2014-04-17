@@ -1,0 +1,315 @@
+
+
+\input{HSAUR_title}
+
+\SweaveOpts{prefix.string=figures/HSAUR,eps=FALSE,keep.source=TRUE}
+
+<<setup, echo = FALSE, results = hide>>=
+source("setup.R")
+library("gee")
+@
+
+\setkeys{Gin}{width=0.95\textheight}
+
+\frame{
+\begin{center}
+\Large{Part 12: Analysing Longitudinal Data II}
+\end{center}
+
+focuses on generalised estimation equations for repeated measurements.
+
+}
+\section{Introduction}
+
+\begin{frame}
+    \frametitle{Respiratory illness}
+
+The \Robject{respiratory} data were collected in a clinical trial
+comparing two treatments for a respiratory illness \citep{HSAUR:Davis1991}.
+
+In each of two centres, eligible patients were randomly assigned
+to active treatment or placebo. During the treatment, the respiratory
+status (categorised \Robject{poor} or \Robject{good}) was determined at each
+of four, monthly visits. The trial recruited
+\Sexpr{nlevels(respiratory$subject)} participants
+(54 in the active group, 57 in the placebo group) and there were
+no missing data for either the responses or the covariates. The
+question of interest is to assess whether the treatment is effective
+and to estimate its effect.
+
+\end{frame}
+
+\section{Generalised Estimating Equations}
+
+\begin{frame}
+    \frametitle{Lack of Independence}
+
+The assumption of the independence of the repeated measurements
+in an GLM will lead to estimated standard errors that are too small for
+the between-subjects covariates (at least when the correlation
+between the repeated measurements are positive) as a result of
+assuming that there are more independent data points than are
+justified.
+
+We might begin by asking is there something relatively simple
+that can be done to `fix-up' these standard errors so that we  %'
+can still apply the \R{} \Rcmd{glm} function to get reasonably satisfactory
+results on longitudinal data with a non-normal response? Two
+approaches which can often help to get more suitable estimates
+of the required standard errors are \stress{bootstrapping} and
+use of the \stress{robust/sandwich, Huber/White variance estimator}.
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Generalised Estimating Equations (GEE)}
+
+But perhaps more satisfactory than these methods to simply
+`fix-up' the standard errors given by the independence model, %'
+would be an approach that fully utilises information on the data's  %'
+structure, including dependencies over time. A suitable procedure
+was first suggested by \cite{HSAUR:LiangZeger1986} and is known as
+\stress{generalised estimating equations} (GEE).
+\index{Generalised estimating equations (GEE)}
+In essence GEE is a multivariate
+extension of the generalised linear model and quasi-likelihood
+methods.
+
+The primary idea behind the GEE approach is that since the
+parameters specifying the structure of the correlation matrix
+are rarely of great practical interest, simple structures are
+used for the within-subject correlations giving rise to the
+so-called \stress{working correlation matrix}.
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Working Correlation Matrices}
+
+\cite{HSAUR:LiangZeger1986} show that the
+estimates of the parameters of most interest, i.e., those that
+determine the average responses over time, are still valid even
+when the correlation structure is incorrectly specified, although
+their standard errors might remain poorly estimated if the working
+correlation matrix is far from the truth. But as with the independence
+situation described previously, this potential difficulty can
+often be handled satisfactorily by again using the \stress{sandwich
+estimator} to find more reasonable standard errors. Possibilities
+for the working correlation matrix that are most frequently used
+in practice are:
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Working Correlation Matrices}
+
+
+\begin{itemize}
+\item An identity matrix: no correlation at all.
+\item An exchangeable correlation matrix: 
+with a single parameter
+     which gives the correlation of each pair of repeated measures.
+\item An autoregressive correlation matrix:
+also with a single parameter
+     but in which $\text{corr}(y_j, y_k) = \vartheta^{|k - j|}, j \not =
+     k$. With $\vartheta$ less than one this gives a pattern in which repeated measures
+     further apart in time are less correlated, than those that are
+     closer to one another.
+\item An unstructured correlation matrix:
+with $q(q-1)/2$ parameters
+     in which $\text{corr}(y_j, y_k) = \vartheta_{jk}$ and where $q$ is the
+     number of repeated measures.
+\end{itemize}
+
+\end{frame}
+
+\section{Analysis Using R}
+
+\begin{frame}[fragile]
+    \frametitle{Beat the Blues Revisited}
+
+<<ALDII-BtheB-data, echo = FALSE, results = hide>>=
+data("BtheB", package = "HSAUR3")      
+BtheB$subject <- factor(rownames(BtheB))
+nobs <- nrow(BtheB)
+BtheB_long <- reshape(BtheB, idvar = "subject",
+    varying = c("bdi.2m", "bdi.3m", "bdi.5m", "bdi.8m"),
+    direction = "long")
+BtheB_long$time <- rep(c(2, 3, 5, 8), rep(nobs, 4))
+names(BtheB_long)[names(BtheB_long) == "treatment"] <- "trt"
+@
+<<ALDII-BtheB-geefit-indep, echo = TRUE, results = hide>>=
+osub <- order(as.integer(BtheB_long$subject))
+BtheB_long <- BtheB_long[osub,]
+btb_gee <- gee(bdi ~ bdi.pre + trt + length + 
+    drug, data = BtheB_long, id = subject, 
+    family = gaussian, corstr = "independence")
+btb_gee1 <- gee(bdi ~ bdi.pre + trt + length + 
+    drug, data = BtheB_long, id = subject, 
+    family = gaussian, corstr = "exchangeable")
+@
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Beat the Blues Revisited}
+
+Note how the na\"{\i}ve and the sandwich or %"
+robust estimates of the standard errors are considerably
+different for the independence structure,
+but quite similar for
+the exchangeable structure.
+This simply reflects that using an
+exchangeable working correlation matrix is more realistic for
+these data and that the standard errors resulting from this assumption
+are already quite reasonable without applying the `sandwich' procedure %'
+to them. And if we compare the results under this assumed structure
+with those for the random intercept model,
+we see that they are almost identical, since
+the random intercept model also implies an exchangeable structure
+for the correlations of the repeated measurements.
+
+\end{frame}
+
+\section{Respiratory Illness}
+
+\begin{frame}[fragile]
+    \frametitle{Respiratory Illness}
+
+
+The baseline status, i.e., the status for \Robject{month == 0}, will enter
+the models as an explanatory variable and thus we have to rearrange the
+\Rclass{data.frame} \Robject{respiratory}
+in order to create a new variable \Robject{baseline}:
+<<ALDII-respiratory-data, echo = TRUE>>=
+data("respiratory", package = "HSAUR3")
+resp <- subset(respiratory, month > "0")
+resp$baseline <- rep(subset(respiratory, month == "0")$status,  
+                     rep(4, 111))
+resp$nstat <- as.numeric(resp$status == "good")
+resp$month <- resp$month[, drop = TRUE]
+names(resp)[names(resp) == "treatment"] <- "trt"
+levels(resp$trt)[2] <- "trt"
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Respiratory Illness}
+
+<<ALDII-respiratory-fit, echo = TRUE, results = hide>>=
+resp_glm <- glm(status ~ centre + trt + gender + 
+    baseline + age, data = resp, family = "binomial")
+resp_gee1 <- gee(nstat ~ centre + trt + gender + 
+    baseline + age, data = resp, family = "binomial", 
+    id = subject, corstr = "independence", 
+    scale.fix = TRUE, scale.value = 1)
+resp_gee2 <- gee(nstat ~ centre + trt + gender + 
+    baseline + age, data = resp, family = "binomial", 
+    id = subject, corstr = "exchangeable", 
+    scale.fix = TRUE, scale.value = 1)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Respiratory Illness}
+
+The estimated treatment effect taken from the exchangeable
+structure GEE model is \Sexpr{round(coef(resp_gee2)["trttrt"], 3)}
+which, using the robust standard
+errors, has an associated $95\%$ confidence interval
+<<ALDII-resp-confint, echo = TRUE>>=
+se <- summary(resp_gee2)$coefficients[
+    "trttrt", "Robust S.E."]
+coef(resp_gee2)["trttrt"] +
+    c(-1, 1) * se * qnorm(0.975)
+@
+These values reflect effects on the log-odds scale, 
+on the exp scale it reads
+<<ALDII-resp-confint-exp, echo = TRUE>>=
+exp(coef(resp_gee2)["trttrt"] +
+    c(-1, 1) * se * qnorm(0.975))
+@
+The odds of achieving a `good' respiratory status with the active treatment is between  %'
+about twice and seven times the corresponding odds for the placebo.
+
+\end{frame}
+
+\section{Epilepsy}
+
+\begin{frame}[fragile]
+    \frametitle{Epilepsy}
+
+Moving on to the count data in \Robject{epilepsy}, we begin by calculating
+the means and variances of the number of seizures for all treatment / period
+interactions
+<<ALDII-epilepsy, echo = TRUE>>=
+data("epilepsy", package = "HSAUR3")
+itp <- interaction(epilepsy$treatment, epilepsy$period)
+tapply(epilepsy$seizure.rate, itp, mean)
+tapply(epilepsy$seizure.rate, itp, var)
+@
+Overdispersion?
+
+\end{frame}
+
+\section{Summary}
+
+\begin{frame}
+    \frametitle{Summary}
+
+The generalised estimation equation approach essentially extends generalised
+linear models to longitudinal data, and allows for the analysis of such data when
+the response variable cannot be assumed to be normal distributed.
+
+\end{frame}
+
+\section*{Exercises}
+
+\section*{Exercises}
+
+\begin{frame}
+  \frametitle{Exercises}
+
+\begin{itemize}
+
+\item 
+For the \Robject{epilepsy} data investigate what Poisson models are most
+          suitable when subject 49 is excluded from the analysis.
+
+\item
+ Investigate the use of other correlational structures than
+          the independence and exchangeable structures used in the text,
+          for both the \Robject{respiratory} and the \Robject{epilepsy} data.
+
+\item The \Robject{schizophrenia2} data 
+          were collected in a follow-up study
+          of women patients with schizophrenia \citep{HSAUR:Davis2002}.
+          The binary response recorded
+          at 0, 2, 6, 8 and 10 months after hospitalisation was thought
+          disorder (absent or present). The single covariate is the factor
+          indicating whether a patient had suffered early or late
+          onset of her condition (age of onset less than 20 years or
+          age of onset 20 years or above). The question of interest is
+          whether the course of the illness differs between patients with
+          early and late onset? Investigate this question using the GEE
+          approach.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}  
+\frametitle{References}
+\tiny
+<<bibfiles, echo = FALSE, results = tex>>=   
+src <- system.file(package = "HSAUR3")
+style <- file.path(src, "LaTeXBibTeX", "refstyle")
+bst <- file.path(src, "LaTeXBibTeX", "HSAUR")
+cat(paste("\\bibliographystyle{", style, "}", sep = ""), "\n \n")
+cat(paste("\\bibliography{", bst, "}", sep = ""), "\n \n")
+@
+
+\end{frame}  
+
+\end{document}

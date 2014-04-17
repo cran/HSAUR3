@@ -1,0 +1,12 @@
+
+\documentclass{beamer}
+
+\input{definitions}
+
+\usetheme{boxes}
+\setbeamercovered{transparent}
+
+<<title, echo = FALSE, results = tex>>=
+title <- "title_UZH.tex"
+writeLines(readLines(title))
+@

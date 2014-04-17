@@ -1,0 +1,459 @@
+
+\input{HSAUR_title}
+
+\SweaveOpts{prefix.string=figures/HSAUR,eps=FALSE,keep.source=TRUE}
+
+<<setup, echo = FALSE, results = hide>>=
+source("setup.R")
+@
+
+
+\frame{
+\begin{center}
+\Large{Part 4: Conditional Inference}
+\end{center}
+
+focuses on conditional statistical test procedures for the
+Guessing Lengths, Suicides, and Gastrointestinal Damage examples.
+
+}
+
+<<CI-roomwidth-ties, echo = FALSE, results = hide>>=
+nobs <- table(roomwidth$unit)
+ties <- tapply(roomwidth$width, roomwidth$unit, function(x) length(x) - length(unique(x)))
+library("coin")
+@
+
+\section{Introduction}
+
+\begin{frame}
+  \frametitle{Introduction}
+
+There are many experimental designs or studies
+where the subjects are not a random sample from some well-defined population. 
+
+For example, in clinical trials the subjects are randomly assigned to certain groups, for
+example a control and a treatment group, and the analysis needs to take this
+randomisation into account. 
+
+In this chapter, we discuss such test procedures
+usually known as \stress{(re)-randomisation} or \stress{permutation tests} 
+where the distribution of the test statistics under the
+null hypothesis is determined \stress{conditionally} on
+the data at hand.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{roomwidth: Estimating Room Widths}
+
+Shortly after metric units of length were officially introduced
+in Australia in the 1970s, each of a group of 44 students was asked to guess,
+to the nearest metre, the width of the lecture hall in which
+they were sitting. Another group of 69 students in the same room
+was asked to guess the width in feet, to the nearest foot.  
+
+But \Sexpr{ties[1]} of the estimated widths (in feet) of \Sexpr{nobs[1]} students
+and \Sexpr{ties[2]} of the estimated widths (in metres) of \Sexpr{nobs[2]}
+students are tied. This violates one assumption of the 
+\stress{unconditional} test procedures such as the Wilcoxon Mann-Whitney test, namely 
+that measurements are drawn from a continuous distribution. 
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{suicides: Baiting Behaviour}
+
+A study was carried out to investigate the
+causes of jeering or baiting behaviour by a crowd when a person
+is threatening to commit suicide by jumping from a high building.
+A hypothesis is that baiting is more likely to occur in warm
+weather. 21 accounts of threatened suicide were classified by
+two factors, the time of year and whether or not baiting occurred.
+
+The data come from the northern hemisphere, 
+so June--September are the warm months.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Lanza: Gastrointestinal Damage}
+
+The administration of non-steriodal anti-inflammatory drugs for patients
+suffering from arthritis induced gastrointestinal damage.
+\cite{HSAUR:Lanza1987} and
+\cite{HSAUR:Lanzaetal1988a,HSAUR:Lanzaetal1988b,HSAUR:Lanzaetal1989}
+report
+the results of placebo-controlled randomised clinical trials investigating
+the prevention of gastrointestinal damage by the application of
+Misoprostol. The degree of the damage is determined by endoscopic
+examinations and the response variable is defined as the classification:
+\input{tables/Lanza}
+
+\end{frame}
+
+\section{Conditional Test Procedures}
+
+\begin{frame}
+  \frametitle{Conditional Test Procedures}
+
+In clinical trials, it is often impossible to draw a random sample from all
+patients suffering a certain disease. 
+
+Commonly, volunteers and patients are
+recruited from hospital staff, relatives or people showing up for
+some examination. 
+
+The test procedures applied in this chapter make no
+assumptions about random sampling or a specific model. 
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Permutation Tests}
+
+Instead, the null
+distribution of the test statistics is computed conditionally on all random
+permutations of the data. 
+
+Therefore, the procedures shown in the sequel are
+known as \stress{permutation tests} or \stress{(re)-randomisation tests}. 
+
+For a general introduction we refer to the text books of
+\cite{HSAUR:Edgington1987} and \cite{HSAUR:Pesarin2001}.
+
+\end{frame}
+
+\subsection{Testing Independence of Two Variables}
+
+\begin{frame}
+  \frametitle{Testing Independence of Two Variables}
+
+Based on $n$ pairs of measurements $(x_i, y_i), i = 1, \dots, n$ 
+we want to test the null hypothesis of the independence of $x$ and
+$y$. 
+
+We may distinguish three situations: Both variables $x$ and $y$
+are continuous (correlation), one is continuous and the other one 
+is a factor (one-way layout, independent two-sample) or both $x$ and $y$ 
+are factors (contingency tables).
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Example: Two Independent Samples}
+
+One class of test procedures for the above three situations are
+randomisation and permutation tests whose basic principles have been described by
+\cite{HSAUR:Fisher1935} and \cite{HSAUR:Pitman1937} and are best illustrated for the
+case of continuous measurements $y$ in two groups, i.e., the $x$ variable is
+a factor that can take values $x = 1$ or $x = 2$.
+
+The difference of the means of the $y$ values in both groups is an appropriate
+statistic for the assessment of the association of $y$ and $x$
+\begin{eqnarray*}
+T = \frac{\sum\limits_{i = 1}^n I(x_i = 1) y_i}{\sum\limits_{i = 1}^n I(x_i = 1)} -
+    \frac{\sum\limits_{i = 1}^n I(x_i = 2) y_i}{\sum\limits_{i = 1}^n I(x_i = 2)}.
+\end{eqnarray*}
+
+Clearly, under the null hypothesis of
+independence of $x$ and $y$ we expect the distribution of $T$ to be centred about zero.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Computing the Null-Distribution}
+
+Suppose that the group labels $x = 1$ or $x = 2$ have been assigned to the
+observational units by randomisation. 
+
+When the result of the randomisation
+procedure is independent of the $y$ measurements, we are allowed to fix the
+$x$ values and shuffle the $y$ values
+randomly over and over again. Thus, we can compute, or at least
+approximate, the distribution of the test statistic $T$ under the
+conditions of the null hypothesis directly from the data $(x_i, y_i), i = 1,
+\dots, n$ by the so called \stress{randomisation principle}.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Computing the Null-Distribution}
+
+The test statistic $T$ is computed for a reasonable number of shuffled
+$y$ values and we can determine how
+many of the shuffled differences are at least as large as the test statistic
+$T$ obtained from the original data. 
+
+If this proportion is small, smaller
+than $\alpha = 0.05$ say, we have good evidence that the assumption of
+independence of $x$ and $y$ is not realistic and we therefore can reject the null
+hypothesis. The proportion of larger differences is usually referred to as
+$p$-value.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Categorical Variables}
+
+The test statistic can be computed
+from the corresponding contingency table in which the observations $(x_i, y_i)$ are
+cross-classified. We can make use of the test statistic
+\begin{eqnarray*}
+X^2 = \sum_{j = 1}^r \sum_{k = 1}^c \frac{(n_{jk} - E_{jk})^2}{E_{jk}}.
+\end{eqnarray*}
+
+Alternatively, Fisher's exact test based on the hyper-geometric
+probability of the observed contingency table can be applied.
+Here, all possible tables can be
+ordered with respect to this metric and $p$-values are computed from the
+fraction of tables more extreme than the observed one.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Correlation}
+
+When both the $x$ and the $y$ measurements are numeric, the test statistic
+can be formulated as the product, i.e., by the sum of all $x_i y_i, i = 1,
+\dots, n$. 
+
+Again, we can fix the $x$ values and shuffle the $y$ values in
+order to approximate the distribution of the test statistic under the
+laws of the null hypothesis of independence of $x$ and $y$.
+
+\end{frame}
+
+\section{Analysis Using R}
+
+\subsection{Estimating the Width of a Room Revised}
+
+\begin{frame}[fragile]
+  \frametitle{roomwidth Revised}
+
+First, we convert metres into feet and store the
+vector of observations in a variable \Robject{y}:
+<<CI-roomwidth-data, echo = TRUE>>=
+convert <- ifelse(roomwidth$unit == "feet", 1, 3.28)
+feet <- roomwidth$unit == "feet"
+metre <- !feet
+y <- roomwidth$width * convert
+@
+The test statistic is simply the difference in means
+<<CI-roomwidth-teststat, echo = TRUE>>=
+T <- mean(y[feet]) - mean(y[metre])
+T
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{roomwidth Revised}
+
+In order to approximate the conditional distribution of the test statistic
+$T$ we compute $9999$ test statistics for shuffled $y$ values. A
+permutation of the $y$ vector can be obtained from the \Rcmd{sample}
+function.
+<<CI-roomwidth-permutation, echo = TRUE>>=
+meandiffs <- double(9999)
+for (i in 1:length(meandiffs)) {
+    sy <- sample(y)
+    meandiffs[i] <- mean(sy[feet]) - mean(sy[metre])
+}
+@
+
+\end{frame}
+
+\begin{frame}
+
+\begin{center}
+<<CI-roomwidth-plot, echo = FALSE, fig = TRUE>>=
+hist(meandiffs)
+abline(v = T, lty = 2)
+abline(v = -T, lty = 2)
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile] 
+  \frametitle{Approximate Null-Distribution}
+
+Now, the value of the test statistic $T$ for the original
+unshuffled data can be compared with the distribution of $T$ under the null
+hypothesis. The $p$-value,
+i.e., the proportion of
+test statistics $T$ larger than \Sexpr{-round(T, 3)} or smaller than
+\Sexpr{round(T, 3)} is
+<<CI-roomwidth-pvalue, echo = TRUE>>=
+greater <- abs(meandiffs) > abs(T)
+mean(greater)
+@
+with a confidence interval of
+<<CI-roomwidth-pvalue, echo = TRUE>>=
+binom.test(sum(greater), length(greater))$conf.int
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Exact Null-Distribution}
+
+The
+function \Rcmd{independence\_test} \citep[package
+\Rpackage{coin},][]{PKG:coin,HSAUR:Hothorn:2006:AmStat} can be used to
+compute the exact $p$-value for two independence samples:
+<<CI-roomwidth-coin, echo = TRUE>>=
+library("coin")
+independence_test(y ~ unit, data = roomwidth, 
+    distribution = exact())
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Exact WMW-Test}
+
+The exact conditional Wilcoxon rank sum test applied to the \Robject{roomwidth} data:
+<<CI-roomwidth-coin, echo = TRUE>>=
+wilcox_test(y ~ unit, data = roomwidth, 
+    distribution = exact())
+@
+
+\end{frame}
+
+\subsection{Crowds and Threatened Suicide}
+
+\begin{frame}
+  \frametitle{Crowds and Threatened Suicide}
+
+The data in this case are in the form of a $2 \times 2$ contingency
+table and it might be thought that the chi-squared test could
+again be applied to test for the independence of crowd behaviour
+and time of year. 
+
+The $\chi^2$-distribution as an approximation to
+the independence test statistic is bad in this situation 
+since the expected frequencies are rather small.
+
+One solution is to use a conditional test
+procedure such as Fisher's exact test as described %'
+above. 
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Fisher's Test}
+
+We can apply this test procedure
+using the \R{} function \Rcmd{fisher.test}
+to the \Rclass{table} \Robject{suicides}:
+<<CI-suicides-ft, echo = TRUE>>=
+fisher.test(suicides)
+@
+
+\end{frame}
+
+\subsection{Gastrointestinal Damages}
+
+\begin{frame}[fragile]
+  \frametitle{Gastrointestinal Damages}
+
+Here we are interested in the comparison of two groups of patients,
+where one group received a placebo and the other one Misoprostol. In the
+trials shown here, the response variable is measured on an ordered scale.
+
+Data from four clinical studies are available and thus the
+observations are naturally grouped together. From the \Rclass{data.frame}
+\Robject{Lanza} we can construct a three-way table as follows:
+<<CI-Lanza-data, echo = TRUE, results = hide>>=
+xtabs(~ treatment + classification + study, 
+    data = Lanza)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Gastrointestinal Damages}
+
+The classifications are
+defined by the number of haemorrhages or erosions, the midpoint of the
+interval for each level is a reasonable choice, i.e.,
+$0$, $1$, $6$, $17$ and $30$. The corresponding
+linear-by-linear association tests extending the general
+\index{Linear-by-linear association test}
+Cochran-Mantel-Haenzel statistics \citep[see][for further
+details]{HSAUR:Agresti2002} are implemented in package \Rpackage{coin}.
+\index{Cochran-Mantel-Haenzel statistic}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{First Study Only}
+
+For the first study, the null hypothesis of independence of treatment and
+gastrointestinal damage, i.e., of no treatment effect of Misoprostol, is
+tested by
+<<CI-Lanza-singleI, echo = TRUE>>=
+library("coin")
+cmh_test(classification ~ treatment, data = Lanza,
+    scores = list(classification = c(0, 1, 6, 17, 30)),
+    subset = Lanza$study == "I")
+@
+and, by default, the conditional distribution is approximated by the
+corresponding limiting distribution. 
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{All Studies}
+
+We can use \Robject{study} as a
+block variable and perform a global linear-association test investigating
+the treatment effect of Misoprostol in all four studies:
+<<CI-Lanza-all, echo = TRUE>>=
+cmh_test(classification ~ treatment | study, 
+    scores = list(classification = c(0, 1, 6, 17, 30)),
+    data = Lanza)
+@
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Exercises}
+
+\begin{itemize}
+
+\item
+Use the \Rcmd{mosaic} and \Rcmd{assoc} functions
+from the \Rpackage{vcd} package \citep{PKG:vcd}
+to create a graphical representation of the deviations from independence in the
+$2 \times 2$ contingency table \Robject{suicides}.
+
+\item
+Generate two groups with measurements following a normal distribution having
+different means. For multiple replications of this experiment ($1000$, say),
+compare the $p$-values of the Wilcoxon Mann-Whitney rank sum test
+and a permutation test (using \Rcmd{independence\_test}).
+Where do the differences come from?
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{References}
+
+\tiny
+<<bibfiles, echo = FALSE, results = tex>>=   
+src <- system.file(package = "HSAUR3")
+style <- file.path(src, "LaTeXBibTeX", "refstyle")
+bst <- file.path(src, "LaTeXBibTeX", "HSAUR")
+cat(paste("\\bibliographystyle{", style, "}", sep = ""), "\n \n")
+cat(paste("\\bibliography{", bst, "}", sep = ""), "\n \n")
+@
+
+\end{frame}
+
+\end{document}
+

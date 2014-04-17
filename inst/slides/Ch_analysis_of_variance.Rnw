@@ -1,0 +1,506 @@
+
+\input{HSAUR_title}
+
+\SweaveOpts{prefix.string=figures/HSAUR,eps=FALSE,keep.source=TRUE}
+
+<<setup, echo = FALSE, results = hide>>=
+source("setup.R")
+@
+
+
+\frame{
+\begin{center}
+\Large{Part 5: Analysis of Variance}
+\end{center}
+
+focuses on the analysis of one-way layouts for the 
+Weight Gain, Foster
+Feeding in Rats, Water Hardness and Male Egyptian Skulls examples.
+
+}
+
+\section{Introduction}
+
+\begin{frame}
+  \frametitle{weightgain: Rats Weights}
+
+The data 
+arise from an experiment to study the
+gain in weight of rats fed on four different diets, distinguished
+by amount of protein (low and high) and by source of protein
+(beef and cereal). Ten rats are randomised to each of the four
+treatments and the weight gain in grams recorded. The question
+of interest is how diet affects weight gain.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{foster: Feeding Rats}
+
+The data from a foster feeding experiment
+with rat mothers and litters of four different genotypes: A,
+B, I and J.
+
+The measurement is the litter weight (in grams) after
+a trial feeding period. Here the investigator's interest lies  %'
+in uncovering the effect of genotype of mother and litter on
+litter weight.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{skulls: Egyptian Skulls}
+
+The data 
+give four measurements made on
+Egyptian skulls from five epochs. The data has been collected with a view
+to deciding if there are any differences between the skulls from
+the five epochs. The measurements are:
+\begin{description}
+\item[\Robject{mb}]: maximum breadths of the skull,
+\item[\Robject{bh}]: basibregmatic heights of the skull,
+\item[\Robject{bl}]: basialiveolar length of the skull, and
+\item[\Robject{nh}]: nasal heights of the skull.
+\end{description}
+Non-constant measurements of the skulls over time would indicate
+interbreeding with immigrant populations.
+
+\end{frame}
+
+\section{Analysis of Variance}
+
+\begin{frame}
+  \frametitle{Analysis of Variance}
+
+For each of the data sets described previously,
+the question of interest involves assessing whether certain populations
+differ in mean value for
+a single variable or 
+for a set of four variables (\Robject{skulls} data). 
+
+In the first two
+cases we shall use \stress{analysis of variance} (ANOVA) and in the
+last \stress{multivariate analysis of variance} (MANOVA) method for the
+analysis of this data.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Factorial Designs}
+
+Both the \Robject{weightgain} and \Robject{foster} data sets 
+are examples of \stress{factorial designs},
+with the factors in the first data set being amount of protein
+with two levels, and source of protein also with two levels.
+
+In the second the factors are the genotype of the mother and
+the genotype of the litter, both with four levels. The analysis
+of each data set can be based on the same model but
+the two data sets differ in that the first is \stress{balanced},
+i.e., there are the same number of observations in each cell,
+whereas the second is \stress{unbalanced} having different
+numbers of observations in the 16 cells of the design. 
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{ANOVA Model}
+
+The model used in the analysis of each is
+\begin{eqnarray*}
+y_{ijk} = \mu + \gamma_i + \beta_j + (\gamma\beta)_{ij} + \varepsilon_{ijk}
+\end{eqnarray*}
+where $y_{ijk}$ represents the $k$th measurement
+made in cell $(i,j)$ of the factorial design,
+$\mu$ is the overall mean, $\gamma_i$ is the main effect of the first factor,
+$\beta_j$ is the main effect of the second factor,
+$(\gamma\beta)_{ij}$ is the interaction effect of the two factors and
+\index{Interaction}
+$\varepsilon_{ijk}$ is the residual or error term assumed to have a
+normal distribution with mean zero and variance $\sigma^2$.
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Formula Specification in R}
+
+In \R{}, the model is specified by a model \Rclass{formula}.
+The \stress{two-way layout with interactions}
+specified above reads
+<<ANOVA-formula, echo = FALSE>>=
+y ~ a + b + a:b
+@
+where the variable \Robject{a} is the first and the variable \Robject{b} is
+the second \Rclass{factor}. The interaction term $(\gamma\beta)_{ij}$
+is denoted by \Robject{a:b}. 
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Estimation and Inference}
+
+The model as specified above is overparameterised, i.e., there are
+infinitively many solutions to the corresponding estimation equations, and so the
+parameters have to be constrained in some way, commonly by requiring
+them to sum to zero.
+
+The model given above leads to a partition of the variation in the
+observations into parts due to main effects and interaction plus
+an error term that enables a series of $F$-tests.
+The assumptions made in deriving the $F$-tests are:
+\begin{itemize}
+\item The observations are independent of each other,
+\item The observations in each cell arise from a population having
+      a normal distribution, and
+\item The observations in each cell are from populations
+      having the same variance.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{MANOVA}
+
+The linear model used in this case is
+\begin{eqnarray*}
+y_{ijh} = \mu_h + \gamma_{jh} + \varepsilon_{ijh}
+\end{eqnarray*}
+where $\mu_h$ is the overall mean for variable $h$, $\gamma_{jh}$
+is the effect of the $j$th level of the single factor
+on the $h$th variable, and $\varepsilon_{ijh}$
+is a random error term. The vector $\varepsilon^\top_{ij} = (\varepsilon_{ij1},
+\varepsilon_{ij2}, \dots, \varepsilon_{ijq})$ where $q$
+is the number of response variables (four
+in the skull example) is assumed to have a multivariate normal
+distribution with null mean vector and covariance matrix, $\Sigma$,
+assumed to be the same in each level of the grouping factor.
+The hypothesis of interest is that the population mean vectors
+for the different levels of the grouping factor are the same.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{MANOVA Inference}
+
+
+A number of different test statistics are available which
+may give different results when applied to the same data set,
+although the final conclusion is often the same. The principal
+test statistics for the multivariate analysis of variance are
+\begin{itemize}
+\item Hotelling-Lawley trace,
+\item Wilks' ratio of determinants
+\item Roy's greatest root,
+\item Pillai trace.
+\end{itemize}
+
+\end{frame}
+
+\section{Analysis Using R}
+
+\subsection{Weight Gain in Rats}
+
+\begin{frame}[fragile]
+  \frametitle{Weight Gain in Rats}
+
+We should try to summarise the main features of the data first.
+The following \R{} code produces the required summary statistics
+<<ANOVA-weightgain-mean-var, echo = TRUE>>=
+tapply(weightgain$weightgain, 
+    list(weightgain$source, weightgain$type), mean)
+tapply(weightgain$weightgain, 
+    list(weightgain$source, weightgain$type), sd)
+@
+
+\end{frame}
+
+\begin{frame}
+
+\begin{center}
+<<ANOVA-weightgain-plot, echo = FALSE, fig = TRUE>>=
+plot.design(weightgain)
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{ANOVA}
+
+To apply analysis of variance to the data we can use the \Rcmd{aov}
+function in \R{} and then the \Rcmd{summary} method to give
+us the analysis of variance table:
+<<ANOVA-weightgain-aov, echo = TRUE>>=
+summary(wg_aov <- aov(weightgain ~ source * type, 
+    data = weightgain))
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{ANOVA}  
+
+The analysis of variance table shows that
+the main effect of type is highly significant.
+The main effect of source is not
+significant. But interpretation of both these main effects is
+complicated by the type $\times$ source interaction which approaches
+significance at the $5$\% level. 
+
+To try to understand this interaction
+effect it will be useful to plot the mean weight gain for low-
+and high-protein diets for each level of source of protein, beef
+and cereal. 
+
+\end{frame}
+
+\begin{frame}
+
+\begin{center}
+<<ANOVA-weightgain-iplot-nice, echo = FALSE, fig = TRUE>>=
+interaction.plot(weightgain$type, weightgain$source, weightgain$weightgain,
+legend = FALSE)
+legend(1.5, 95, legend = levels(weightgain$source), title = "weightgain$source",
+       lty = 1:2, bty = "n")
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{ANOVA Results}  
+
+The estimates of the intercept and the main and interaction effects can be
+extracted from the model fit by
+<<ANOVA-weightgain-coef, echo = TRUE>>=
+coef(wg_aov)
+@
+Note that the model was fitted with the restrictions $\gamma_1 = 0$
+(corresponding to \Rlevel{Beef}) and
+$\beta_1 = 0$ (corresponding to \Rlevel{High}) because treatment contrasts
+were used as default as can be seen from
+<<ANOVA-weightgain-contrasts, echo = TRUE>>=
+options("contrasts")
+@
+Thus, the coefficient for \Robject{source} of $\Sexpr{coef(wg_aov)[2]}$
+can be interpreted as an estimate of the difference $\gamma_2 - \gamma_1$.
+
+\end{frame}
+
+\subsection{Foster Feeding of Rats of Different Genotype}
+
+\begin{frame}
+  \frametitle{Foster Feeding}
+
+\begin{center}
+<<ANOVA-foster-plot, echo = FALSE, fig = TRUE>>=
+plot.design(foster)
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Unbalanced ANOVA}  
+
+We can now apply analysis of variance
+using the \Rcmd{aov} function, but there is a complication caused
+by the unbalanced nature of the data. Here where there are unequal
+numbers of observations in the $16$ cells of the two-way layout,
+it is no longer possible to partition the variation in the data
+into \stress{non-overlapping} or \stress{orthogonal} sums
+of squares representing main effects and interactions. In an
+unbalanced two-way layout with factors $A$ and $B$ there is a proportion
+of the variance of the response variable that can be attributed
+to either $A$ or $B$. 
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{ANOVA Results}  
+
+We can derive the two analyses of variance tables for the
+foster feeding example by applying the \R{} code
+<<ANOVA-foster-aov-one, echo = TRUE>>=
+summary(aov(weight ~ litgen * motgen, data = foster))
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{ANOVA Results}  
+
+and
+<<ANOVA-foster-aov-two, echo = TRUE>>=
+summary(aov(weight ~ motgen * litgen, data = foster))
+@
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Multiple Comparisons}
+
+We can investigate the effect of genotype B on litter weight
+in more detail by the use of \stress{multiple comparison procedures}.
+
+Such procedures allow
+a comparison of all pairs of levels of a factor whilst maintaining
+the nominal significance level at its selected value and producing
+adjusted confidence intervals for mean differences. One such
+procedure is called \stress{Tukey honest significant differences}
+\index{Tukey honest significant differences}
+suggested
+by \cite{HSAUR:Tukey1953}, see \cite{HSAUR:HochbergTamhane1987} also. 
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{All-Pair Differences}
+
+Here,
+we are interested in simultaneous confidence intervals for the weight
+differences between all four genotypes of the mother:
+<<ANOVA-foster-aov, echo = TRUE>>=
+TukeyHSD(aov(weight ~ litgen * motgen, 
+    data = foster), "motgen")
+@
+
+\end{frame}
+
+\begin{frame}
+
+\begin{center}
+<<ANOVA-foster-tukeyHSDplot, echo = FALSE, fig = TRUE>>=
+foster_aov <- aov(weight ~ litgen * motgen, data = foster)
+plot(TukeyHSD(foster_aov, "motgen"))
+@
+\end{center}
+
+\end{frame}
+
+\subsection{Water Hardness and Mortality}
+
+\begin{frame}
+  \frametitle{Water Hardness and Mortality}
+
+The water hardness and mortality data for $61$ large towns in England and
+Wales was analysed in Part~2 and here
+we will extend the analysis by an assessment of the differences of both
+hardness and mortality in the North or South. The hypothesis that the
+two-dimensional mean-vector of water hardness and mortality is the same for
+cities in the North and the South can be tested by \stress{Hotelling-Lawley}
+test in a multivariate analysis of variance framework. 
+
+The \R{} function
+\Rcmd{manova} can be used to fit such a model and the corresponding
+\Rcmd{summary} method performs the test specified by the \Rcmd{test}
+argument.
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+<<ANOVA-water-manova, echo = TRUE>>=
+summary(manova(cbind(hardness, mortality) ~ location, 
+    data = water), test = "Hotelling-Lawley")
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+Looking at the sample means
+<<ANOVA-water-means, echo = TRUE>>=
+tapply(water$hardness, water$location, mean)
+tapply(water$mortality, water$location, mean)
+@
+we see large differences in the two regions both in water hardness and
+mortality, where low mortality is associated with hard water in the South
+and high mortality with soft water in the North.
+
+\end{frame}
+
+\subsection{Male Egyptian Skulls}
+
+\begin{frame}[fragile]
+  \frametitle{Male Egyptian Skulls}
+
+We can begin by looking at a table of mean values for the
+four measurements within each of the five epochs:
+<<ANOVA-skulls-data, echo = TRUE>>=
+means <- aggregate(skulls[,c("mb", "bh", "bl", "nh")], 
+    list(epoch = skulls$epoch), mean)
+means
+@
+
+\end{frame}
+
+\begin{frame}
+
+\begin{center}
+<<ANOVA-skulls-fig, echo = FALSE, fig = TRUE>>=
+pairs(means[,-1],
+    panel = function(x, y) {
+        text(x, y, abbreviate(levels(skulls$epoch)))
+    })
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+There appear to be quite large differences between the epoch
+means, at least on some of the four measurements. We can now
+test for a difference more formally by using MANOVA with the
+following \R{} code to apply each of the four possible test criteria
+mentioned earlier;
+<<ANOVA-skulls-manova, echo = TRUE>>=
+skulls_manova <- manova(cbind(mb, bh, bl, nh) ~ epoch, 
+    data = skulls)
+sapply(c("Pillai", "Wilks", "Hotelling-Lawley", "Roy"), 
+    function(test)
+        summary(skulls_manova, test = test)$stats[1,6])
+@
+
+\end{frame}
+
+\section*{Exercises}
+
+\begin{frame}
+\frametitle{Exercises}
+
+\begin{itemize}
+
+\item 
+Examine the residuals ($\text{observed value} - \text{fitted value}$) from fitting
+a main effects only model to the \Robject{weightgain} data.
+What conclusions do you draw?
+
+\item 
+The data \Robject{students} arise from a large study of
+risk taking.
+Students were randomly assigned to three different
+treatments labelled AA, C and NC. Students were administered two
+parallel forms of a test called `low' and `high'. Carry out
+a test of the equality of the bivariate means of each treatment
+population.
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{References}
+\tiny
+<<bibfiles, echo = FALSE, results = tex>>=   
+src <- system.file(package = "HSAUR3")
+style <- file.path(src, "LaTeXBibTeX", "refstyle")
+bst <- file.path(src, "LaTeXBibTeX", "HSAUR")
+cat(paste("\\bibliographystyle{", style, "}", sep = ""), "\n \n")
+cat(paste("\\bibliography{", bst, "}", sep = ""), "\n \n")
+@
+
+\end{frame}
+
+\end{document}

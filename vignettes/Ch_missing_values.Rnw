@@ -1,0 +1,691 @@
+
+
+\documentclass{chapman}
+
+%%% copy Sweave.sty definitions
+
+%%% keeps `sweave' from adding `\usepackage{Sweave}': DO NOT REMOVE
+%\usepackage{Sweave} 
+
+
+\RequirePackage[T1]{fontenc}
+\RequirePackage{graphicx,ae,fancyvrb}
+\IfFileExists{upquote.sty}{\RequirePackage{upquote}}{}
+\usepackage{relsize}
+
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{fontfamily=courier,
+                                              fontshape=it,
+                                              fontsize=\relsize{-1}}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{}
+\newenvironment{Schunk}{}{}
+
+%%% environment for raw output
+\newcommand{\SchunkRaw}{\renewenvironment{Schunk}{}{}
+    \DefineVerbatimEnvironment{Soutput}{Verbatim}{fontfamily=courier,
+                                                  fontshape=it,
+                                                  fontsize=\small}
+    \rawSinput
+}
+
+%%% environment for labeled output
+\newcommand{\nextcaption}{}
+\newcommand{\SchunkLabel}{
+  \renewenvironment{Schunk}{\begin{figure}[ht] }{\caption{\nextcaption}
+  \end{figure} }
+  \DefineVerbatimEnvironment{Sinput}{Verbatim}{frame = topline}
+  \DefineVerbatimEnvironment{Soutput}{Verbatim}{frame = bottomline, 
+                                                samepage = true,
+                                                fontfamily=courier,
+                                                fontshape=it,
+                                                fontsize=\relsize{-1}}
+}
+
+
+%%% S code with line numbers
+\DefineVerbatimEnvironment{Sinput}
+{Verbatim}
+{
+%%  numbers=left
+}
+
+\newcommand{\numberSinput}{
+    \DefineVerbatimEnvironment{Sinput}{Verbatim}{numbers=left}
+}
+\newcommand{\rawSinput}{
+    \DefineVerbatimEnvironment{Sinput}{Verbatim}{}
+}
+
+
+%%% R / System symbols
+\newcommand{\R}{\textsf{R}}
+\newcommand{\rR}{{R}}
+\renewcommand{\S}{\textsf{S}}
+\newcommand{\SPLUS}{\textsf{S-PLUS}}
+\newcommand{\rSPLUS}{{S-PLUS}}
+\newcommand{\SPSS}{\textsf{SPSS}}
+\newcommand{\EXCEL}{\textsf{Excel}}
+\newcommand{\ACCESS}{\textsf{Access}}
+\newcommand{\SQL}{\textsf{SQL}}
+%%\newcommand{\Rpackage}[1]{\hbox{\rm\textit{#1}}}
+%%\newcommand{\Robject}[1]{\hbox{\rm\texttt{#1}}}
+%%\newcommand{\Rclass}[1]{\hbox{\rm\textit{#1}}}
+%%\newcommand{\Rcmd}[1]{\hbox{\rm\texttt{#1}}}
+\newcommand{\Rpackage}[1]{\index{#1 package@{\fontseries{b}\selectfont #1} package} {\fontseries{b}\selectfont #1}}
+\newcommand{\rpackage}[1]{{\fontseries{b}\selectfont #1}}
+\newcommand{\Robject}[1]{\texttt{#1}}
+\newcommand{\Rclass}[1]{\index{#1 class@\textit{#1} class}\textit{#1}}
+\newcommand{\Rcmd}[1]{\index{#1 function@\texttt{#1} function}\texttt{#1}}
+\newcommand{\Roperator}[1]{\texttt{#1}}
+\newcommand{\Rarg}[1]{\texttt{#1}}
+\newcommand{\Rlevel}[1]{\texttt{#1}}
+
+
+%%% other symbols
+\newcommand{\file}[1]{\hbox{\rm\texttt{#1}}}
+%%\newcommand{\stress}[1]{\index{#1}\textit{#1}} 
+\newcommand{\stress}[1]{\textit{#1}} 
+\newcommand{\booktitle}[1]{\textit{#1}} %%'
+
+%%% Math symbols
+\usepackage{amstext}
+\usepackage{amsmath}
+\newcommand{\E}{\mathsf{E}}   
+\newcommand{\Var}{\mathsf{Var}}   
+\newcommand{\Cov}{\mathsf{Cov}}   
+\newcommand{\Cor}{\mathsf{Cor}}   
+\newcommand{\x}{\mathbf{x}}   
+\newcommand{\y}{\mathbf{y}}   
+\renewcommand{\a}{\mathbf{a}}
+\newcommand{\W}{\mathbf{W}}   
+\newcommand{\C}{\mathbf{C}}   
+\renewcommand{\H}{\mathbf{H}}   
+\newcommand{\X}{\mathbf{X}}   
+\newcommand{\B}{\mathbf{B}}   
+\newcommand{\V}{\mathbf{V}}   
+\newcommand{\I}{\mathbf{I}}   
+\newcommand{\D}{\mathbf{D}}   
+\newcommand{\bS}{\mathbf{S}}   
+\newcommand{\N}{\mathcal{N}}   
+\renewcommand{\L}{L}   
+\renewcommand{\P}{\mathsf{P}}   
+\newcommand{\K}{\mathbf{K}}
+\newcommand{\m}{\mathbf{m}}
+\newcommand{\argmin}{\operatorname{argmin}\displaylimits}
+\newcommand{\argmax}{\operatorname{argmax}\displaylimits}
+
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\bbeta}{\mathbf{\beta}}
+
+
+%%% links
+\usepackage{hyperref}
+
+\hypersetup{%
+  pdftitle = {A Handbook of Statistical Analyses Using R (3rd Edition)},
+  pdfsubject = {Book},
+  pdfauthor = {Torsten Hothorn and Brian S. Everitt},
+  colorlinks = {black},
+  linkcolor = {black},
+  citecolor = {black},
+  urlcolor = {black},
+  hyperindex = {true},
+  linktocpage = {true},
+}
+
+
+%%% captions & tables
+%% <FIXME>: conflics with figure definition in chapman.cls
+%%\usepackage[format=hang,margin=10pt,labelfont=bf]{caption}
+%% </FIMXE>
+\usepackage{longtable}
+\usepackage[figuresright]{rotating}
+
+%%% R symbol in chapter 1
+\usepackage{wrapfig}
+
+%%% Bibliography
+\usepackage[round,comma]{natbib}
+\renewcommand{\refname}{References \addcontentsline{toc}{chapter}{References}}
+\citeindexfalse
+
+%%% texi2dvi complains that \newblock is undefined, hm...
+\def\newblock{\hskip .11em plus .33em minus .07em}
+
+%%% Example sections
+\newcounter{exercise}[chapter]
+\setcounter{exercise}{0}
+\newcommand{\exercise}{\stepcounter{exercise} \item{Ex.~\arabic{chapter}.\arabic{exercise} }}
+
+
+%% URLs
+\newcommand{\curl}[1]{\begin{center} \url{#1} \end{center}}
+
+%%% for manual corrections
+%\renewcommand{\baselinestretch}{2}
+
+%%% plot sizes
+\setkeys{Gin}{width=0.95\textwidth}
+
+%%% color
+\usepackage{color}
+
+%%% hyphenations
+\hyphenation{drop-out}
+\hyphenation{mar-gi-nal}
+
+%%% new bidirectional quotes need 
+\usepackage[utf8]{inputenc}
+
+%\usepackage{setspace}
+\definecolor{sidebox_todo}{rgb}{1,1,0.2}
+\newcommand{\todo}[1]{
+        \hspace{0pt}%
+        \marginpar{% 
+                        \fcolorbox{black}{sidebox_todo}{%
+                                \parbox{\marginparwidth} {
+
+\raggedright\sffamily\footnotesize{TODO: #1}%
+                                }
+                        }%
+        }
+}
+\begin{document}
+
+%% Title page
+
+\title{A Handbook of Statistical Analyses Using \R{} --- 3rd Edition}
+
+\author{Torsten Hothorn and Brian S. Everitt}
+
+\maketitle
+%%\VignetteIndexEntry{Missing Values}
+%%\VignetteDepends{mice}
+\setcounter{chapter}{15}
+
+
+\SweaveOpts{prefix.string=figures/HSAUR,eps=FALSE,keep.source=TRUE} 
+
+<<setup, echo = FALSE, results = hide>>=
+rm(list = ls())
+s <- search()[-1]
+s <- s[-match(c("package:base", "package:stats", "package:graphics", "package:grDevices",
+                "package:utils", "package:datasets", "package:methods", "Autoloads"), s)]
+if (length(s) > 0) sapply(s, detach, character.only = TRUE)
+if (!file.exists("tables")) dir.create("tables")
+if (!file.exists("figures")) dir.create("figures")
+set.seed(290875)
+options(prompt = "R> ", continue = "+  ",
+    width = 63, # digits = 4, 
+    show.signif.stars = FALSE,
+    SweaveHooks = list(leftpar = function() 
+        par(mai = par("mai") * c(1, 1.05, 1, 1)),
+        bigleftpar = function()
+        par(mai = par("mai") * c(1, 1.7, 1, 1))))
+HSAURpkg <- require("HSAUR3")
+if (!HSAURpkg) stop("cannot load package ", sQuote("HSAUR2"))
+rm(HSAURpkg)
+ ### </FIXME> hm, R-2.4.0 --vanilla seems to need this
+a <- Sys.setlocale("LC_ALL", "C")
+ ### </FIXME>
+book <- TRUE
+refs <- cbind(c("AItR", "DAGD", "SI", "CI", "ANOVA", "MLR", "GLM", 
+                "DE", "RP", "GAM", "SA", "ALDI", "ALDII", "SIMC", "MA", "PCA", 
+                "MDS", "CA"), 1:18)
+ch <- function(x) {
+    ch <- refs[which(refs[,1] == x),]
+    if (book) {
+        return(paste("Chapter~\\\\ref{", ch[1], "}", sep = ""))
+    } else {
+        return(paste("Chapter~", ch[2], sep = ""))
+    }
+}
+if (file.exists("deparse.R"))
+    source("deparse.R")
+
+setHook(packageEvent("lattice", "attach"), function(...) {
+    lattice.options(default.theme = 
+        function()
+            standard.theme("pdf", color = FALSE))
+    })
+@
+
+\pagestyle{headings}
+<<singlebook, echo = FALSE>>=
+book <- FALSE
+@
+
+
+\chapter[Missing Values]{Missing Values: 
+Lowering Blood Pressure During Surgery \label{MV}}
+
+\section{Introduction}
+
+\index{Blood pressure}
+It is sometimes necessary to lower a patient's blood pressure during
+surgery, using a hypotensive drug.  Such drugs are administered continuously
+during the relevant phase of the operation; because the duration of this
+phase varies so does the total amount of drug administered.  Patients also
+vary in the extent to which the drugs succeed in lowering blood pressure. 
+The sooner the blood pressure rises again to normal after the drug is
+discontinued, the better.  The data in Table~\ref{MV-bp-tab} \citep[a
+missing-value version of the data presented
+by][]{HSAUR:RobertsonArmitage1959} relate to a particular hypotensive drug
+and give the time in minutes before the patient's systolic blood pressure
+returned to 100mm of mercury (the recovery time), the logarithm (base 10) of
+the dose of drug in milligrams, and the average systolic blood pressure
+achieved while the drug was being administered.  The question of interest is
+how is the recovery time related to the other two variables?  For some
+patients the recovery time was not recorded and the missing values are
+indicated as NA in Table~\ref{MV-bp-tab}.
+
+<<MV-bp-tab, echo = FALSE, results = tex>>=
+data("bp", package = "HSAUR3")
+toLatex(HSAURtable(bp), pcol = 2,
+    caption = paste("Blood pressure data."),
+    label = "MV-bp-tab")
+@
+
+
+\section{Analyzing Multiply Imputed Data} \label{MI:ana}
+
+From the analysis of each data set we need to look at the estimates of the
+quantity of interest, say $Q$, and the variance of the estimates.  We let
+$\hat{Q}_i$ be the estimate from the $i$th data set and $S_i$ its
+corresponding variance.  The combined estimate of the quantity of interest
+is
+\begin{eqnarray*}
+\bar{Q} = \frac{1}{m}\sum_{i = 1}^m \hat{Q}_i.
+\end{eqnarray*}
+To find the combined variance involves first calculating the 
+within-imputation variance,
+\begin{eqnarray*}
+\bar{S} = \frac{1}{m}\sum_{i = 1}^m S_i
+\end{eqnarray*}
+followed by the between-imputation variance,
+\begin{eqnarray*}
+B = \frac{1}{m - 1} \sum_{i = 1}^m (\hat{Q}_i - \bar{Q})^2
+\end{eqnarray*}
+then the required total variance can now be found from
+\begin{eqnarray*}
+T = \bar{S} + (1 + m^{-1}) B
+\end{eqnarray*}
+This total variance is made up of two components; the first which preserves
+the natural variability, $\bar{S}$, is simply the average of the variance
+estimates for each imputed data set and is analogous to the variance that
+would be suitable if we did not need to account for missing data; the second
+component, $B$, estimates uncertainty caused by missing data by measuring
+how the point estimates vary from data set to data set.  More explanation of
+how the formula for $T$ arises is given in
+\cite{HSAUR:vanBuuren2012}.
+
+The overall standard error is simply the square root of $T$. A significance
+test for $Q$ and a confidence interval is found from the usual test statistic,
+($Q-$ hypothesized value of $Q$)/$\sqrt{T}$, the value of which is referred to a
+Student's $t$-distribution.  The question arises however as to what is the appropriate value for the degrees of
+freedom of the test, say $v_0$? \cite{HSAUR:Rubin1987} suggests that the answer to this
+question is given by;
+\begin{eqnarray*}
+v_0 = (m - 1) (1 + 1/r^2)
+\end{eqnarray*}
+where
+\begin{eqnarray*}
+r = \frac{B + B / m}{\bar{S}}
+\end{eqnarray*}
+But \cite{HSAUR:BarnardRubin1999} noted that using this value of $v_0$ can produce values that are
+larger than the degrees of freedom in the complete data, a result which they
+considered `clearly inappropriate'.  Consequently they developed an adapted
+version that does not lead to the same problem.  Barnard and Rubin's revised
+value for the degrees of freedom of the $t$-test in which we are interested is $v_1$
+given by;
+\begin{eqnarray*}
+v_1 = \frac{v_0 v_2}{v_0 + v_2}
+\end{eqnarray*}
+where
+\begin{eqnarray*}
+v_2 = \frac{n(n-1)(1 - \lambda)}{n + 2}
+\end{eqnarray*}
+and
+\begin{eqnarray*}
+\lambda = \frac{r}{\sqrt{r^2 + 1}}.
+\end{eqnarray*}
+The quantity $v_1$ is always less than or equal to the degrees of freedom of
+the test applied to the hypothetically complete data.  \citep[For more
+details see][]{HSAUR:vanBuuren2012}.
+\index{Imputation|)}
+
+\section{Analysis Using \R{}}
+
+To begin we shall analyze the blood pressure data in Table~\ref{MV-bp-tab}
+using the complete-case approach, i.e., by simply removing the data for
+patients where the recovery time is missing.  To begin we might simply count
+the number of missing values using the sapply function as follows:
+<<MV-bp-NA, echo = TRUE>>=
+sapply(bp, function(x) sum(is.na(x)))
+@
+So there are ten missing values of recovery time but no missing values
+amongst the other two variables.  Now we use the \Rcmd{summary} function to look at
+some basic statistics of the complete data for recovery time:
+<<MV-bp-msd-cc, echo = TRUE>>=
+summary(bp$recovtime, na.rm = TRUE)
+@
+And next we can calculate the complete data estimate of the standard deviation
+of recover time 
+<<MV-bp-sd-cc, echo = TRUE>>=
+sd(bp$recovtime, na.rm = TRUE)
+@
+The final numerical results we might be interested in are the correlations
+of recovery time with blood pressure and of recovery time with logdose. 
+These can be found as follows:
+<<MV-bp-cor-cc, echo = TRUE>>= 
+with(bp, cor(bloodp, recovtime, use = "complete.obs"))
+with(bp, cor(logdose, recovtime, use = "complete.obs"))
+@
+And a useful graphic of the data is a scatterplot matrix which we can
+construct using \Rcmd{pairs}.  The scatterplot matrix is given in
+Figure~\ref{MV-bp-pairs-cc}.
+
+\begin{figure}
+\begin{center}
+<<MV-bp-pairs-cc, echo = TRUE, fig = TRUE, height = 3>>=
+layout(matrix(1:3, nrow = 1))
+plot(bloodp ~ logdose, data = bp)
+plot(recovtime ~ bloodp, data = bp)
+plot(recovtime ~ logdose, data = bp)
+@
+\caption{Scatterplots of the complete cases of the \Robject{bp} data.  
+         \label{MV-bp-pairs-cc}}
+\end{center}
+\end{figure}
+
+To investigate how recovery time is related to blood pressure and logdose we
+might begin by fitting a multiple linear regression model (see
+Chapter~\ref{MLR}).  The relevant command and the summary of the results is
+shown in Figure~\ref{MV-bp-lm-cc}.  Note that this summary output reports
+that ten observations with missing values were removed prior to the
+analysis; this is default for many models in \R.
+
+\renewcommand{\nextcaption}{\R{} output of the complete-case linear model 
+                            for the \Robject{bp} data.
+                            \label{MV-bp-lm-cc}}  
+\SchunkLabel
+<<MV-bp-lm-cc, echo = TRUE>>=
+summary(lm(recovtime ~ bloodp + logdose, data = bp))
+@
+\SchunkRaw
+
+Now let us see what happens when we impute the missing values of the
+recovery time variable simply by the mean of the complete case; for this we
+will use the \Rpackage{mice} \citep{PKG:mice} package;
+<<MV-bp-mice-pkg, echo = TRUE>>=
+library("mice")
+@
+We begin by creating a new data set, \Robject{imp}, which will contain the three
+variables log-dose, blood pressure, and recovery time with the missing values
+in the latter replaced by the mean recovery time of the complete cases;
+<<MV-bp-mice, echo = TRUE>>=
+imp <- mice(bp, method = "mean", m = 1, maxit = 1)
+@
+So now we can find the summary statistics of recovery time to compare with
+those given previously
+<<MV-bp-imp-summary, echo = TRUE>>=
+with(imp, summary(recovtime))
+@
+Making the comparison we see that only the values of the first and third
+quantile and the median have changed.  The minimum and maximum values are
+the same and so, of course, is the mean.  But of more interest is what
+happens to the sample standard deviation; its value for the imputed data can
+be found using:
+<<MV-bp-imp-sd, echo = TRUE>>=
+with(imp, sd(recovtime))
+@
+The value for the imputed data, $\Sexpr{round(with(imp, sd(recovtime))[["analyses"]][[1]], 2)}$ 
+is, as we would expect, lower than that for the complete data, 
+$\Sexpr{round(with(bp, sd(recovtime, na.rm = TRUE)), 2)}$.  
+What about the correlations?
+<<MV-bp-imp-cor, echo = TRUE>>=      
+with(imp, cor(bloodp, recovtime))
+with(imp, cor(logdose, recovtime)) 
+@
+The correlations of blood pression and recovery time are very similar before
+($\Sexpr{round(with(bp, cor(bloodp, recovtime, use = "complete.obs")), 2)}$)
+after 
+($\Sexpr{round(with(imp, cor(bloodp, recovtime))[["analyses"]][[1]], 2)}$)
+imputation. For log-dose, imputation changes the correlation from
+$\Sexpr{round(with(bp, cor(logdose, recovtime, use = "complete.obs")), 2)}$
+to
+$\Sexpr{round(with(imp, cor(logdose, recovtime))[["analyses"]][[1]], 2)}$.
+
+The scatterplot of the imputed data is found as given by the code displayed
+with Figure~\ref{MV-bp-pairs-imp}.  For mean imputation, the imputed value
+of the recovery time is constant for all observations and so they appear as
+a series of points along the value of the mean value of the observed
+recovery times namely, $\Sexpr{round(with(bp, mean(recovtime, na.rm = TRUE)), 2)}$.
+
+\begin{figure}
+\begin{center}
+<<MV-bp-pairs-imp, echo = TRUE, fig = TRUE, height = 4>>=
+layout(matrix(1:2, nrow = 1))
+plot(recovtime ~ bloodp, data = complete(imp), 
+     pch = is.na(bp$recovtime) + 1)
+plot(recovtime ~ logdose, data = complete(imp), 
+     pch = is.na(bp$recovtime) + 1)
+legend("topleft", pch = 1:2, bty = "n",
+       legend = c("original", "imputed"))
+@
+\caption{Scatterplots of the imputed \Robject{bp} data. Imputed
+         observations are depicted as triangles. 
+         \label{MV-bp-pairs-imp}} 
+\end{center}
+\end{figure}
+
+\renewcommand{\nextcaption}{\R{} output of the mean imputation linear model
+                            for the \Robject{bp} data.
+                            \label{MV-bp-lm-imp}}
+\SchunkLabel
+<<MV-bp-lm-imp, echo = TRUE>>=
+with(imp, summary(lm(recovtime ~ bloodp + logdose)))
+@
+\SchunkRaw
+
+Comparison of the multiple linear regression results in
+Figure~\ref{MV-bp-lm-imp} with those in Figure~\ref{MV-bp-lm-cc} show some
+interesting differences, for example, the standard errors of the regression
+coefficients are somewhat lower for the mean imputed data but the
+conclusions drawn from the results in each table would be broadly similar.
+
+\index{Predictive mean matching}
+The single imputation of a sample mean is not to be recommended and so we
+will move on to using a more sophisticated multiple imputation procedure
+know as \stress{predictive mean matching}.  The method is described in
+detail in \cite{HSAUR:vanBuuren2012} who considers it both easy-to-use and versatile. 
+And imputations outside the observed data range will not occur so that
+problems with meaningless imputations, for example, a negative recovery
+time, will not occur.  The method is labeled \Robject{pmm} in the
+\Rpackage{mice} package and here we will apply it to the blood pressure data
+with $m = 10$ (we need to fix the seed in order to make the result
+reproducible):
+<<MV-bp-mice, echo = TRUE>>=
+imp_ppm <- mice(bp, m = 10, method = "pmm", 
+                print = FALSE, seed = 1)
+@
+
+The scatterplot of the imputed data is found as given by the code displayed
+with Figure~\ref{MV-bp-pairs-imp-mice}.  We only show the imputed recovery
+times from the first iteration ($m = 1$).The imputed recovery times now take
+different values.
+\begin{figure}
+\begin{center}
+<<MV-bp-pairs-mice, echo = TRUE, fig = TRUE, height = 4>>=
+layout(matrix(1:2, nrow = 1))
+plot(recovtime ~ bloodp, data = complete(imp_ppm),      
+     pch = is.na(bp$recovtime) + 1)
+plot(recovtime ~ logdose, data = complete(imp_ppm),
+     pch = is.na(bp$recovtime) + 1)
+legend("topleft", pch = 1:2, bty = "n",
+       legend = c("original", "imputed"))
+@
+\caption{Scatterplots of the multiple imputed \Robject{bp} data (first iteration). 
+         Imputed observations are depicted as triangles. 
+         \label{MV-bp-pairs-imp-mice}} 
+\end{center}
+\end{figure}  
+
+From the resulting object we can compute the mean and standard deviations of
+recovery time for each of the $m = 10$ iterations.  We first extract these
+numbers from the \Robject{analyses} element of the returned object, convert
+this list to a vector, and use the \Rcmd{summary} function to compute the
+usual summary statistics:
+<<MV-bp-mice-out, echo = TRUE>>=
+summary(unlist(with(imp_ppm, mean(recovtime))$analyses))
+summary(unlist(with(imp_ppm, sd(recovtime))$analyses))
+@
+We do the same with the correlations as follows
+<<MV-bp-mice-cor, echo = TRUE>>=
+summary(unlist(with(imp_ppm, 
+        cor(bloodp, recovtime))$analyses))
+summary(unlist(with(imp_ppm, 
+        cor(logdose, recovtime))$analyses))
+@
+The estimate of the mean of the blood pressure data from the multiply
+imputed results is $\Sexpr{round(mean(unlist(with(imp_ppm, mean(recovtime))$analyses)) , 2)}$, 
+very similar to the values found previously. 
+Similarly the estimate of the standard deviation of the data is
+$\Sexpr{round(mean(unlist(with(imp_ppm, sd(recovtime))$analyses)) , 2)}$ which
+lies between the complete data estimate and the \emph{mean-imputed}
+value.  The two correlation estimates are also
+very close to the previous values.  The variation in the estimates of mean,
+standard deviation, and correlations across the ten imputation is relatively
+small apart from that for the correlation between log-dose and recovery
+time -- here there is considerable variation in the values for the ten
+imputations.
+
+Finally, we will fit a linear model to each of the imputed samples and then
+find the summary statistics for the ten sets of regression coefficients: the
+results are given in Figure~\ref{MV-bp-lm-cc-mice}:
+<<MV-bp-mice-lm, echo = TRUE>>=
+fit <- with(imp_ppm, lm(recovtime ~ bloodp + logdose))
+@
+
+\renewcommand{\nextcaption}{\R{} output of the multiple imputed linear model
+                            for the \Robject{bp} data.
+                            \label{MV-bp-lm-cc-mice}}  
+\SchunkLabel
+<<MV-bp-lm-mice, echo = TRUE>>=
+summary(pool(fit))[, c("est", "se", "t", "Pr(>|t|)")]
+@
+\SchunkRaw
+
+The result for blood pressure is similar to the previous complete data and
+mean-imputed results with the regression coefficient for this variable being
+highly significant 
+$(p = \Sexpr{round(summary(pool(fit))["bloodp", "Pr(>|t|)"], 3)})$.
+But the result for log dose differs from
+those found previously; for the multiply imputed data the regression
+coefficient for log dose is not significant at the $5\%$ level 
+$(p = \Sexpr{round(summary(pool(fit))["logdose", "Pr(>|t|)"], 3)})$
+whereas in both of the previous two analyses it was significant.  This
+finding reflects the greater variation of the value of the correlation
+between log dose and recovery time in the ten imputations noted
+above. (Remember that the standard errors in Figure~\ref{MV-bp-lm-cc-mice} 
+computed by \Rcmd{pool} arise from the formulae given in Section~\ref{MI:ana}.) 
+
+Now suppose we wish to test the hypothesis that in the population from which
+the sample data in Table~\ref{MV-bp-tab} arises a mean recovery time of $27$ minutes.
+We will test this hypothesis in the usual way using Student's t-test applied to the
+complete-data, the singly imputed data, and the multiply imputed data:
+<<MI-bp-t, echo = TRUE>>=
+with(bp, t.test(recovtime, mu = 27))
+with(imp, t.test(recovtime, mu = 27))$analyses[[1]]
+@
+For the multiply imputed data we need to use the \Rcmd{lm} function to get the
+equivalent of the $t$-test by modeling recovery time minus $27$ with an
+intercept only and testing for zero intercept.  So the code needed is:
+<<MI-mice-t, echo = TRUE>>=
+fit <- with(imp_ppm, lm(I(recovtime - 27) ~ 1))
+summary(pool(fit))[, c("est", "se", "t", "Pr(>|t|)")]
+@
+Looking at the results of the three analyses we see that the complete-case
+analysis fails to reject the hypothesis at the $5\%$ level whereas the other
+two analyses lead to results that are statistically significant at the
+level.  This simple (and perhaps rather artificial) example demonstrates
+that different conclusions can be reached by the different approaches.
+
+
+\section{Summary of Findings}
+
+The estimated standard deviation of the blood pressure is lower when
+computed from the mean-imputed data than from the complete data.  The
+corresponding value from the multiply imputed data lies between these two
+values.
+
+The estimate of the mean from the multiply imputed data is very similar
+to the value obtained in the complete data analysis.  (The value from the
+singly imputed data is, of course, the same as from the complete data.)
+
+The estimates of the correlations between blood pressure and recovery
+time and log dose and recovery time are very similar in all three analyses
+but the variation in the latter across the ten multiple imputations is
+considerable and this results in the regression coefficient for log dose being less significant than in the other two analyses.
+
+Testing the hypothesis that the population mean of recovery time is $27$
+minutes using complete-case analysis leads to a different conclusion than is
+arrived at by the two multiple imputations approaches.
+
+\section{Final Comments}
+
+Missing values are an ever-present possibility in all types of studies
+although everything possible should be done to avoid them.  But when data
+contain missing values multiple imputation can be used to provide valid
+inferences for parameter estimates from the incomplete data.  If carefully
+handled, multiple imputation can cope with missing data in all types of
+variables.  In this chapter we have given only a brief account of dealing
+with missing values; a detailed account is available in the issue of
+\stress{Statistical Methods in Medical Research entitled Multiple Imputation:
+Current Perspectives} (Volume 16, Number 3, 2007) and in \cite{HSAUR:vanBuuren2012}.
+
+\section*{Exercises}
+
+\begin{description}
+
+
+\exercise
+The data in Table~\ref{MI-UStemp-tab} give the lowest temperatures (in Fahrenheit) recorded in
+various months for cities in the US; missing values are indicated by NA. 
+Calculate the correlation matrix of the data using
+\begin{enumerate}
+\item the complete-case approach, 
+\item the available-data approach, and 
+\item a multiple-imputation approach.  
+\end{enumerate}
+Find the principal components of the data using each of three
+correlation matrices and plot the cities in the space of the first two
+components of each solution.
+
+<<MI-UStemp-tab, echo = FALSE, results = tex>>=
+data("UStemp", package = "HSAUR3")
+toLatex(HSAURtable(UStemp), 
+    caption = "Lowest temperatures in Fahrenheit recorded in various months for cities in the US.",
+    label = "MI-UStemp-tab", rownames = TRUE)
+@
+
+
+\exercise
+Find $95\%$ confidence intervals for the population means of the lowest
+temperature in each month using 
+\begin{enumerate}
+\item the complete-case approach,
+\item the mean value imputation, and
+\item a multiple-imputation approach. 
+\end{enumerate}
+
+\exercise
+Find the correlation matrix for the four months in Table~\ref{MI-UStemp-tab} using complete-case analysis, 
+listwise deletion, and multiple imputation.
+
+
+\end{description}
+
+%%\bibliographystyle{LaTeXBibTeX/refstyle}
+%%\bibliography{LaTeXBibTeX/HSAUR}   
+\end{document}

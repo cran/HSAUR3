@@ -1,0 +1,480 @@
+
+
+\input{HSAUR_title}
+
+\SweaveOpts{prefix.string=figures/HSAUR,eps=FALSE,keep.source=TRUE}
+
+<<setup, echo = FALSE, results = hide>>=
+source("setup.R")
+@
+
+\frame{
+\begin{center}
+\Large{Part 10: Survival Analysis}
+\end{center}
+
+explains how to fit regression models to response variables which are only
+incompletely available.
+
+}
+
+\section{Introduction}
+\begin{frame}
+  \frametitle{Introduction}
+
+\cite{HSAUR:Granaetal2002} report results of a non-randomised clinical trial
+investigating a novel radioimmunotherapy in malignant glioma patients. The
+overall survival, i.e., the time from the beginning of the therapy to the
+disease-caused death
+of the patient, is compared for two groups of patients.
+
+Since only some patients die by others survive, the time to death is not completely
+observed. Only the time the patient is still alive is known. Such a
+time measurement is called \stress{censored}.
+
+The main interest is to investigate whether the 
+patients treated with the novel radioimmunothery survive for a longer time.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Introduction}
+
+The effects of hormonal treatment with Tamoxifen in women suffering from node-positive
+breast cancer were investigated in a randomised clinical trial as reported
+by \cite{HSAUR:Schumacher1994}. 
+Complete data of seven prognostic factors
+of $686$ women
+are available for prognostic modelling.
+Observed hypothetical prognostic factors are age,
+menopausal status, tumor size, tumor grade, number of positive lymph nodes,
+progesterone receptor, estrogen receptor and the
+information of whether or not a hormonal therapy was applied. We are
+interested in an assessment of the impact of the covariates on the survival
+time of the patients. 
+
+\end{frame}
+
+\section{Survival Analysis}
+
+\begin{frame}
+  \frametitle{Survival Analysis}
+
+In many medical studies, the main outcome variable is the
+time to the occurrence of a particular event. Such observations are
+generally referred to by the generic term \stress{survival data}.
+Such data generally require special techniques
+for analysis for two main reasons:
+\begin{enumerate}
+\item Survival data are generally not symmetrically distributed.
+\item At the completion of the study, some patients may not have
+      reached the endpoint of interest (death, relapse, etc.). Consequently,
+      the exact survival times are not known. All that is known is
+      that the survival times are greater than the amount of time the
+      individual has been in the study. The survival times of these
+      individuals are said to be \stress{censored} (precisely, they
+      are right-censored).
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Survival and Hazard Function}
+
+Of central importance in the analysis of survival time data
+are two functions used to describe their distribution, namely
+the \stress{survival} (or \stress{survivor}) \stress{function} and
+the \stress{hazard function}.
+
+The survivor function, $S(t)$, is defined as the probability that the
+survival time, $T$,
+is greater than or equal to some time $t$, i.e.,
+\begin{eqnarray*}
+S(t) = \P(T \ge t)
+\end{eqnarray*}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Estimation}
+
+When there are no censored observations in the sample of survival times,
+a non-parametric survivor function can be estimated simply as
+\begin{eqnarray*}
+\hat{S}(t) = \frac{\text{number of individuals with survival times} \ge t}
+{n}
+\end{eqnarray*}
+where $n$ is the total number of observations.
+
+This simple method used to estimate the survivor function
+when there are no censored observations cannot now be used for
+survival times when censored observations are present. In the
+presence of censoring, the survivor function is typically estimated
+using the \stress{Kaplan-Meier} estimator \citep{HSAUR:KaplanMeier1958}.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Kaplan-Meier Estimator}
+
+This involves first ordering the survival times from the smallest to the largest
+such that $t_{(1)} \le t_{(2)} \le \dots \le t_{(n)}$, where $t_{(j)}$ is
+the $j$th largest unique survival time. The Kaplan-Meier estimate
+of the survival function is obtained as
+\begin{eqnarray*}
+\hat{S}(t) = \prod_{j: t_{(j)} \le t} \left( 1 - \frac{d_j}{r_j} \right)
+\end{eqnarray*}
+where $r_j$ is the number of individuals at risk just before $t_{(j)}$
+(including those censored at $t_{(j)}$), and
+$d_j$ is the number of individuals
+who experience the event of interest (death, etc.) at time $t_{(j)}$.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Comparing Survival Functions}
+
+A formal test of the equality of the survival curves for
+the two groups can be made using the \stress{log-rank test}.
+First, the expected number of deaths is computed for each unique
+death time, or \stress{failure time}
+in the data set, assuming that the chances of dying, given that
+subjects are at risk, are the same for both groups. The total
+number of expected deaths is then computed for each group by
+adding the expected number of deaths for each failure time. The
+test then compares the observed number of deaths in each group
+with the expected number of deaths using a chi-squared test.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Hazard Functions}
+
+The hazard function, $h(t)$, is defined as the
+probability that an individual experiences the event in a small
+time interval, $s$, given that the individual has survived
+up to the beginning of the interval, when the size of the time
+interval approaches zero; 
+\begin{eqnarray*}
+h(t) = \lim_{s \rightarrow 0} \frac{\P(t \le T \le t + s | T \ge t)}{s}
+\end{eqnarray*}
+where $T$ is the individual's survival time. 
+
+For
+example, the probability of dying at age $100$ is very small because
+most people die before that age; in contrast, the probability
+of a person dying at age $100$ who has reached that age is much
+greater.
+
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Hazard and Survival Function}
+
+The hazard function and survivor function are related by
+the formula
+\begin{eqnarray*}
+S(t) = \exp(-H(t))
+\end{eqnarray*}
+where $H(t)$ is known as the \stress{integrated hazard} or
+\stress{cumulative hazard}, and is defined as
+follows:
+\begin{eqnarray*}
+H(t) = \int_0^t h(u) du,
+\end{eqnarray*}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Shapes of Hazard Functions}
+
+In practice the hazard function may increase, decrease, remain
+constant or have a more complex shape. The hazard function for
+death in human beings, for example, has the `bath tub' shape:
+
+\begin{center}
+<<SA-hazard-plot, echo = FALSE, fig = TRUE, height = 4>>=
+hazard <- function(x, alpha = 5, theta = 0.1, sigma = 100)
+    (alpha*theta*(1 - exp(-(x/sigma)^alpha))^(theta - 1)*
+        exp(-(x/sigma)^alpha)*(x/sigma)^(alpha-1))/(sigma*
+        (1 - (1 - exp(-(x/sigma)^alpha))^theta))
+x <- seq(from = 0.1, to = 100, by = 0.1)
+h <- hazard(x, alpha = 5, theta = 0.1, sigma = 100)
+plot(x, h, type = "l", xlab = "Time",
+     ylab = "Hazard", ylim = c(0, max(h)))
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Cox' Proportional Hazards Model}
+
+Modelling the hazard
+function directly as a linear function of explanatory variables
+is not appropriate since $h(t)$ is restricted
+to being positive, however
+\begin{eqnarray*}
+h(t) = h_0(t) \exp(\beta_1 x_1 + \dots + \beta_q x_q).
+\end{eqnarray*}
+is appropriate.
+Written in this way we see that the model forces the hazard
+ratio between two individuals to be constant over time since
+\begin{eqnarray*}
+\frac{h(t | \x_1)}{h(t | \x_2)} = \frac{\exp(\beta^\top
+\x_1)}{\exp(\beta^\top \x_2)}
+\end{eqnarray*}
+where $\x_1$ and $\x_2$ are vectors of covariate values for two individuals.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Interpreting Cox' Model}
+
+In the Cox model, the baseline hazard describes the common
+shape of the survival time distribution for all individuals,
+while the \stress{relative risk function}, $\exp(\beta^\top \x)$,
+gives the level of each individual's hazard. The interpretation  %%'
+of the parameter $\beta_j$ is that $\exp(\beta_j)$
+gives the relative risk change associated with an increase
+of one unit in covariate $x_j$,
+all other explanatory variables remaining constant.
+The parameters in a Cox model can be estimated by maximising
+what is known as a \stress{partial likelihood}.
+
+\end{frame}
+
+\section{Analysis Using R}
+
+\begin{frame}[fragile]
+  \frametitle{Analysis Using R: Glioma Data}
+
+\small
+\begin{center}
+<<SA-glioma-KM, echo = TRUE, eval = FALSE>>=
+data("glioma", package = "coin")
+library("survival")
+layout(matrix(1:2, ncol = 2))
+g3 <- subset(glioma, histology == "Grade3")
+plot(survfit(Surv(time, event) ~ group, data = g3),
+    main = "Grade III Glioma", lty = c(2, 1),
+    ylab = "Probability",
+    xlab = "Survival Time in Month",
+    legend.bty = "n", legend.text = c("Control", "Treated")
+)
+g4 <- subset(glioma, histology == "GBM")
+plot(survfit(Surv(time, event) ~ group, data = g4),
+    main = "Grade IV Glioma", ylab = "Probability", 
+    lty = c(2, 1), xlab = "Survival Time in Month", 
+    xlim = c(0, max(glioma$time) * 1.05))
+@
+\end{center}
+\normalsize
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Analysis Using R: Glioma Data}
+
+\begin{center}
+<<SA-glioma-KM, echo = FALSE, fig = TRUE, height = 4>>=
+data("glioma", package = "coin")
+library("survival")
+layout(matrix(1:2, ncol = 2))
+g3 <- subset(glioma, histology == "Grade3")
+plot(survfit(Surv(time, event) ~ group, data = g3),
+      main = "Grade III Glioma",
+      lty = c(2, 1),
+      ylab = "Probability",
+      xlab = "Survival Time in Month",
+      legend.bty = "n", legend.text = c("Control", "Treated")
+)
+g4 <- subset(glioma, histology == "GBM")
+plot(survfit(Surv(time, event) ~ group, data = g4),
+     main = "Grade IV Glioma", ylab = "Probability", lty = c(2, 1),
+     xlab = "Survival Time in Month", xlim = c(0, max(glioma$time) * 1.05))
+@
+\end{center}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Comparing Groups}
+
+The figure leads to the impression that patients treated
+with the novel radioimmunotherapy survive longer, regardless of the tumor
+type. In order to assess if this informal finding is reliable, we may perform a
+log-rank test via
+<<SA-glioma-logrank, echo = TRUE>>=
+survdiff(Surv(time, event) ~ group, data = g3)
+@
+which indicates that the survival times are indeed different in both groups.
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Permutation Testing}
+
+However, the number of patients is rather limited and so it might be
+dangerous to rely on asymptotic tests. 
+Conditioning on the data and computing the distribution of the test
+statistics without additional assumptions is one alternative:
+<<SA-glioma-exact, echo = TRUE>>=
+library("coin")
+surv_test(Surv(time, event) ~ group, data = g3,
+    distribution = exact())
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Breast Cancer Survival}
+
+\begin{center}
+<<SA-GBSG2-plot, echo = TRUE, eval = FALSE>>=
+data("GBSG2", package = "TH.data")
+plot(survfit(Surv(time, cens) ~ horTh, data = GBSG2), 
+    lty = 1:2, mark.time = FALSE, ylab = "Probability", 
+    xlab = "Survival Time in Days")
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Breast Cancer Survival}
+
+\begin{center}
+<<SA-GBSG2-plot, echo = FALSE, fig = TRUE>>=
+data("GBSG2", package = "TH.data")
+plot(survfit(Surv(time, cens) ~ horTh, data = GBSG2), lty = 1:2,
+     mark.time = FALSE,
+     ylab = "Probability", xlab = "Survival Time in Days")
+legend(250, 0.2, legend = c("yes", "no"), lty = c(2, 1),
+       title = "Hormonal Therapy", bty = "n")
+@
+\end{center}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Fitting Cox' Model}
+
+The response variable is coded as a \Rclass{Surv} object
+and Cox' model can be fitted using:
+<<SA-GBSG2-coxph, echo = TRUE, eval = FALSE>>=
+GBSG2_coxph <- coxph(Surv(time, cens) ~ ., 
+    data = GBSG2)
+summary(GBSG2_coxph)
+@
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Fitting Cox' Model}
+
+The response variable is coded as a \Rclass{Surv} object
+and Cox' model can be fitted using:
+\small
+<<SA-GBSG2-coxph, echo = FALSE>>=
+GBSG2_coxph <- coxph(Surv(time, cens) ~ ., data = GBSG2)
+summary(GBSG2_coxph)
+@
+\normalsize
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Confidence Intervals}
+
+Since we are especially interested in the
+relative risk for patients who underwent a hormonal therapy, we can
+compute an estimate of the relative risk and a corresponding confidence
+interval via
+<<SA-GBSG2-coxph-ci, echo = TRUE>>=
+ci <- confint(GBSG2_coxph)
+exp(cbind(coef(GBSG2_coxph), ci))["horThyes",]
+@
+This result implies that patients treated with a hormonal therapy had a
+lower risk and thus survived longer compared to women who were not treated
+this way.
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Survival Trees}
+
+A simple prognostic tree model with only
+a few terminal nodes might be helpful for relating the risk to certain
+subgroups of patients:
+\small
+<<SA-GBSG2-ctree, echo = TRUE>>=
+library("partykit")
+ctree(Surv(time, cens) ~ ., data = GBSG2)
+@
+\normalsize
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Visualizing Survival Trees}
+
+\begin{center}
+<<SA-GBSG2-ctree-plot, echo = TRUE, fig = TRUE, width = 8>>=
+plot(ctree(Surv(time, cens) ~ ., data = GBSG2))
+@
+\end{center}
+
+\end{frame}
+
+\section{Summary}
+
+\begin{frame}
+  \frametitle{Summary}
+
+The analysis of life-time data is complicated by the fact that the time to
+some event is not observable for all observations due to censoring. Survival
+times are analysed by some estimates of the survival function, for example by a
+non-parametric Kaplan-Meier estimate or by semi-parametric proportional
+hazards regression models.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Exercises}
+
+\begin{itemize}
+\item
+Try to reproduce the analysis presented by
+\cite{HSAUR:SauerbreiRoyston1999}, i.e., fit a multivariable fractional
+polynomial to the \Robject{GBSG2} data (using package \Rpackage{mfp})!
+\item
+The \Robject{mastectomy} data 
+are the survival times (in months) after
+mastectomy of women with breast cancer. The cancers are classified as having
+metastised or not based on a histochemical marker. 
+Plot the survivor functions of each group, estimated using the Kaplan-Meier estimate,
+on the same graph and comment
+on the differences. Use a log-rank test to compare the survival experience
+of each group more formally.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{References}
+
+\tiny
+<<bibfiles, echo = FALSE, results = tex>>=   
+src <- system.file(package = "HSAUR3")
+style <- file.path(src, "LaTeXBibTeX", "refstyle")
+bst <- file.path(src, "LaTeXBibTeX", "HSAUR")
+cat(paste("\\bibliographystyle{", style, "}", sep = ""), "\n \n")
+cat(paste("\\bibliography{", bst, "}", sep = ""), "\n \n")
+@
+\normalsize
+
+\end{frame}
+
+\end{document}

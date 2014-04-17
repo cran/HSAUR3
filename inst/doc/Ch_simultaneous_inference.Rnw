@@ -1,0 +1,628 @@
+
+
+\documentclass{chapman}
+
+%%% copy Sweave.sty definitions
+
+%%% keeps `sweave' from adding `\usepackage{Sweave}': DO NOT REMOVE
+%\usepackage{Sweave} 
+
+
+\RequirePackage[T1]{fontenc}
+\RequirePackage{graphicx,ae,fancyvrb}
+\IfFileExists{upquote.sty}{\RequirePackage{upquote}}{}
+\usepackage{relsize}
+
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{fontfamily=courier,
+                                              fontshape=it,
+                                              fontsize=\relsize{-1}}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{}
+\newenvironment{Schunk}{}{}
+
+%%% environment for raw output
+\newcommand{\SchunkRaw}{\renewenvironment{Schunk}{}{}
+    \DefineVerbatimEnvironment{Soutput}{Verbatim}{fontfamily=courier,
+                                                  fontshape=it,
+                                                  fontsize=\small}
+    \rawSinput
+}
+
+%%% environment for labeled output
+\newcommand{\nextcaption}{}
+\newcommand{\SchunkLabel}{
+  \renewenvironment{Schunk}{\begin{figure}[ht] }{\caption{\nextcaption}
+  \end{figure} }
+  \DefineVerbatimEnvironment{Sinput}{Verbatim}{frame = topline}
+  \DefineVerbatimEnvironment{Soutput}{Verbatim}{frame = bottomline, 
+                                                samepage = true,
+                                                fontfamily=courier,
+                                                fontshape=it,
+                                                fontsize=\relsize{-1}}
+}
+
+
+%%% S code with line numbers
+\DefineVerbatimEnvironment{Sinput}
+{Verbatim}
+{
+%%  numbers=left
+}
+
+\newcommand{\numberSinput}{
+    \DefineVerbatimEnvironment{Sinput}{Verbatim}{numbers=left}
+}
+\newcommand{\rawSinput}{
+    \DefineVerbatimEnvironment{Sinput}{Verbatim}{}
+}
+
+
+%%% R / System symbols
+\newcommand{\R}{\textsf{R}}
+\newcommand{\rR}{{R}}
+\renewcommand{\S}{\textsf{S}}
+\newcommand{\SPLUS}{\textsf{S-PLUS}}
+\newcommand{\rSPLUS}{{S-PLUS}}
+\newcommand{\SPSS}{\textsf{SPSS}}
+\newcommand{\EXCEL}{\textsf{Excel}}
+\newcommand{\ACCESS}{\textsf{Access}}
+\newcommand{\SQL}{\textsf{SQL}}
+%%\newcommand{\Rpackage}[1]{\hbox{\rm\textit{#1}}}
+%%\newcommand{\Robject}[1]{\hbox{\rm\texttt{#1}}}
+%%\newcommand{\Rclass}[1]{\hbox{\rm\textit{#1}}}
+%%\newcommand{\Rcmd}[1]{\hbox{\rm\texttt{#1}}}
+\newcommand{\Rpackage}[1]{\index{#1 package@{\fontseries{b}\selectfont #1} package} {\fontseries{b}\selectfont #1}}
+\newcommand{\rpackage}[1]{{\fontseries{b}\selectfont #1}}
+\newcommand{\Robject}[1]{\texttt{#1}}
+\newcommand{\Rclass}[1]{\index{#1 class@\textit{#1} class}\textit{#1}}
+\newcommand{\Rcmd}[1]{\index{#1 function@\texttt{#1} function}\texttt{#1}}
+\newcommand{\Roperator}[1]{\texttt{#1}}
+\newcommand{\Rarg}[1]{\texttt{#1}}
+\newcommand{\Rlevel}[1]{\texttt{#1}}
+
+
+%%% other symbols
+\newcommand{\file}[1]{\hbox{\rm\texttt{#1}}}
+%%\newcommand{\stress}[1]{\index{#1}\textit{#1}} 
+\newcommand{\stress}[1]{\textit{#1}} 
+\newcommand{\booktitle}[1]{\textit{#1}} %%'
+
+%%% Math symbols
+\usepackage{amstext}
+\usepackage{amsmath}
+\newcommand{\E}{\mathsf{E}}   
+\newcommand{\Var}{\mathsf{Var}}   
+\newcommand{\Cov}{\mathsf{Cov}}   
+\newcommand{\Cor}{\mathsf{Cor}}   
+\newcommand{\x}{\mathbf{x}}   
+\newcommand{\y}{\mathbf{y}}   
+\renewcommand{\a}{\mathbf{a}}
+\newcommand{\W}{\mathbf{W}}   
+\newcommand{\C}{\mathbf{C}}   
+\renewcommand{\H}{\mathbf{H}}   
+\newcommand{\X}{\mathbf{X}}   
+\newcommand{\B}{\mathbf{B}}   
+\newcommand{\V}{\mathbf{V}}   
+\newcommand{\I}{\mathbf{I}}   
+\newcommand{\D}{\mathbf{D}}   
+\newcommand{\bS}{\mathbf{S}}   
+\newcommand{\N}{\mathcal{N}}   
+\renewcommand{\L}{L}   
+\renewcommand{\P}{\mathsf{P}}   
+\newcommand{\K}{\mathbf{K}}
+\newcommand{\m}{\mathbf{m}}
+\newcommand{\argmin}{\operatorname{argmin}\displaylimits}
+\newcommand{\argmax}{\operatorname{argmax}\displaylimits}
+
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\bbeta}{\mathbf{\beta}}
+
+
+%%% links
+\usepackage{hyperref}
+
+\hypersetup{%
+  pdftitle = {A Handbook of Statistical Analyses Using R (3rd Edition)},
+  pdfsubject = {Book},
+  pdfauthor = {Torsten Hothorn and Brian S. Everitt},
+  colorlinks = {black},
+  linkcolor = {black},
+  citecolor = {black},
+  urlcolor = {black},
+  hyperindex = {true},
+  linktocpage = {true},
+}
+
+
+%%% captions & tables
+%% <FIXME>: conflics with figure definition in chapman.cls
+%%\usepackage[format=hang,margin=10pt,labelfont=bf]{caption}
+%% </FIMXE>
+\usepackage{longtable}
+\usepackage[figuresright]{rotating}
+
+%%% R symbol in chapter 1
+\usepackage{wrapfig}
+
+%%% Bibliography
+\usepackage[round,comma]{natbib}
+\renewcommand{\refname}{References \addcontentsline{toc}{chapter}{References}}
+\citeindexfalse
+
+%%% texi2dvi complains that \newblock is undefined, hm...
+\def\newblock{\hskip .11em plus .33em minus .07em}
+
+%%% Example sections
+\newcounter{exercise}[chapter]
+\setcounter{exercise}{0}
+\newcommand{\exercise}{\stepcounter{exercise} \item{Ex.~\arabic{chapter}.\arabic{exercise} }}
+
+
+%% URLs
+\newcommand{\curl}[1]{\begin{center} \url{#1} \end{center}}
+
+%%% for manual corrections
+%\renewcommand{\baselinestretch}{2}
+
+%%% plot sizes
+\setkeys{Gin}{width=0.95\textwidth}
+
+%%% color
+\usepackage{color}
+
+%%% hyphenations
+\hyphenation{drop-out}
+\hyphenation{mar-gi-nal}
+
+%%% new bidirectional quotes need 
+\usepackage[utf8]{inputenc}
+
+%\usepackage{setspace}
+\definecolor{sidebox_todo}{rgb}{1,1,0.2}
+\newcommand{\todo}[1]{
+        \hspace{0pt}%
+        \marginpar{% 
+                        \fcolorbox{black}{sidebox_todo}{%
+                                \parbox{\marginparwidth} {
+
+\raggedright\sffamily\footnotesize{TODO: #1}%
+                                }
+                        }%
+        }
+}
+\begin{document}
+
+%% Title page
+
+\title{A Handbook of Statistical Analyses Using \R{} --- 3rd Edition}
+
+\author{Torsten Hothorn and Brian S. Everitt}
+
+\maketitle
+%%\VignetteIndexEntry{Chapter Simultaneous Inference and Multiple Comparisons}
+%%\VignetteDepends{lme4,multcomp,coin,sandwich}
+\setcounter{chapter}{14}
+
+
+\SweaveOpts{prefix.string=figures/HSAUR,eps=FALSE,keep.source=TRUE} 
+
+<<setup, echo = FALSE, results = hide>>=
+rm(list = ls())
+s <- search()[-1]
+s <- s[-match(c("package:base", "package:stats", "package:graphics", "package:grDevices",
+                "package:utils", "package:datasets", "package:methods", "Autoloads"), s)]
+if (length(s) > 0) sapply(s, detach, character.only = TRUE)
+if (!file.exists("tables")) dir.create("tables")
+if (!file.exists("figures")) dir.create("figures")
+set.seed(290875)
+options(prompt = "R> ", continue = "+  ",
+    width = 63, # digits = 4, 
+    show.signif.stars = FALSE,
+    SweaveHooks = list(leftpar = function() 
+        par(mai = par("mai") * c(1, 1.05, 1, 1)),
+        bigleftpar = function()
+        par(mai = par("mai") * c(1, 1.7, 1, 1))))
+HSAURpkg <- require("HSAUR3")
+if (!HSAURpkg) stop("cannot load package ", sQuote("HSAUR2"))
+rm(HSAURpkg)
+ ### </FIXME> hm, R-2.4.0 --vanilla seems to need this
+a <- Sys.setlocale("LC_ALL", "C")
+ ### </FIXME>
+book <- TRUE
+refs <- cbind(c("AItR", "DAGD", "SI", "CI", "ANOVA", "MLR", "GLM", 
+                "DE", "RP", "GAM", "SA", "ALDI", "ALDII", "SIMC", "MA", "PCA", 
+                "MDS", "CA"), 1:18)
+ch <- function(x) {
+    ch <- refs[which(refs[,1] == x),]
+    if (book) {
+        return(paste("Chapter~\\\\ref{", ch[1], "}", sep = ""))
+    } else {
+        return(paste("Chapter~", ch[2], sep = ""))
+    }
+}
+if (file.exists("deparse.R"))
+    source("deparse.R")
+
+setHook(packageEvent("lattice", "attach"), function(...) {
+    lattice.options(default.theme = 
+        function()
+            standard.theme("pdf", color = FALSE))
+    })
+@
+
+\pagestyle{headings}
+<<singlebook, echo = FALSE>>=
+book <- FALSE
+@
+
+<<SIMC-setup, echo = FALSE, results = hide>>=
+library("multcomp")
+library("coin")
+library("sandwich")
+library("lme4")
+@
+
+\chapter[Simultaneous Inference and Multiple Comparisons]{Simultaneous Inference 
+    and Multiple Comparisons: Genetic Components of Alcoholism, 
+    Deer Browsing Intensities, and Cloud Seeding \label{SIMC}}
+
+\section{Introduction}
+
+
+\section{Simultaneous Inference and Multiple Comparisons}
+
+
+\section{Analysis Using \R{}}
+
+\subsection{Genetic Components of Alcoholism}
+
+We start with a graphical display of the data. Three parallel boxplots
+shown in Figure~\ref{SIMC-alpha-data-figure} indicate increasing
+expression levels of alpha synuclein mRNA for longer \textit{NACP}-REP1 alleles.
+
+%%\setkeys{Gin}{width=0.6\textwidth}
+\begin{figure}[t]
+\begin{center}
+<<SIMC-alpha-data-figure, echo = TRUE, fig = TRUE, width = 7, height = 5>>=
+n <- table(alpha$alength)
+levels(alpha$alength) <- abbreviate(levels(alpha$alength), 4)
+plot(elevel ~ alength, data = alpha, varwidth = TRUE,
+     ylab = "Expression Level", 
+     xlab = "NACP-REP1 Allele Length")
+axis(3, at = 1:3, labels = paste("n = ", n))
+@
+\caption{Distribution of levels of expressed alpha synuclein mRNA
+         in three groups defined by the \textit{NACP}-REP1 allele lengths.
+         \label{SIMC-alpha-data-figure}}
+\end{center}
+\end{figure}
+
+\index{Tukey honest significant differences|(}
+In order to model this relationship, we start fitting a simple one-way ANOVA 
+model of the form
+$y_{ij} = \mu + \gamma_i + \varepsilon_{ij}$
+to the data with independent normal errors $\varepsilon_{ij} \sim \N(0, \sigma^2)$, 
+$j \in \{\text{short}, \text{intermediate}, \text{long}\}$, and  
+$i = 1, \dots, n_j$. The parameters
+$\mu + \gamma_\text{short}$, $\mu + \gamma_\text{intermediate}$ and $\mu + \gamma_\text{long}$
+can be interpreted as the mean expression levels in the corresponding groups.
+As already discussed in \Sexpr{ch("ANOVA")}, this
+model description is overparameterized. A standard approach is to consider a 
+suitable re-parameterization. The so-called ``treatment contrast'' vector $%
+\theta = (\mu, \gamma_\text{intermediate} - \gamma_\text{short}, \gamma_\text{long} - 
+\gamma_\text{short})$ (the default re-parameterization used as  
+elemental parameters in \R{}) is one possibility and is equivalent to imposing the restriction 
+$\gamma_\text{short} = 0$.
+
+In addition, we define all comparisons among our three groups by
+choosing $\K$ such that $\K \theta$ contains all three 
+group differences (Tukey's all-pairwise comparisons): %%'
+\begin{eqnarray*}
+\K_\text{Tukey} = \left(
+\begin{array}{rrr}
+0 & 1 & 0 \\%% 
+0 & 0 & 1 \\%% 
+0 & -1 & 1%  
+\end{array}  
+\right)
+\end{eqnarray*}
+with parameters of interest
+\begin{eqnarray*}
+\vartheta_\text{Tukey} = \K_\text{Tukey} \theta = 
+(\gamma_\text{intermediate} - \gamma_\text{short}, \gamma_\text{long} - \gamma_\text{short},
+\gamma_\text{long} - \gamma_\text{intermediate}).
+\end{eqnarray*}
+
+The function \Rcmd{glht} (for generalized linear hypothesis) from package \Rpackage{multcomp} 
+\citep{PKG:multcomp,HSAUR:HothornBretzWestfall2008}
+takes the fitted \Rclass{aov} object and a description of the matrix 
+$\K$. Here, we use the \Rcmd{mcp} function to set up the matrix 
+of all pairwise differences for the model parameters associated
+with factor \Robject{alength}:
+<<SIMC-alpha-aov-tukey, echo = TRUE>>=
+library("multcomp")
+amod <- aov(elevel ~ alength, data = alpha)
+amod_glht <- glht(amod, linfct = mcp(alength = "Tukey"))
+@
+The matrix $\K$ reads
+<<SIMC-alpha-aov-tukey-K, echo = TRUE>>=
+amod_glht$linfct
+@
+The \Robject{amod\_glht} object now contains information
+about the estimated linear function $\hat{\vartheta}$ and 
+their covariance matrix which can be inspected
+via the \Rcmd{coef} and \Rcmd{vcov} methods:
+<<SIMC-alpha-aov-coefvcov, echo = TRUE>>=
+coef(amod_glht)
+vcov(amod_glht)
+@
+The \Rcmd{summary}
+and \Rcmd{confint} methods can be used to compute a
+summary statistic including adjusted $p$-values and 
+simultaneous confidence intervals, respectively:
+<<SIMC-alpha-aov-results, echo = TRUE>>=
+confint(amod_glht)
+summary(amod_glht)
+@
+
+Because of the variance heterogeneity 
+that can be observed in Figure~\ref{SIMC-alpha-data-figure}, one might be concerned 
+with the validity of the above results stating that there
+is no difference between any combination of the three
+allele lengths. A sandwich estimator
+might be more appropriate in this situation, and
+the \Rarg{vcov} argument can be used
+to specify a function to compute some alternative 
+covariance estimator as follows:
+<<SIMC-aov-tukey-sandwich, echo = TRUE>>=
+amod_glht_sw <- glht(amod, linfct = mcp(alength = "Tukey"), 
+                     vcov = sandwich)
+summary(amod_glht_sw)
+@
+We use the \Rcmd{sandwich} function from package \Rpackage{sandwich}
+\citep{PKG:sandwich, HSAUR:Zeileis2006} which provides us with a 
+heteroscedasticity-consistent estimator of the covariance matrix.
+This result is more in line with previously published findings
+for this study
+obtained from non-parametric test procedures such as the
+Kruskal-Wallis test. A comparison of the simultaneous 
+confidence intervals calculated based on the ordinary and
+sandwich estimator is given in Figure~\ref{SIMC-alpha-confint-plot}.
+
+%%\setkeys{Gin}{width=0.95\textwidth}
+\begin{figure}[h]
+\begin{center}
+<<SIMC-alpha-confint-plot, echo = TRUE, fig = TRUE, width = 8, height = 3.5>>=
+par(mai = par("mai") * c(1, 2.1, 1, 0.5))
+layout(matrix(1:2, ncol = 2))
+ci1 <- confint(glht(amod, linfct = mcp(alength = "Tukey")))
+ci2 <- confint(glht(amod, linfct = mcp(alength = "Tukey"), 
+               vcov = sandwich))
+ox <- expression(paste("Tukey (ordinary ", bold(S)[n], ")"))
+sx <- expression(paste("Tukey (sandwich ", bold(S)[n], ")"))
+plot(ci1, xlim = c(-0.6, 2.6), main = ox, 
+    xlab = "Difference", ylim = c(0.5, 3.5))
+plot(ci2, xlim = c(-0.6, 2.6), main = sx, 
+    xlab = "Difference", ylim = c(0.5, 3.5))
+@
+\caption{Simultaneous confidence intervals for the \Robject{alpha} data based
+    on the ordinary covariance matrix (left) and a sandwich estimator (right). 
+    \label{SIMC-alpha-confint-plot}}
+\end{center}
+\end{figure}
+
+It should be noted that this data set is heavily unbalanced;
+see Figure~\ref{SIMC-alpha-data-figure}, and therefore the results
+obtained from function \Rcmd{TukeyHSD} might be less accurate.
+\index{Tukey honest significant differences|)}
+
+\subsection{Deer Browsing}
+
+\index{Generalized linear mixed model|(}
+Since we have to take the spatial structure of the deer browsing data into account, we
+cannot simply use a logistic regression model as introduced in \Sexpr{ch("GLM")}.
+One possibility is to apply a mixed logistic regression model 
+\citep[using package \Rpackage{lme4},][]{PKG:lme4}
+with random intercept accounting for the spatial variation
+of the trees. These models have already been discussed in \Sexpr{ch("ALDII")}.
+For each plot nested within a set of five plots
+oriented on a 100m transect (the location of the transect  
+is determined by a predefined equally spaced lattice of the area under test),
+a random intercept is included in the model. Essentially,
+trees that are close to each other are handled like repeated
+measurements in a longitudinal analysis. We are interested
+in probability estimates and confidence intervals for each tree species.
+Each of the five fixed parameters of the model corresponds to one species 
+(in absence of a global intercept term);
+therefore, $\K = \text{diag}(5)$ is the linear function we are interested
+in:
+<<SIMC-trees-setup, echo = FALSE, results = hide>>=
+trees513 <- subset(trees513, !species %in% c("fir", "ash/maple/elm/lime", "softwood (other)"))
+trees513$species <- trees513$species[,drop = TRUE]
+levels(trees513$species)[nlevels(trees513$species)] <- "hardwood"
+@
+ 
+<<SIMC-trees-lmer, echo = TRUE>>=
+mmod <- glmer(damage ~ species - 1 + (1 | lattice / plot),
+              data = trees513, family = binomial())
+K <- diag(length(fixef(mmod)))
+K
+@
+In order to help interpretation, the names of the tree species
+and the corresponding sample sizes (computed via \Rcmd{table}) 
+are added to $\K$ as row names; this
+information will carry through all subsequent steps of our analysis:
+<<SIMC-trees-K, echo = TRUE>>=
+colnames(K) <- rownames(K) <- 
+    paste(gsub("species", "", names(fixef(mmod))),
+          " (", table(trees513$species), ")", sep = "")
+K
+@
+Based on $\K$, we first compute simultaneous confidence intervals
+for $\K \theta$ and transform these into probabilities.
+Note that $\left(1 + \exp(- \hat{\vartheta})\right)^{-1}$ (cf.~Equation~\ref{GLM:logitexp})
+is the vector of estimated probabilities;
+simultaneous confidence intervals can be transformed to the probability
+scale in the same way:
+<<SIMC-trees-ci, echo = TRUE>>=
+ci <- confint(glht(mmod, linfct = K))
+ci$confint <- 1 - binomial()$linkinv(ci$confint)
+ci$confint[,2:3] <- ci$confint[,3:2]
+@
+The result is shown in Figure~\ref{SIMC-trees-plot}. Browsing
+is more frequent in hardwood but especially small oak trees are severely
+at risk.  Consequently, the local authorities increased the number of roe deers
+to be harvested in the following years.
+%%The large confidence interval for ash, maple, elm and lime
+%%trees is caused by the small sample size.
+
+%%\setkeys{Gin}{width=0.8\textwidth}
+\begin{figure}[t]
+\begin{center}   
+<<SIMC-trees-plot, echo = TRUE, bigleftpar = TRUE, fig = TRUE, width = 7, height = 4.5>>=
+plot(ci, xlab = "Probability of Damage Caused by Browsing", 
+     xlim = c(0, 0.5), main = "", ylim = c(0.5, 5.5))
+@
+\caption{Probability of damage caused by roe deer browsing
+   for five tree species. Sample sizes are given in brackets. \label{SIMC-trees-plot}}
+\end{center}
+\end{figure}
+\index{Generalized linear mixed model|)}
+
+\subsection{Cloud Seeding}
+
+\index{Confidence band|(}
+In \Sexpr{ch("MLR")} we studied the dependency of 
+rainfall on S-Ne values by means of linear models. Because the number of observations 
+is small, an additional assessment of the variability of the fitted regression
+lines is interesting. Here, we are interested in a confidence band around
+some estimated regression line, i.e., a confidence region which covers the
+true but unknown regression line with probability greater or equal 
+$1 - \alpha$. It is straightforward to compute \stress{pointwise} 
+confidence intervals but we have to make sure that the type I error
+is controlled for all $x$ values simultaneously. Consider the simple
+linear regression model
+\begin{eqnarray*}
+\text{rainfall}_i = \beta_0 + \beta_1 \text{sne}_i + \varepsilon_i
+\end{eqnarray*}
+where we are interested in a confidence band for the predicted rainfall, i.e.,
+the values $\hat{\beta}_0 + \hat{\beta}_1 \text{sne}_i$ for some observations 
+$\text{sne}_i$. (Note that the estimates $\hat{\beta}_0$ and $\hat{\beta}_1$
+are random variables.)
+
+We can formulate the problem as a linear combination of the
+regression coefficients by multiplying a matrix $\K$ to a grid of S-Ne values 
+(ranging from $1.5$ to $4.5$, say) from the left to the elemental 
+parameters $\theta = (\beta_0, \beta_1)$:
+\begin{eqnarray*}
+\K \theta = \left(
+\begin{array}{rr}
+1 & 1.50  \\%% 
+1 & 1.75  \\%%    
+\vdots & \vdots \\%%
+1 & 4.25 \\%%
+1 & 4.50 %
+\end{array}  
+\right)\theta = (\beta_0 + \beta_1 1.50, \beta_0 + \beta_1 1.75, \dots, \beta_0 + \beta_1 4.50) = \vartheta.
+\end{eqnarray*}
+Simultaneous confidence intervals for all the parameters of interest $\vartheta$ form
+a confidence band for the estimated regression line. We implement this idea
+for the \Robject{clouds} data writing a small reusable function as follows:
+<<SIMC-clouds-confband, echo = TRUE>>=
+confband <- function(subset, main) {
+    mod <- lm(rainfall ~ sne, data = clouds, subset = subset)
+    sne_grid <- seq(from = 1.5, to = 4.5, by = 0.25)
+    K <- cbind(1, sne_grid)
+    sne_ci <- confint(glht(mod, linfct = K))
+    plot(rainfall ~ sne, data = clouds, subset = subset,
+         xlab = "S-Ne criterion", main = main, 
+         xlim = range(clouds$sne), 
+         ylim = range(clouds$rainfall))
+    abline(mod)
+    lines(sne_grid, sne_ci$confint[,2], lty = 2)
+    lines(sne_grid, sne_ci$confint[,3], lty = 2)
+}
+@
+The function \Rcmd{confband} basically fits a linear model using \Rcmd{lm}
+to a subset of the data, sets up the matrix $\K$ as shown above and nicely
+plots both the regression line and the confidence band. Now, this
+function can be reused to produce plots similar to Figure~\ref{MLR-clouds-lmplot}
+separately for days with and without cloud seeding in Figure~\ref{SIMC-clouds-lmplot}.
+For the days without seeding, there is more uncertainty about the true regression
+line compared to the days with cloud seeding. Clearly, this is caused by the larger
+variability of the observations in the left part of the figure.
+
+\begin{figure}
+\begin{center}
+<<SIMC-clouds-lmplot, echo = TRUE, fig = TRUE, height = 4>>=
+layout(matrix(1:2, ncol = 2))
+confband(clouds$seeding == "no", main = "No seeding")
+confband(clouds$seeding == "yes", main = "Seeding")
+@
+\caption{Regression relationship between S-Ne criterion and rainfall with
+and without seeding. The confidence bands cover the area within the dashed curves. 
+\label{SIMC-clouds-lmplot}}
+\end{center}
+\end{figure}
+\index{Confidence band|)}
+
+\section{Summary of Findings}
+
+\begin{description}
+\item[Genetic components of alcoholism]
+We were interested in studying all pairwise differences in expression levels
+for three groups of subjects defined by allele length.  Overall, there seem
+to be different expression levels for short and long alleles but no
+difference between these two groups and the intermediate group.
+\item[Deer browsing]
+For a number of tree species, the simultaneous confidence intervals
+for the probability of browsing damage show that there is rather precise
+information about browsing damage for spruce and pine with more variability for
+the broad-leaf species. For oak, more than $\Sexpr{round(ci$confint["oak (1258)", 2], 2)}\%$
+of the trees are damaged.
+\item[Cloud seeding]
+Confidence bands for the estimated effects help to identify days where the uncertainty about 
+rainfall is largest.
+\end{description}
+
+
+\section{Final Comments}
+
+Multiple comparisons in linear models have been in use for a long time. The
+\Rpackage{multcomp} package extends much of the theory to a broad class of parametric and
+semi-parametric statistical models, which allows for a unified treatment of
+multiple comparisons and other simultaneous inference procedures in
+generalized linear models, mixed models, models for censored data,
+robust models, etc. Honest decisions based on simultaneous inference
+procedures maintaining a pre-specified familywise error rate (at least
+asymptotically) can be derived from almost all classical and modern 
+statistical models. The technical details and more examples can be found
+in \cite{HSAUR:HothornBretzWestfall2008} and the package vignettes of 
+package \Rpackage{multcomp} \citep{PKG:multcomp}.
+
+\section*{Exercises}
+
+\begin{description}
+
+\exercise 
+Compare the results of \Rcmd{glht} and \Rcmd{TukeyHSD} on the \Robject{alpha}
+data.
+
+\exercise
+Consider the linear model fitted to the clouds data as summarized 
+in Figure~\ref{MLR-clouds-summary}. Set up a matrix $\K$ corresponding
+to the global null hypothesis that all interaction terms present in the model
+are zero. Test both the global hypothesis and all hypotheses corresponding
+to each of the interaction terms. Which interaction remains significant
+after adjustment for multiple testing?
+
+\exercise
+For the logistic regression model presented in Figure~\ref{GLM-womensrole-summary-2}
+perform a multiplicity adjusted test on all regression coefficients (except for the intercept)
+being zero. Do the conclusions drawn in \Sexpr{ch("GLM")} remain valid?
+
+\end{description}
+
+\bibliographystyle{LaTeXBibTeX/refstyle}
+\bibliography{LaTeXBibTeX/HSAUR}
+\end{document}

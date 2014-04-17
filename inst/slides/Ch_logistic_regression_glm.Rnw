@@ -1,0 +1,548 @@
+
+\input{HSAUR_title}
+
+\SweaveOpts{prefix.string=figures/HSAUR,eps=FALSE,keep.source=TRUE}
+
+<<setup, echo = FALSE, results = hide>>=
+source("setup.R")
+@
+
+\frame{
+\begin{center}
+\Large{Part 7: Logistic Regression and \\ Generalised Linear Models}
+\end{center}
+
+explains how to fit regression models to binary response variables and to counts.
+
+}
+
+\section{Introduction}
+\begin{frame}
+  \frametitle{Introduction}
+
+Ordinary linear regression models assume the response variable to be
+(approximately) normal distributed. However, many experiments require
+an assessment of the relationship between covariates and a binary response
+variable, i.e., a variable measured at only two levels, or counts.
+
+Generalised linear models provide a framework for the estimation of 
+regression models with non-normal response variables. The regression
+relationship between the covariates and the response is modelled by
+a linear combination of the covariates.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{plasma: Erythrocyte sedimentation rate (ESR)}
+
+The erythrocyte sedimentation rate (ESR) is the rate at which
+red blood cells (erythrocytes) settle out of suspension in blood
+plasma, when measured under standard conditions. If the ESR increases
+when the level of certain proteins in the blood plasma rise in
+association with conditions such as rheumatic diseases, chronic
+infections and malignant diseases, its determination might be
+useful in screening blood samples taken from people suspected
+of suffering from one of the conditions mentioned. The
+absolute value of the ESR is not of great importance, rather it
+is whether it is less than 20mm/hr since lower values indicate
+a `healthy' individual. 
+
+The question of interest is whether there is any association
+between the probability of an ESR reading greater than 20mm/hr
+and the levels of the two plasma proteins. If there is not then
+the determination of ESR would not be useful for diagnostic purposes.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{womensrols: Women's role in society}
+
+In a survey carried out in 1974/1975 each respondent was
+asked if he or she agreed or disagreed with the statement `Women
+should take care of running their homes and leave running the
+country up to men'. The questions
+here are whether the responses of men and women differ and how
+years of education affects the response.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{polyps: Colonic polyps}
+
+The data stem from an placebo-controlled trial of a non-steroidal anti-inflammatory
+drug in the treatment of familial andenomatous polyposis (FAP).
+The trial was halted after a planned interim analysis had suggested
+compelling evidence in favour of the treatment. The data 
+give the number of colonic polyps after a $12$-month
+treatment period. The question of interest is whether the number of polyps
+is related to treatment and/or age of patients.
+
+\end{frame}
+
+\section{Logistic Regression and Generalised Linear Models}
+
+\begin{frame}
+  \frametitle{Logistic Regression}
+
+The ordinary multiple regression model is described
+as $y \sim \N(\mu, \sigma^2)$ where $\mu = \beta_0 + \beta_1 x_1 + \dots + \beta_q x_q$.
+
+This makes it clear that this model is suitable for
+continuous response variables with, conditional on the values
+of the explanatory variables, a normal distribution with constant
+variance. 
+
+So clearly the model would not be suitable for applying
+to the erythrocyte sedimentation rate since the response variable is binary.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Logistic Regression}
+
+For modelling the expected value of the response
+directly as a linear function of explanatory variables, a suitable
+transformation is modelled. In this case the most suitable transformation
+is the \stress{logistic} or \stress{logit}
+function of $\pi = P(y = 1)$ leading to the model
+\begin{eqnarray*} 
+\text{logit}(\pi) = \log\left(\frac{\pi}{1 - \pi}\right) = \beta_0 + \beta_1 x_1 + \dots + \beta_q x_q.
+\end{eqnarray*}
+The logit of a probability is simply the log of the odds of the response
+taking the value one. 
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Logistic Regression}
+
+The logit function can take any real value, but the associated
+probability always lies in the required $[0,1]$ interval. In a
+logistic regression model, the parameter $\beta_j$
+associated with explanatory variable $x_j$ is such
+that $\exp(\beta_j)$ is the odds that the response variable
+takes the value one when $x_j$ increases by one, conditional on the other
+explanatory variables remaining constant. The parameters of the
+logistic regression model (the vector of regression coefficients
+$\beta$) are estimated by
+maximum likelihood.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{The Generalised Linear Model (GLM)}
+
+Essentially GLMs consist of three main features;
+\begin{enumerate}
+\item An \stress{error distribution} giving the distribution of
+      the response around its mean. 
+\item A \stress{link function}, $g$, that shows how
+      the linear function of the explanatory variables is related to
+      the expected value of the response
+      \begin{eqnarray*}
+      g(\mu) = \beta_0 + \beta_1 x_1 + \dots + \beta_q x_q.
+      \end{eqnarray*}
+\item The \stress{variance function} that captures how the variance
+      of the response variable depends on the mean. 
+\end{enumerate}
+Estimation of the parameters in a GLM is usually achieved
+through a maximum likelihood approach.
+
+\end{frame}
+
+\section{Analysis Using R}
+
+\begin{frame}[fragile]
+  \frametitle{ESR and Plasma Proteins: Plot}
+
+At first, we will look at conditional density plots of the response variable given
+the two explanatory variables describing
+how the conditional distribution of the categorical variable ESR changes
+over the numerical variables fibrinogen and gamma globulin.
+It appears that higher levels of each protein are
+associated with ESR values above $20$ mm/hr.
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{ESR and Plasma Proteins: Plot}
+
+\begin{center}
+<<GLM-plasma-plot, echo = TRUE, fig = TRUE, height = 4>>=
+layout(matrix(1:2, ncol = 2))
+cdplot(ESR ~ fibrinogen, data = plasma)
+cdplot(ESR ~ globulin, data = plasma)
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{ESR and Plasma Proteins: GLM}
+
+We can now fit a logistic regression model to the data using
+the \Rcmd{glm} function. We start with a model that includes
+only a single explanatory variable, \Robject{fibrinogen}. The
+code to fit the model is
+
+<<GLM-plasma-fit1, echo = TRUE>>=
+plasma_glm_1 <- glm(ESR ~ fibrinogen, data = plasma, 
+    family = binomial())
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{ESR and Plasma Proteins: Summary}
+
+\small
+<<GLM-plasma-summary-1, echo = TRUE>>=
+summary(plasma_glm_1)
+@
+\normalsize
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{ESR and Plasma Proteins: Estimation}
+
+From the summary we
+see that the regression
+coefficient for fibrinogen is significant at the $5\%$ level.
+An increase
+of one unit in this variable increases the log-odds in favour
+of an ESR value greater than $20$ by an estimated
+$\Sexpr{round(coef(plasma_glm_1)["fibrinogen"], 2)}$ with 95\%
+confidence interval
+<<GLM-plasma-confint, echo = TRUE>>=
+confint(plasma_glm_1)["fibrinogen",]
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{ESR and Plasma Proteins: GLM}          
+
+Nevertheless it seems likely that increased values of fibrinogen
+lead to a greater probability of an ESR value greater than $20$.
+We can now fit a logistic regression model that includes both
+explanatory variables using the code
+<<GLM-plasma-fit2, echo = TRUE>>=
+plasma_glm_2 <- glm(ESR ~ fibrinogen + globulin, 
+    data = plasma, family = binomial())
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{ESR and Plasma Proteins: Summary}
+
+\small
+<<GLM-plasma-summary-2, echo = TRUE>>=
+summary(plasma_glm_2)
+@
+\normalsize
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{ESR and Plasma Proteins: Model Comparison}
+
+<<GLM-plasma-anova-hide, echo = TRUE>>=
+anova(plasma_glm_1, plasma_glm_2, test = "Chisq")
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{ESR and Plasma Proteins: Prediction}
+
+The estimated conditional probability of a ESR value larger $20$ for all
+observations can be computed by
+<<GLM-plasma-predict, echo = TRUE>>=
+prob <- predict(plasma_glm_1, type = "response")
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{ESR and Plasma Proteins: Plot}
+
+%%\setkeys{Gin}{width = 0.5\textwidth}
+\tiny
+\begin{center}
+<<GLM-plasma-bubble, echo = TRUE, fig = TRUE>>=
+plot(globulin ~ fibrinogen, data = plasma, xlim=c(2,6), ylim=c(25,50), pch = ".")
+symbols(plasma$fibrinogen, plasma$globulin, circles = prob, add = TRUE)
+@
+\end{center}
+\normalsize
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Women's Role in Society: GLM} %'
+
+We first fit a model that includes the two explanatory variables
+using the code
+<<GLM-womensrole-fit1, echo = TRUE>>=
+fm <- cbind(agree,disagree) ~ gender + education
+womensrole_glm_1 <- glm(fm,
+    data = womensrole, family = binomial())
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Women's Role in Society: Summary} %'           
+
+\small
+<<GLM-womensrole-summary-1, echo = TRUE>>=
+summary(womensrole_glm_1)
+@
+\normalsize
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Women's Role in Society: Plot}
+
+We now are going to construct a plot comparing the observed proportions of
+agreeing with those fitted by our fitted model. Because we will reuse this
+plot for another fitted object later on, we define a function which plots
+years of education against some fitted probabilities, e.g.,
+\tiny
+<<GLM-womensrole-probfit, echo = TRUE>>=
+role.fitted1 <- predict(womensrole_glm_1, type = "response")
+myplot <- function(role.fitted)  {
+    f <- womensrole$gender == "Female"
+    plot(womensrole$education, role.fitted, type = "n",
+         ylab = "Probability of agreeing",
+         xlab = "Education", ylim = c(0,1))
+    lines(womensrole$education[!f], role.fitted[!f], lty = 1)
+    lines(womensrole$education[f], role.fitted[f], lty = 2)
+    lgtxt <- c("Fitted (Males)", "Fitted (Females)")
+    legend("topright", lgtxt, lty = 1:2, bty = "n")
+    y <-  womensrole$agree / (womensrole$agree +   
+                              womensrole$disagree)
+    size <- womensrole$agree + womensrole$disagree
+    size <- size - min(size)
+    size <- (size / max(size)) * 3 + 1
+    text(womensrole$education, y, ifelse(f, "\\VE", "\\MA"),
+         family = "HersheySerif", cex = size)
+} 
+@
+\normalsize
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Women's Role in Society: Plot}
+
+\begin{center}
+<<GLM-role-fitted1, echo = TRUE, fig = TRUE>>=
+myplot(role.fitted1)
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Women's Role in Society: Interactions} %'
+
+An interaction term for gender and education can be included into the logistic
+regression model via
+<<GLM-womensrole-fit2, echo = TRUE>>=
+fm <- cbind(agree,disagree) ~ gender * education
+womensrole_glm_2 <- glm(fm, 
+    data = womensrole, family = binomial())
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Women's Role in Society: Interactions} %'
+
+\small
+<<GLM-womensrole-summary-2, echo = TRUE>>=
+summary(womensrole_glm_2)
+@
+\normalsize
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Women's Role in Society: Plot}
+
+\begin{center}
+<<GLM-role-fitted2, echo = TRUE, fig = TRUE>>=
+myplot(predict(womensrole_glm_2, type = "response"))
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Colonic Polyps: Poisson GLM}
+
+We will apply a GLM with a log link function, ensuring that fitted
+values are positive, and a Poisson error distribution, i.e.,
+\begin{eqnarray*}
+\P(y) = \frac{e^{-\lambda}\lambda^y}{y!}.
+\end{eqnarray*}
+This type of GLM is often known as \stress{Poisson regression}.
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Colonic Polyps: Poisson GLM}
+
+<<GLM-polyps-fit1, echo = TRUE>>=
+polyps_glm_1 <- glm(number ~ treat + age, 
+    data = polyps, family = poisson())
+@
+(The default link function when the Poisson family is requested
+is the log function.)
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Colonic Polyps: Summary}
+
+\small
+<<GLM-polyps-summary-1, echo = TRUE>>=
+summary(polyps_glm_1)
+@
+\normalsize
+
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Colonic Polyps: Overdispersion}
+
+We see that the regression
+coefficients for both age and treatment are highly significant.
+But there is a problem with the model, but before we can deal
+with it we need a short digression to describe in more detail
+the third component
+of GLMs mentioned in the previous section, namely their variance
+functions, $V(\mu)$.
+
+Both the Poisson and binomial distributions have variance
+functions that are completely determined by the mean. 
+
+The phenomenon of greater variability than expected under the model is
+observed is called \stress{overdispersion}.
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Colonic Polyps: Quasi-Likelihood}
+
+We can deal with overdispersion by using a procedure known
+as \stress{quasi-likelihood},
+which allows the estimation of
+model parameters without fully knowing the error distribution
+of the response variable. 
+
+<<GLM-polyp-quasi, echo = TRUE>>=
+polyps_glm_2 <- glm(number ~ treat + age, 
+    data = polyps, family = quasipoisson())
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Colonic Polyps: Summary}
+
+\small
+<<GLM-polyp-quasi-summary, echo = TRUE>>=
+summary(polyps_glm_2)
+@
+\normalsize
+
+\end{frame}
+
+\section{Summary}
+
+\begin{frame}
+  \frametitle{Summary}
+
+Generalised linear models provide a very powerful and flexible framework
+for the application of regression models to a variety of non-normal
+response variables, for example, logistic regression to binary responses
+and Poisson regression to count data.
+
+\end{frame}
+
+
+\section{Exercises}
+
+\begin{frame}
+  \frametitle{Exercises}
+
+\begin{itemize}
+
+\item
+Construct a perspective plot of the fitted values from
+a logistic regression model fitted to the \Robject{plasma} data
+in which both fibrinogen and gamma globulin are included as explanatory
+variables.
+\item
+\cite{HSAUR:Collett2003} argues that two outliers need to be removed from
+the \Robject{plasma} data. Try to identify those two unusual observations
+by means of a scatterplot.
+\item 
+The \Robject{bladdercancer} data arise from $31$ male patients
+who have been treated for superficial bladder cancer
+\citep[see][]{HSAUR:Seeber1998}, and give
+the number of recurrent tumours during a particular time after
+the removal of the primary tumour, along with the size of the
+original tumour (whether smaller or larger than $3$ cm). Use Poisson
+regression to estimate the effect of size of tumour on the number
+of recurrent tumours.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Exercises}
+ 
+\begin{itemize}
+\item
+The \Robject{leuk} data show the survival times
+from diagnosis of patients suffering from leukemia and the values
+of two explanatory variables, the white blood cell count (\Robject{wbc})
+and the presence or absence of a morphological characteristic
+of the white blood cells (\Robject{ag})
+\citep[the data are available in package
+\Rpackage{MASS},][]{HSAUR:VenablesRipley2002}.
+Define a binary outcome variable
+according to whether or not patients lived for at least 24 weeks
+after diagnosis and then fit a logistic regression model to the
+data. It may be advisable to transform the very large white blood
+counts to avoid regression coefficients very close to 0 (and
+odds ratios very close to 1). And a model that contains only
+the two explanatory variables may not be adequate for these data.
+Construct some graphics useful in the interpretation of the final
+model you fit.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{References}
+\tiny
+<<bibfiles, echo = FALSE, results = tex>>=   
+src <- system.file(package = "HSAUR3")
+style <- file.path(src, "LaTeXBibTeX", "refstyle")
+bst <- file.path(src, "LaTeXBibTeX", "HSAUR")
+cat(paste("\\bibliographystyle{", style, "}", sep = ""), "\n \n")
+cat(paste("\\bibliography{", bst, "}", sep = ""), "\n \n")
+@
+
+\end{frame}
+
+\end{document}

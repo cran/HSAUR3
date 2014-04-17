@@ -1,0 +1,833 @@
+
+
+\documentclass{chapman}
+
+%%% copy Sweave.sty definitions
+
+%%% keeps `sweave' from adding `\usepackage{Sweave}': DO NOT REMOVE
+%\usepackage{Sweave} 
+
+
+\RequirePackage[T1]{fontenc}
+\RequirePackage{graphicx,ae,fancyvrb}
+\IfFileExists{upquote.sty}{\RequirePackage{upquote}}{}
+\usepackage{relsize}
+
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{fontfamily=courier,
+                                              fontshape=it,
+                                              fontsize=\relsize{-1}}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{}
+\newenvironment{Schunk}{}{}
+
+%%% environment for raw output
+\newcommand{\SchunkRaw}{\renewenvironment{Schunk}{}{}
+    \DefineVerbatimEnvironment{Soutput}{Verbatim}{fontfamily=courier,
+                                                  fontshape=it,
+                                                  fontsize=\small}
+    \rawSinput
+}
+
+%%% environment for labeled output
+\newcommand{\nextcaption}{}
+\newcommand{\SchunkLabel}{
+  \renewenvironment{Schunk}{\begin{figure}[ht] }{\caption{\nextcaption}
+  \end{figure} }
+  \DefineVerbatimEnvironment{Sinput}{Verbatim}{frame = topline}
+  \DefineVerbatimEnvironment{Soutput}{Verbatim}{frame = bottomline, 
+                                                samepage = true,
+                                                fontfamily=courier,
+                                                fontshape=it,
+                                                fontsize=\relsize{-1}}
+}
+
+
+%%% S code with line numbers
+\DefineVerbatimEnvironment{Sinput}
+{Verbatim}
+{
+%%  numbers=left
+}
+
+\newcommand{\numberSinput}{
+    \DefineVerbatimEnvironment{Sinput}{Verbatim}{numbers=left}
+}
+\newcommand{\rawSinput}{
+    \DefineVerbatimEnvironment{Sinput}{Verbatim}{}
+}
+
+
+%%% R / System symbols
+\newcommand{\R}{\textsf{R}}
+\newcommand{\rR}{{R}}
+\renewcommand{\S}{\textsf{S}}
+\newcommand{\SPLUS}{\textsf{S-PLUS}}
+\newcommand{\rSPLUS}{{S-PLUS}}
+\newcommand{\SPSS}{\textsf{SPSS}}
+\newcommand{\EXCEL}{\textsf{Excel}}
+\newcommand{\ACCESS}{\textsf{Access}}
+\newcommand{\SQL}{\textsf{SQL}}
+%%\newcommand{\Rpackage}[1]{\hbox{\rm\textit{#1}}}
+%%\newcommand{\Robject}[1]{\hbox{\rm\texttt{#1}}}
+%%\newcommand{\Rclass}[1]{\hbox{\rm\textit{#1}}}
+%%\newcommand{\Rcmd}[1]{\hbox{\rm\texttt{#1}}}
+\newcommand{\Rpackage}[1]{\index{#1 package@{\fontseries{b}\selectfont #1} package} {\fontseries{b}\selectfont #1}}
+\newcommand{\rpackage}[1]{{\fontseries{b}\selectfont #1}}
+\newcommand{\Robject}[1]{\texttt{#1}}
+\newcommand{\Rclass}[1]{\index{#1 class@\textit{#1} class}\textit{#1}}
+\newcommand{\Rcmd}[1]{\index{#1 function@\texttt{#1} function}\texttt{#1}}
+\newcommand{\Roperator}[1]{\texttt{#1}}
+\newcommand{\Rarg}[1]{\texttt{#1}}
+\newcommand{\Rlevel}[1]{\texttt{#1}}
+
+
+%%% other symbols
+\newcommand{\file}[1]{\hbox{\rm\texttt{#1}}}
+%%\newcommand{\stress}[1]{\index{#1}\textit{#1}} 
+\newcommand{\stress}[1]{\textit{#1}} 
+\newcommand{\booktitle}[1]{\textit{#1}} %%'
+
+%%% Math symbols
+\usepackage{amstext}
+\usepackage{amsmath}
+\newcommand{\E}{\mathsf{E}}   
+\newcommand{\Var}{\mathsf{Var}}   
+\newcommand{\Cov}{\mathsf{Cov}}   
+\newcommand{\Cor}{\mathsf{Cor}}   
+\newcommand{\x}{\mathbf{x}}   
+\newcommand{\y}{\mathbf{y}}   
+\renewcommand{\a}{\mathbf{a}}
+\newcommand{\W}{\mathbf{W}}   
+\newcommand{\C}{\mathbf{C}}   
+\renewcommand{\H}{\mathbf{H}}   
+\newcommand{\X}{\mathbf{X}}   
+\newcommand{\B}{\mathbf{B}}   
+\newcommand{\V}{\mathbf{V}}   
+\newcommand{\I}{\mathbf{I}}   
+\newcommand{\D}{\mathbf{D}}   
+\newcommand{\bS}{\mathbf{S}}   
+\newcommand{\N}{\mathcal{N}}   
+\renewcommand{\L}{L}   
+\renewcommand{\P}{\mathsf{P}}   
+\newcommand{\K}{\mathbf{K}}
+\newcommand{\m}{\mathbf{m}}
+\newcommand{\argmin}{\operatorname{argmin}\displaylimits}
+\newcommand{\argmax}{\operatorname{argmax}\displaylimits}
+
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\bbeta}{\mathbf{\beta}}
+
+
+%%% links
+\usepackage{hyperref}
+
+\hypersetup{%
+  pdftitle = {A Handbook of Statistical Analyses Using R (3rd Edition)},
+  pdfsubject = {Book},
+  pdfauthor = {Torsten Hothorn and Brian S. Everitt},
+  colorlinks = {black},
+  linkcolor = {black},
+  citecolor = {black},
+  urlcolor = {black},
+  hyperindex = {true},
+  linktocpage = {true},
+}
+
+
+%%% captions & tables
+%% <FIXME>: conflics with figure definition in chapman.cls
+%%\usepackage[format=hang,margin=10pt,labelfont=bf]{caption}
+%% </FIMXE>
+\usepackage{longtable}
+\usepackage[figuresright]{rotating}
+
+%%% R symbol in chapter 1
+\usepackage{wrapfig}
+
+%%% Bibliography
+\usepackage[round,comma]{natbib}
+\renewcommand{\refname}{References \addcontentsline{toc}{chapter}{References}}
+\citeindexfalse
+
+%%% texi2dvi complains that \newblock is undefined, hm...
+\def\newblock{\hskip .11em plus .33em minus .07em}
+
+%%% Example sections
+\newcounter{exercise}[chapter]
+\setcounter{exercise}{0}
+\newcommand{\exercise}{\stepcounter{exercise} \item{Ex.~\arabic{chapter}.\arabic{exercise} }}
+
+
+%% URLs
+\newcommand{\curl}[1]{\begin{center} \url{#1} \end{center}}
+
+%%% for manual corrections
+%\renewcommand{\baselinestretch}{2}
+
+%%% plot sizes
+\setkeys{Gin}{width=0.95\textwidth}
+
+%%% color
+\usepackage{color}
+
+%%% hyphenations
+\hyphenation{drop-out}
+\hyphenation{mar-gi-nal}
+
+%%% new bidirectional quotes need 
+\usepackage[utf8]{inputenc}
+
+%\usepackage{setspace}
+\definecolor{sidebox_todo}{rgb}{1,1,0.2}
+\newcommand{\todo}[1]{
+        \hspace{0pt}%
+        \marginpar{% 
+                        \fcolorbox{black}{sidebox_todo}{%
+                                \parbox{\marginparwidth} {
+
+\raggedright\sffamily\footnotesize{TODO: #1}%
+                                }
+                        }%
+        }
+}
+\begin{document}
+
+%% Title page
+
+\title{A Handbook of Statistical Analyses Using \R{} --- 3rd Edition}
+
+\author{Torsten Hothorn and Brian S. Everitt}
+
+\maketitle
+%%\VignetteIndexEntry{Chapter Data Analysis using Graphical Displays}
+%%\VignetteDepends{lattice, maps, maptools, sp}
+\setcounter{chapter}{1}
+
+
+
+\SweaveOpts{prefix.string=figures/HSAUR,eps=FALSE,keep.source=TRUE} 
+
+<<setup, echo = FALSE, results = hide>>=
+rm(list = ls())
+s <- search()[-1]
+s <- s[-match(c("package:base", "package:stats", "package:graphics", "package:grDevices",
+                "package:utils", "package:datasets", "package:methods", "Autoloads"), s)]
+if (length(s) > 0) sapply(s, detach, character.only = TRUE)
+if (!file.exists("tables")) dir.create("tables")
+if (!file.exists("figures")) dir.create("figures")
+set.seed(290875)
+options(prompt = "R> ", continue = "+  ",
+    width = 63, # digits = 4, 
+    show.signif.stars = FALSE,
+    SweaveHooks = list(leftpar = function() 
+        par(mai = par("mai") * c(1, 1.05, 1, 1)),
+        bigleftpar = function()
+        par(mai = par("mai") * c(1, 1.7, 1, 1))))
+HSAURpkg <- require("HSAUR3")
+if (!HSAURpkg) stop("cannot load package ", sQuote("HSAUR2"))
+rm(HSAURpkg)
+ ### </FIXME> hm, R-2.4.0 --vanilla seems to need this
+a <- Sys.setlocale("LC_ALL", "C")
+ ### </FIXME>
+book <- TRUE
+refs <- cbind(c("AItR", "DAGD", "SI", "CI", "ANOVA", "MLR", "GLM", 
+                "DE", "RP", "GAM", "SA", "ALDI", "ALDII", "SIMC", "MA", "PCA", 
+                "MDS", "CA"), 1:18)
+ch <- function(x) {
+    ch <- refs[which(refs[,1] == x),]
+    if (book) {
+        return(paste("Chapter~\\\\ref{", ch[1], "}", sep = ""))
+    } else {
+        return(paste("Chapter~", ch[2], sep = ""))
+    }
+}
+if (file.exists("deparse.R"))
+    source("deparse.R")
+
+setHook(packageEvent("lattice", "attach"), function(...) {
+    lattice.options(default.theme = 
+        function()
+            standard.theme("pdf", color = FALSE))
+    })
+@
+
+\pagestyle{headings}
+<<singlebook, echo = FALSE>>=
+book <- FALSE
+@
+
+
+\chapter[Data Analysis Using Graphical Displays]{Data Analysis 
+         Using Graphical Displays: Malignant Melanoma in the US and
+         Chinese Health and \\ Family Life \label{DAGD}}
+
+\section{Introduction}
+
+
+\section{Initial Data Analysis}
+
+
+\section{Analysis Using \R{}}
+
+\subsection{Malignant Melanoma}
+
+\index{Boxplot|(}
+\index{Histogram|(}
+\index{Scatterplot|(}
+We might begin to examine the malignant melanoma data in Table~\ref{DAGD-USmelanoma-tab} 
+by constructing a histogram or boxplot for \stress{all} the mortality rates
+in Figure~\ref{DAGD-USmelanoma-histbox}.
+The \Rcmd{plot}, \Rcmd{hist} and \Rcmd{boxplot} functions have already been introduced in 
+\Sexpr{ch("AItR")} and we want to produce a plot where both techniques
+are applied at once. The \Rcmd{layout} function organizes two independent plots
+on one plotting device, for example on top of each other. Using this
+relatively simple technique (more advanced methods will be introduced later)
+we have to make sure that the $x$-axis is the same in both graphs. This can be done 
+by computing a plausible range of the data, later to be specified in a plot via the \Rcmd{xlim}
+argument:
+<<DAGD-USmelanoma-histbox, echo = TRUE>>=
+xr <- range(USmelanoma$mortality) * c(0.9, 1.1)
+xr
+@
+Now, plotting both the histogram and the boxplot requires setting up the
+plotting device with equal space for two independent plots on top 
+of each other. Calling the \Rcmd{layout} function on a matrix with
+two cells in two rows, containing the numbers one and two, leads to such
+a partitioning. The \Rcmd{boxplot} function is called first on the mortality
+data and then the \Rcmd{hist} function, where the range of the
+$x$-axis in both plots is defined by $(\Sexpr{xr[1]}, \Sexpr{xr[2]})$. One
+tiny problem to solve is the size of the margins; their
+defaults are too large for such a plot. As with many other graphical
+parameters, one can adjust their value for a specific
+plot using function \Rcmd{par}. The
+\R{} code and the resulting display are given in 
+Figure~\ref{DAGD-USmelanoma-histbox}.
+
+\begin{figure}
+\begin{center}
+<<DAGD-USmelanoma-histbox, echo = TRUE, fig = TRUE, width = 8>>=
+layout(matrix(1:2, nrow = 2))
+par(mar = par("mar") * c(0.8, 1, 1, 1))
+boxplot(USmelanoma$mortality, ylim = xr, horizontal = TRUE, 
+        xlab = "Mortality")
+hist(USmelanoma$mortality, xlim = xr, xlab = "", main = "", 
+     axes = FALSE, ylab = "")
+axis(1)
+@
+\caption{Histogram (top) and boxplot (bottom) of malignant melanoma mortality rates.
+         \label{DAGD-USmelanoma-histbox}}
+\end{center}
+\end{figure}
+
+
+
+Both the histogram and the boxplot in Figure~\ref{DAGD-USmelanoma-histbox} indicate
+a certain skewness of the mortality distribution.
+Looking at the characteristics of all the mortality rates is a useful 
+beginning but for these data we might be more interested in comparing 
+mortality rates for ocean and non-ocean states. So we might construct 
+two histograms or two boxplots. Such a \stress{parallel boxplot}, visualizing
+the conditional distribution of a numeric variable in groups as given by
+a categorical variable, are easily computed using the \Rcmd{boxplot} function.
+The continuous response variable and the categorical independent variable
+are specified via a \Rclass{formula} as described in \Sexpr{ch("AItR")}.
+Figure~\ref{DAGD-USmelanoma-boxocean} shows such parallel boxplots,
+as by default produced the \Rcmd{plot} function for such data,
+for the mortality in ocean and non-ocean states and leads to the 
+impression that the mortality is increased in east or west coast
+states compared to the rest of the country.
+\begin{figure}
+\begin{center}
+<<DAGD-USmelanoma-boxocean, echo = TRUE, fig = TRUE, width = 8>>=
+plot(mortality ~ ocean, data = USmelanoma, 
+     xlab = "Contiguity to an ocean", ylab = "Mortality")
+@
+\caption{Parallel boxplots of malignant melanoma mortality rates by contiguity to an ocean.
+         \label{DAGD-USmelanoma-boxocean}}
+\end{center}
+\end{figure}
+
+Histograms are generally used for two purposes: counting and displaying the 
+distribution of a variable; according to \cite{HSAUR:Wilkinson1992}, `they are effective for neither'. Histograms can often be misleading for 
+displaying distributions because of their dependence on the number of classes chosen. 
+An alternative is to formally estimate the density function of a variable and 
+then plot the resulting estimate; details of density estimation are 
+given in \Sexpr{ch("DE")} but for the ocean and non-ocean states the 
+two density estimates can be produced and plotted as shown in 
+Figure~\ref{DAGD-USmelanoma-dens} which supports the impression from 
+Figure~\ref{DAGD-USmelanoma-boxocean}. For more details on
+such density estimates we refer to \Sexpr{ch("DE")}.
+\begin{figure}
+\begin{center}
+<<DAGD-USmelanoma-dens, echo = TRUE, fig = TRUE, width = 8>>=
+dyes <- with(USmelanoma, density(mortality[ocean == "yes"]))
+dno <- with(USmelanoma, density(mortality[ocean == "no"]))
+plot(dyes, lty = 1, xlim = xr, main = "", ylim = c(0, 0.018),
+     xlab = "Mortality")
+lines(dno, lty = 2)
+legend("topleft", lty = 1:2, legend = c("Coastal State", 
+       "Land State"), bty = "n")
+@
+\caption{Estimated densities of malignant melanoma mortality rates by contiguity to an ocean.
+         \label{DAGD-USmelanoma-dens}}
+\end{center}
+\end{figure}
+
+Now we might move on to look at how mortality rates are related to the 
+geographic location of a state as represented by the latitude and longitude 
+of the center of the state. Here the main graphic will be the scatterplot.
+The simple $xy$ scatterplot has been in use since at least the eighteenth 
+century and has many virtues -- indeed according to \cite{HSAUR:Tufte1983}:
+\begin{quote}
+The relational graphic -- in its barest form the scatterplot and its 
+variants -- is the greatest of all graphical designs. It links at least two 
+variables, encouraging and even imploring the viewer to assess the 
+possible causal relationship between the plotted variables. It confronts 
+causal theories that $x$  causes $y$ with empirical evidence as to the actual 
+relationship between $x$ and $y$.
+\end{quote}
+
+Let's begin with simple scatterplots of mortality rate against longitude %%'
+and mortality rate against latitude which can be produced by the code
+preceding Figure~\ref{DAGD-USmelanoma-xy}. Again, the 
+\Rcmd{layout} function is used for partitioning the plotting device, now
+resulting in two side-by-side plots. The argument to \Rcmd{layout}
+is now a matrix with only one row but two columns containing the 
+numbers one and two. In each cell, the \Rcmd{plot} function
+is called for producing a scatterplot of the variables given
+in the \Rclass{formula}.
+\begin{figure}  
+\begin{center}
+<<DAGD-USmelanoma-xy, echo = TRUE, fig = TRUE, height = 5, width = 8>>=
+layout(matrix(1:2, ncol = 2))
+plot(mortality ~ longitude, data = USmelanoma, 
+     ylab = "Mortality", xlab = "Longitude")
+plot(mortality ~ latitude, data = USmelanoma, 
+     ylab = "Mortality", xlab = "Latitude")
+@
+\caption{Scatterplot of malignant melanoma mortality rates by geographical location.
+         \label{DAGD-USmelanoma-xy}}
+\end{center}
+\end{figure} 
+
+Since mortality rate is clearly related only to latitude we can now produce 
+scatterplots of mortality rate against latitude separately for ocean and non-ocean 
+states. Instead of producing two displays, one can choose different plotting
+symbols for either states. This can be achieved by specifying a vector
+of integers or characters to the \Rcmd{pch}, where the $i$th element of this
+vector defines the plot symbol of the $i$th observation in the data to be plotted.
+For the sake of simplicity, we convert the \Robject{ocean} factor to
+an \Rclass{integer} vector containing the numbers one for land states and two for 
+ocean states. As a consequence, land states can be identified by the dot symbol
+and ocean states by triangles. It is useful to add a legend to such a plot,
+most conveniently by using the \Rcmd{legend} function. This function takes
+three arguments: a string indicating the position of the legend in the plot,
+a character vector of labels to be printed and the corresponding plotting
+symbols (referred to by integers). In addition, the display of a bounding box
+is anticipated (\Rcmd{bty = "n"}).
+\begin{figure}  
+\begin{center}
+<<DAGD-USmelanoma-lat, echo = TRUE, fig = TRUE>>=
+plot(mortality ~ latitude, data = USmelanoma, 
+     pch = (1:2)[ocean], ylab = "Mortality", 
+     xlab = "Latitude")
+legend("topright", legend = c("Land state", "Coast state"), 
+       pch = 1:2, bty = "n")
+@
+\caption{Scatterplot of malignant melanoma mortality rates against latitude.
+         \label{DAGD-USmelanoma-lat}}
+\end{center}
+\end{figure}
+The scatterplot in Figure~\ref{DAGD-USmelanoma-lat} highlights that
+the mortality is lowest in the northern land states. Coastal states show
+a higher mortality than land states at roughly the same latitude. The highest
+mortalities can be observed for the south coastal states with latitude less than
+$32^\circ$, say, that is
+<<DAGD-USmelanoma-south, echo = TRUE>>=
+subset(USmelanoma, latitude < 32)
+@
+
+
+Alternatively, we also may simply want to look at a color-coded map of the United States, where
+each state is plotted in a color that corresponds to its mortality rate. It is fairly simple
+to set-up such a plot using the \Rpackage{sp} family of packages \citep{PKG:sp}. We start with
+loading a map of the mainland states, basically a number of polygons:
+<<DAGD-USmelanoma-long-lat-data, echo = TRUE>>=
+library("sp")
+library("maps")
+library("maptools")
+states <- map("state", plot = FALSE, fill = TRUE)
+@
+It is of course important to match the mortality rates to the corresponding
+state. We therefore create unique names of the states in lower-case letters for
+both the polygons and the mortality data
+<<DAGD-USmelanoma-long-lat-names, echo = TRUE>>=                        
+IDs <- sapply(strsplit(states$names, ":"), function(x) x[1])
+rownames(USmelanoma) <- tolower(rownames(USmelanoma))
+@
+Now we are ready to merge these two objects into a so-called \Rclass{SpatialPolygonsDataFrame}
+object. We first create a \Rclass{SpatialPolygons} object from the map in the
+correct reference system (WGS84, in our case) and then merge the polygons with the data
+<<DAGD-USmelanoma-long-lat-sp, echo = TRUE>>=          
+us1 <- map2SpatialPolygons(states, IDs=IDs,
+    proj4string = CRS("+proj=longlat +datum=wgs84"))
+us2 <- SpatialPolygonsDataFrame(us1, USmelanoma)
+@
+The resulting object \Robject{us2} can now be plotted using the
+\Rcmd{spplot} function, see Figure~\ref{DAGD-USmelanoma-long-lat}.  The
+colors correspond to the mortality rate, as shown in the color legend to the
+right of the map.  We see that darker grey values corresponding to higher
+mortality rates appear in the southern costal states, both on the east and the west coast
+in good agreement with our earlier results.
+
+\begin{figure}  
+\begin{center}
+<<DAGD-USmelanoma-long-lat, echo = TRUE, fig = TRUE, height = 4>>=
+spplot(us2, "mortality", col.regions = rev(grey.colors(100)))
+@
+\caption{Map of the United States of America showing 
+         malignant melanoma mortality rates.
+         \label{DAGD-USmelanoma-long-lat}}
+\end{center}
+\end{figure}
+
+Up to now we have primarily focused on the visualization of 
+continuous variables. We now extend our focus to the visualization
+of categorical variables.
+
+\index{Boxplot|)}
+\index{Histogram|)}
+\index{Scatterplot|)}
+
+
+\subsection{Chinese Health and Family Life}
+
+
+\index{Barchart|(}
+\index{Spineplot|(}
+\index{Spinogram|(}
+One part of the questionnaire the Chinese Health and Family Life
+Survey focuses on is the self-reported health status. Two
+questions are interesting for us. The first one is `Generally speaking,
+do you consider the condition of your health to be excellent,
+good, fair, not good, or poor?'.
+The second question is `Generally speaking, in the past twelve months,
+how happy were you?'. The distribution of such variables is commonly
+visualized using barcharts where for each category the
+total or relative number of observations is displayed. 
+Such a barchart can conveniently be produced by applying the
+\Rcmd{barplot} function to a tabulation of the data. The
+empirical density of the variable \Robject{R\_happy}
+is computed by the \Rcmd{xtabs} function for producing
+(contingency) tables; the resulting barchart is given
+in Figure~\ref{DAGD-CHFLS-happy}.
+
+\begin{figure}
+<<DAGD-CHFLS-happy, echo = TRUE, fig = TRUE, width = 8>>=
+barplot(xtabs(~ R_happy, data = CHFLS))
+@
+\caption{Bar chart of happiness. \label{DAGD-CHFLS-happy}}
+\end{figure}
+
+The visualization of two categorical variables could be 
+done by conditional barcharts, i.e., barcharts of the
+first variable within the categories of the second variable.
+An attractive alternative for displaying such two-way tables
+are \stress{spineplots} \citep{HSAUR:Friendly1994,HSAUR:HofmannTheus2005,HSAUR:Chenetal2008};
+the meaning of the name will become clear
+when looking at such a plot in Figure~\ref{DAGD-CHFLS-health_happy}.
+
+Before constructing such a plot, we produce a two-way table of the health status
+and self-reported happiness using the \Rcmd{xtabs} function:
+<<DAGD-CHFLS-health_happy_xtabs, echo = TRUE>>=
+xtabs(~ R_happy + R_health, data = CHFLS)
+@
+<<DAGD-CHFLS-health_happy_xtabs2, echo = FALSE>>=
+hh <- xtabs(~ R_health + R_happy, data = CHFLS)
+@
+
+A \stress{spineplot} is a group of rectangles, each representing
+one cell in the two-way contingency table. The area of the
+rectangle is proportional with the number of observations 
+in the cell. Here, we produce a mosaic plot of health status and happiness
+in Figure~\ref{DAGD-CHFLS-health_happy}.
+\begin{figure}
+<<DAGD-CHFLS-health_happy, echo = TRUE, fig = TRUE, width = 8, height = 8>>=
+plot(R_happy ~ R_health, data = CHFLS, ylab = "Happiness", 
+     xlab = "Health")
+@
+\caption{Spineplot of health status and happiness. 
+         \label{DAGD-CHFLS-health_happy}}
+\end{figure}
+
+Consider the right upper cell in Figure~\ref{DAGD-CHFLS-health_happy}, i.e.,
+the $\Sexpr{hh["Excellent", "Very happy"]}$ very happy women with
+excellent health status. The width of the right-most bar corresponds
+to the frequency of women with excellent health status. The length 
+of the top-right rectangle corresponds 
+to the conditional frequency of very happy women given their health status is
+excellent. Multiplying these two quantities gives the area of this
+cell which corresponds to the frequency of women who are both
+very happy and enjoy an excellent health status. The conditional
+frequency of very happy women increases with increasing health status, whereas
+the conditional frequency of very unhappy or not too happy women decreases.
+
+When the association of a categorical and a continuous variable
+is of interest, say the monthly income and self-reported happiness,
+one might use parallel boxplots to visualize the distribution
+of the income depending on happiness. If we were studying self-reported
+happiness as response and income as independent variable, however, 
+this would give a representation of the conditional distribution
+of income given happiness, but we are interested in the 
+conditional distribution of happiness given income.
+One possibility to produce a more appropriate plot
+is called \stress{spinogram}. Here, the continuous $x$-variable is
+categorized first. Within each of these categories, the conditional
+frequencies of the response variable are given by stacked barcharts, 
+in a way similar to spineplots. For happiness depending
+on log-income (since income is naturally skewed we use a 
+log-transformation of the income) 
+it seems that the proportion of unhappy and not too
+happy women decreases with increasing income whereas the proportion
+of very happy women stays rather constant. In contrast
+to spinograms, where bins, as in a histogram, are given
+on the $x$-axis, a \stress{conditional density plot} uses
+the original $x$-axis for a display of the
+conditional density of the categorical response given
+the independent variable.
+
+\begin{figure}
+<<DAGD-CHFLS-happy_income, echo = TRUE, fig = TRUE, width = 8, height = 5>>=
+layout(matrix(1:2, ncol = 2))
+plot(R_happy ~ log(R_income + 1), data = CHFLS, 
+     ylab = "Happiness", xlab = "log(Income + 1)")
+cdplot(R_happy ~ log(R_income + 1), data = CHFLS, 
+       ylab = "Happiness", xlab = "log(Income + 1)")
+
+@
+\caption{Spinogram (left)
+         and conditional density plot (right) of happiness depending on log-income
+         \label{DAGD-CHFLS-happy_income}}
+\end{figure}
+
+\index{Barchart|)}
+\index{Spineplot|)}
+\index{Spinogram|)}
+
+\index{Trellis plot|(}
+For our last example we return to scatterplots for inspecting
+the association between a woman's monthly income and the
+income of her partner. Both income variables have been computed
+and partially imputed from other self-reported variables and
+are only rough assessments of the real income. Moreover, the 
+data itself is numeric but heavily tied, making it difficult to
+produce `correct' scatterplots because points will overlap.
+A relatively easy trick is to jitter the observation
+by adding a small random noise to each point in order to
+avoid overlapping plotting symbols. In addition, we want to
+study the relationship between both monthly incomes conditional
+on the woman's education. Such conditioning plots are called
+\stress{trellis} plots and are implemented in the package 
+\Rpackage{lattice} \citep{PKG:lattice, HSAUR:Sarkar2008}.
+We utilize the \Rcmd{xyplot} function from package \Rpackage{lattice}
+to produce a scatterplot. The formula reads as already explained with
+the exception that a third \stress{conditioning} variable, \Robject{R\_edu}
+in our case, is present. For each level of education, a separate 
+scatterplot will be produced. The plots are directly comparable since
+the axes remain the same for all plots. 
+
+\begin{figure}
+<<DAGD-CHFLS-RAincome3, echo = TRUE, eval = FALSE>>=
+library("lattice")
+xyplot(jitter(log(R_income + 0.5)) ~ 
+       jitter(log(A_income + 0.5)) | R_edu, data = CHFLS,
+       pch = 19, col = rgb(.1, .1, .1, .1), 
+       ylab = "log(Wife's income + .5)",
+       xlab = "log(Husband's income + .5)")
+@
+<<DAGD-CHFLS-RAincome3, echo = FALSE, fig = TRUE, width = 8>>=
+library("lattice")
+trellis.par.set(list(plot.symbol = list(col=1,pch=20, cex=0.7),
+                     box.rectangle = list(col=1),
+                     plot.line = list(col = 1, lwd = 1),
+                     box.umbrella = list(lty=1, col=1),
+                     strip.background = list(col = "white")))
+ltheme <- canonical.theme(color = FALSE)     ## in-built B&W theme
+ltheme$strip.background$col <- "transparent" ## change strip bg
+lattice.options(default.theme = ltheme)
+xyplot(jitter(log(R_income + 0.5)) ~ jitter(log(A_income + 0.5)) | R_edu, data = CHFLS,
+             pch = 19, col = rgb(.1, .1, .1, .1), ylab = "log(Wife's income + .5)", 
+             xlab = "log(Husband's income + .5)")
+@
+\caption{Scatterplot of jittered log-income of wife and husband, conditional on the wife's education.
+         \label{DAGD-CHFLS-RAincome3}}
+\end{figure}
+
+The plot shown in Figure~\ref{DAGD-CHFLS-RAincome3} reveals several
+interesting issues.  Some observations are positioned on a straight line
+with slope one, most probably an artifact of missing value imputation by
+linear models (as described in the data dictionary, see the documentation
+\texttt{?CHFLS}).  Four constellations can be identified: both partners have
+zero income, the partner has no income, the woman has no income or both
+partners have a positive income.
+
+For couples where the woman has a university degree, the income of
+both partners is relatively high (except for two couples where only
+the woman has income). A small number of former junior college students
+live in relationships where only the man has income, the income
+of both partners seems only slightly positively correlated for the
+remaining couples. For lower levels of education, all four constellations
+are present. The frequency of couples where only the man has some income
+seems larger than the other way around. Ignoring the observations
+on the straight line, there is almost no association between the income
+of both partners.
+\index{Trellis plot|)}
+
+\section{Summary of Findings}
+
+Using relatively straightforward graphical techniques only on the two sets
+of data considered in this chapter we have been able to uncover a number of
+important features of each data set; 
+\begin{description}
+\item[Melanoma mortality]
+Mortality is related
+only to the latitude of a state not to its longitude, mortality is higher
+for costal states than for land states, and the highest mortality is observed in
+the south costal states with latitude less than 32 degrees.
+\item[Health and family life]
+We saw that happiness depends on health status. Women reported to be very
+happy more often when they also reported a good or excellent health status. 
+The dependency of happiness on the income of the women seems to be less
+clear, but we conclude that, conditional on education, the income of wives
+and their husbands is highly correlated.
+\end{description}
+
+\section{Final Comments}
+
+Producing publication-quality graphics is one of the major strengths
+of the \R{} system and almost anything is possible since graphics
+are programmable in \R{}. Naturally, this chapter can be only a very
+brief introduction to some commonly used displays and the reader is
+referred to specialized books, most important 
+\cite{HSAUR:Murrell2005}, \cite{HSAUR:Sarkar2008}, and
+\cite{HSAUR:Chenetal2008}. Interactive 3D-graphics are available
+from package \Rpackage{rgl} \citep{PKG:rgl}.
+
+
+\section*{Exercises}
+
+\begin{description}
+
+\exercise 
+The data in Table~\ref{DAGD-household-tab} are part of a data set collected 
+from a survey of household expenditure and give the expenditure of $20$ single men 
+and $20$ single women on four commodity groups. The units of expenditure are 
+Hong Kong dollars, and the four commodity groups are
+\begin{description}
+\item[\Robject{housing}] housing, including fuel and light,
+\item[\Robject{food}] foodstuffs, including alcohol and tobacco,
+\item[\Robject{goods}] other goods, including clothing, footwear, and durable goods,
+\item[\Robject{service}] services, including transport and vehicles.
+\end{description}
+The aim of the survey was to investigate how the division of household 
+expenditure between the four commodity groups depends on total expenditure 
+and to find out whether this relationship differs for men and women.
+Use appropriate graphical methods to answer these questions
+and state your conclusions.
+
+<<DAGD-household-tab, echo = FALSE, results = tex>>=
+data("household", package = "HSAUR3")
+toLatex(HSAURtable(household), 
+  caption = paste("Household expenditure for single men and women."),
+  label = "DAGD-household-tab")
+@
+
+\exercise 
+The data set shown in Table~\ref{DAGD-USstates-tab} contains values 
+of seven variables for ten states in the US. The seven variables are
+\begin{description}
+\item[\Robject{Population}] population size divided by $1000$,
+\item[\Robject{Income}] average per capita income,
+\item[\Robject{Illiteracy}] illiteracy rate (\% population),
+\item[\Robject{Life.Expectancy}] life expectancy (years),
+\item[\Robject{Homicide}] homicide rate (per $1000$),
+\item[\Robject{Graduates}] percentage of high school graduates,
+\item[\Robject{Freezing}] average number of days per below freezing.
+\end{description}
+With these data
+\begin{enumerate}
+\item Construct a scatterplot matrix of the data labeling the 
+      points by state name (using function \Rcmd{text}).
+\item Construct a plot of life expectancy and homicide rate 
+      conditional on average per capita income.
+\end{enumerate}
+
+\begin{sidewaystable}
+\vspace*{12.5cm}
+\begin{center}
+<<DAGD-USstates-tab, echo = FALSE, results = tex>>=
+data("USstates", package = "HSAUR3")
+toLatex(HSAURtable(USstates), 
+  caption = paste("Socio-demographic variables for ten US states."),
+  label = "DAGD-USstates-tab")
+@
+\end{center}
+\end{sidewaystable}
+
+\exercise 
+Mortality rates per $100,000$ from male suicides for a number of 
+age groups and a number of countries are given in Table~\ref{DAGD-suicides2-tab}. 
+Construct side-by-side box plots for the data from different age 
+groups, and comment on what the graphic tells us about the data.
+
+<<DAGD-suicides2-tab, echo = FALSE, results = tex>>=
+data("suicides2", package = "HSAUR3")
+toLatex(HSAURtable(suicides2), 
+  caption = paste("Mortality rates per $100,000$ from male suicides."),
+  label = "DAGD-suicides2-tab", rownames = TRUE)
+@
+
+\exercise
+\cite{HSAUR:FluryRiedwyl1988} report data that give various length 
+measurements on $200$ Swiss bank notes. The data are available
+from package \Rpackage{alr3} \citep{PKG:alr3}; a sample of 
+ten bank notes is given in Table~\ref{DAGD-banknote-tab}.
+
+<<DAGD-banknote-tab, echo = FALSE, results = tex>>=
+data("banknote", package = "alr3")
+banknote$Y <- NULL
+banknote <- banknote[c(1:5, 101:200),]
+toLatex(HSAURtable(banknote, pkg = "alr3", nrow = 10),
+  caption = paste("Swiss bank note data."),
+  label = "DAGD-banknote-tab", rownames = FALSE)
+@	
+Use whatever graphical techniques you think are appropriate
+to investigate whether there is any `pattern'
+or structure in the data. Do you observe something suspicious?
+
+\exercise
+The data in Table~\ref{DAGD-birds-tab} were originally derived from a study
+reported in \cite{HSAUR:Vuilleumier1970} which investigated numbers of bird
+species in isolated `islands' of paramo vegetation in the northern Andes. 
+The aim of the study was to investigate how the number of species (\Robject{N}) is related to four
+other variables, \Robject{AR} (area of `island' in thousands of square km), \Robject{EL}
+(elevation in thousands of m), \Robject{Dec} (distance from Ecuador in km) and \Robject{DNI}
+(distance to the nearest `island' in km).  Begin by constructing a
+scatterplot matrix of the data differentiating the islands on each panel by
+a different plotting symbol and on each diagonal panel showing the histogram
+of the associated variable.  What can you conclude from this plot about how
+N is related to the other four variables?
+
+<<DAGD-birds-tab, echo = FALSE, results = tex>>= 
+data("birds", package = "HSAUR3")
+toLatex(HSAURtable(birds), 
+  caption = paste("Birds in paramo vegetation."), label = "DAGD-birds-tab",
+  rownames = TRUE)
+@       
+
+\end{description}
+
+\bibliographystyle{LaTeXBibTeX/refstyle}
+\bibliography{LaTeXBibTeX/HSAUR}
+\end{document}
+

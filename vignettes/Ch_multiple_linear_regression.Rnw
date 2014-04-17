@@ -1,0 +1,671 @@
+
+
+
+\documentclass{chapman}
+
+%%% copy Sweave.sty definitions
+
+%%% keeps `sweave' from adding `\usepackage{Sweave}': DO NOT REMOVE
+%\usepackage{Sweave} 
+
+
+\RequirePackage[T1]{fontenc}
+\RequirePackage{graphicx,ae,fancyvrb}
+\IfFileExists{upquote.sty}{\RequirePackage{upquote}}{}
+\usepackage{relsize}
+
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{fontfamily=courier,
+                                              fontshape=it,
+                                              fontsize=\relsize{-1}}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{}
+\newenvironment{Schunk}{}{}
+
+%%% environment for raw output
+\newcommand{\SchunkRaw}{\renewenvironment{Schunk}{}{}
+    \DefineVerbatimEnvironment{Soutput}{Verbatim}{fontfamily=courier,
+                                                  fontshape=it,
+                                                  fontsize=\small}
+    \rawSinput
+}
+
+%%% environment for labeled output
+\newcommand{\nextcaption}{}
+\newcommand{\SchunkLabel}{
+  \renewenvironment{Schunk}{\begin{figure}[ht] }{\caption{\nextcaption}
+  \end{figure} }
+  \DefineVerbatimEnvironment{Sinput}{Verbatim}{frame = topline}
+  \DefineVerbatimEnvironment{Soutput}{Verbatim}{frame = bottomline, 
+                                                samepage = true,
+                                                fontfamily=courier,
+                                                fontshape=it,
+                                                fontsize=\relsize{-1}}
+}
+
+
+%%% S code with line numbers
+\DefineVerbatimEnvironment{Sinput}
+{Verbatim}
+{
+%%  numbers=left
+}
+
+\newcommand{\numberSinput}{
+    \DefineVerbatimEnvironment{Sinput}{Verbatim}{numbers=left}
+}
+\newcommand{\rawSinput}{
+    \DefineVerbatimEnvironment{Sinput}{Verbatim}{}
+}
+
+
+%%% R / System symbols
+\newcommand{\R}{\textsf{R}}
+\newcommand{\rR}{{R}}
+\renewcommand{\S}{\textsf{S}}
+\newcommand{\SPLUS}{\textsf{S-PLUS}}
+\newcommand{\rSPLUS}{{S-PLUS}}
+\newcommand{\SPSS}{\textsf{SPSS}}
+\newcommand{\EXCEL}{\textsf{Excel}}
+\newcommand{\ACCESS}{\textsf{Access}}
+\newcommand{\SQL}{\textsf{SQL}}
+%%\newcommand{\Rpackage}[1]{\hbox{\rm\textit{#1}}}
+%%\newcommand{\Robject}[1]{\hbox{\rm\texttt{#1}}}
+%%\newcommand{\Rclass}[1]{\hbox{\rm\textit{#1}}}
+%%\newcommand{\Rcmd}[1]{\hbox{\rm\texttt{#1}}}
+\newcommand{\Rpackage}[1]{\index{#1 package@{\fontseries{b}\selectfont #1} package} {\fontseries{b}\selectfont #1}}
+\newcommand{\rpackage}[1]{{\fontseries{b}\selectfont #1}}
+\newcommand{\Robject}[1]{\texttt{#1}}
+\newcommand{\Rclass}[1]{\index{#1 class@\textit{#1} class}\textit{#1}}
+\newcommand{\Rcmd}[1]{\index{#1 function@\texttt{#1} function}\texttt{#1}}
+\newcommand{\Roperator}[1]{\texttt{#1}}
+\newcommand{\Rarg}[1]{\texttt{#1}}
+\newcommand{\Rlevel}[1]{\texttt{#1}}
+
+
+%%% other symbols
+\newcommand{\file}[1]{\hbox{\rm\texttt{#1}}}
+%%\newcommand{\stress}[1]{\index{#1}\textit{#1}} 
+\newcommand{\stress}[1]{\textit{#1}} 
+\newcommand{\booktitle}[1]{\textit{#1}} %%'
+
+%%% Math symbols
+\usepackage{amstext}
+\usepackage{amsmath}
+\newcommand{\E}{\mathsf{E}}   
+\newcommand{\Var}{\mathsf{Var}}   
+\newcommand{\Cov}{\mathsf{Cov}}   
+\newcommand{\Cor}{\mathsf{Cor}}   
+\newcommand{\x}{\mathbf{x}}   
+\newcommand{\y}{\mathbf{y}}   
+\renewcommand{\a}{\mathbf{a}}
+\newcommand{\W}{\mathbf{W}}   
+\newcommand{\C}{\mathbf{C}}   
+\renewcommand{\H}{\mathbf{H}}   
+\newcommand{\X}{\mathbf{X}}   
+\newcommand{\B}{\mathbf{B}}   
+\newcommand{\V}{\mathbf{V}}   
+\newcommand{\I}{\mathbf{I}}   
+\newcommand{\D}{\mathbf{D}}   
+\newcommand{\bS}{\mathbf{S}}   
+\newcommand{\N}{\mathcal{N}}   
+\renewcommand{\L}{L}   
+\renewcommand{\P}{\mathsf{P}}   
+\newcommand{\K}{\mathbf{K}}
+\newcommand{\m}{\mathbf{m}}
+\newcommand{\argmin}{\operatorname{argmin}\displaylimits}
+\newcommand{\argmax}{\operatorname{argmax}\displaylimits}
+
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\bbeta}{\mathbf{\beta}}
+
+
+%%% links
+\usepackage{hyperref}
+
+\hypersetup{%
+  pdftitle = {A Handbook of Statistical Analyses Using R (3rd Edition)},
+  pdfsubject = {Book},
+  pdfauthor = {Torsten Hothorn and Brian S. Everitt},
+  colorlinks = {black},
+  linkcolor = {black},
+  citecolor = {black},
+  urlcolor = {black},
+  hyperindex = {true},
+  linktocpage = {true},
+}
+
+
+%%% captions & tables
+%% <FIXME>: conflics with figure definition in chapman.cls
+%%\usepackage[format=hang,margin=10pt,labelfont=bf]{caption}
+%% </FIMXE>
+\usepackage{longtable}
+\usepackage[figuresright]{rotating}
+
+%%% R symbol in chapter 1
+\usepackage{wrapfig}
+
+%%% Bibliography
+\usepackage[round,comma]{natbib}
+\renewcommand{\refname}{References \addcontentsline{toc}{chapter}{References}}
+\citeindexfalse
+
+%%% texi2dvi complains that \newblock is undefined, hm...
+\def\newblock{\hskip .11em plus .33em minus .07em}
+
+%%% Example sections
+\newcounter{exercise}[chapter]
+\setcounter{exercise}{0}
+\newcommand{\exercise}{\stepcounter{exercise} \item{Ex.~\arabic{chapter}.\arabic{exercise} }}
+
+
+%% URLs
+\newcommand{\curl}[1]{\begin{center} \url{#1} \end{center}}
+
+%%% for manual corrections
+%\renewcommand{\baselinestretch}{2}
+
+%%% plot sizes
+\setkeys{Gin}{width=0.95\textwidth}
+
+%%% color
+\usepackage{color}
+
+%%% hyphenations
+\hyphenation{drop-out}
+\hyphenation{mar-gi-nal}
+
+%%% new bidirectional quotes need 
+\usepackage[utf8]{inputenc}
+
+%\usepackage{setspace}
+\definecolor{sidebox_todo}{rgb}{1,1,0.2}
+\newcommand{\todo}[1]{
+        \hspace{0pt}%
+        \marginpar{% 
+                        \fcolorbox{black}{sidebox_todo}{%
+                                \parbox{\marginparwidth} {
+
+\raggedright\sffamily\footnotesize{TODO: #1}%
+                                }
+                        }%
+        }
+}
+\begin{document}
+
+%% Title page
+
+\title{A Handbook of Statistical Analyses Using \R{} --- 3rd Edition}
+
+\author{Torsten Hothorn and Brian S. Everitt}
+
+\maketitle
+%%\VignetteIndexEntry{Multiple Linear Regression}
+%%\VignetteDepends{wordcloud}
+\setcounter{chapter}{5}
+
+
+\SweaveOpts{prefix.string=figures/HSAUR,eps=FALSE,keep.source=TRUE} 
+
+<<setup, echo = FALSE, results = hide>>=
+rm(list = ls())
+s <- search()[-1]
+s <- s[-match(c("package:base", "package:stats", "package:graphics", "package:grDevices",
+                "package:utils", "package:datasets", "package:methods", "Autoloads"), s)]
+if (length(s) > 0) sapply(s, detach, character.only = TRUE)
+if (!file.exists("tables")) dir.create("tables")
+if (!file.exists("figures")) dir.create("figures")
+set.seed(290875)
+options(prompt = "R> ", continue = "+  ",
+    width = 63, # digits = 4, 
+    show.signif.stars = FALSE,
+    SweaveHooks = list(leftpar = function() 
+        par(mai = par("mai") * c(1, 1.05, 1, 1)),
+        bigleftpar = function()
+        par(mai = par("mai") * c(1, 1.7, 1, 1))))
+HSAURpkg <- require("HSAUR3")
+if (!HSAURpkg) stop("cannot load package ", sQuote("HSAUR2"))
+rm(HSAURpkg)
+ ### </FIXME> hm, R-2.4.0 --vanilla seems to need this
+a <- Sys.setlocale("LC_ALL", "C")
+ ### </FIXME>
+book <- TRUE
+refs <- cbind(c("AItR", "DAGD", "SI", "CI", "ANOVA", "MLR", "GLM", 
+                "DE", "RP", "GAM", "SA", "ALDI", "ALDII", "SIMC", "MA", "PCA", 
+                "MDS", "CA"), 1:18)
+ch <- function(x) {
+    ch <- refs[which(refs[,1] == x),]
+    if (book) {
+        return(paste("Chapter~\\\\ref{", ch[1], "}", sep = ""))
+    } else {
+        return(paste("Chapter~", ch[2], sep = ""))
+    }
+}
+if (file.exists("deparse.R"))
+    source("deparse.R")
+
+setHook(packageEvent("lattice", "attach"), function(...) {
+    lattice.options(default.theme = 
+        function()
+            standard.theme("pdf", color = FALSE))
+    })
+@
+
+\pagestyle{headings}
+<<singlebook, echo = FALSE>>=
+book <- FALSE
+@
+
+<<MLR-setup, echo = FALSE, results = hide>>=
+library("wordcloud")
+@
+
+\chapter[Simple and Multiple Linear Regression]{Simple and Multiple Linear Regression: \\ How Old is the Universe and Cloud Seeding \label{MLR}}
+
+\section{Introduction}
+
+
+\index{Age of the Universe}
+\cite{HSAUR:Freedmanetal2001} give the relative velocity and the distance of $24$ galaxies, 
+according to measurements made using the Hubble Space Telescope -- the data
+are contained in the \Rpackage{gamair} package accompanying \cite{HSAUR:Wood2006}, see 
+Table~\ref{MLR-hubble-tab}. 
+Velocities are assessed by measuring the Doppler red shift in the spectrum of 
+light observed from the galaxies concerned, although some correction 
+for `local' velocity components is required. Distances are measured 
+using the known relationship between the period of Cepheid variable 
+stars and their luminosity. How can these data be used to estimate 
+the age of the universe? Here we shall show how this can be done 
+using simple linear regression.
+
+<<MLR-hubble-tab, echo = FALSE, results = tex>>=
+data("hubble", package = "gamair")
+names(hubble) <- c("galaxy", "velocity", "distance")
+toLatex(HSAURtable(hubble, package = "gamair"), pcol = 2,
+    caption = paste("Distance and velocity for 24 galaxies."),
+    label = "MLR-hubble-tab")
+@
+\vspace*{-1cm}
+\textit{Source}: From Freedman W. L., et al., \textit{The Astrophysical Journal},
+553, 47--72, 2001. With permission.
+\vspace*{1cm}
+
+\index{Cloud seeding}
+
+{\tabcolsep3.5pt
+<<MLR-clouds-tab, echo = FALSE, results = tex>>=
+data("clouds", package = "HSAUR3")
+names(clouds) <- c("seeding", "time", "sne", "cloudc", "prewet", "EM", "rain")
+toLatex(HSAURtable(clouds), pcol = 1, 
+    caption = paste("Cloud seeding experiments in Florida -- see text for",
+                    "explanations of the variables. Note that the \\Robject{clouds} data set has slightly different variable names."),
+    label = "MLR-clouds-tab")
+@
+}
+
+
+Weather modification, or cloud seeding, is the treatment of individual 
+clouds or storm systems with various inorganic and organic materials 
+in the hope of achieving an increase in rainfall. Introduction 
+of such material into a cloud that contains supercooled water, 
+that is, liquid water colder than zero degrees Celsius, 
+has the aim of 
+inducing freezing, with the consequent ice particles growing 
+at the expense of liquid droplets and becoming heavy enough to 
+fall as rain from clouds that otherwise would produce none.
+
+The data shown in Table~\ref{MLR-clouds-tab} were collected in the summer 
+of 1975 from an experiment to investigate the use of massive 
+amounts of silver iodide ($100$ to $1000$ grams per cloud) in cloud 
+seeding to increase rainfall \citep{HSAUR:Woodleyetal1977}. 
+In the experiment, which was conducted 
+in an area of Florida, 24 days were judged suitable for seeding 
+on the basis that a measured suitability criterion, denoted \stress{S-Ne},  
+was not less than $1.5$. Here \stress{S} is the `seedability', %' 
+the difference between the maximum height of a cloud if seeded 
+and the same cloud if not seeded predicted by a suitable cloud 
+model, and \stress{Ne} is the number of hours between $1300$ 
+and $1600$ G.M.T. with $10$ centimeter echoes in the target; this 
+quantity biases the decision for experimentation against naturally 
+rainy days. Consequently, optimal days for seeding are those 
+on which seedability is large and the natural rainfall early 
+in the day is small.
+
+On suitable days, a decision was taken at random as to whether 
+to seed or not. For each day the following variables were measured:
+\begin{description}
+\item[\Robject{seeding}] a factor indicating whether seeding action occurred (yes or no),
+\item[\Robject{time}] number of days after the first day of the experiment,
+\item[\Robject{cloudc}] the percentage cloud cover in the experimental area, 
+                  measured using radar,
+\item[\Robject{prewet}] the total rainfall in the target area one hour before seeding 
+                  (in cubic meters $\times 10^{7}$), 
+\item[\Robject{EM}] a factor showing whether the radar echo was moving or
+                             stationary,
+\item[\Robject{rain}] the amount of rain in cubic meters $\times 10^{7}$,
+\item[\Robject{sne}] suitability criterion, see above.
+\end{description}
+
+The objective in analyzing these data is to see how rainfall 
+is related to the explanatory variables and, in particular, to 
+determine the effectiveness of seeding. The method to be used 
+is \stress{multiple linear regression}.
+
+
+\section{Simple Linear Regression}
+
+
+\section{Multiple Linear Regression \label{MLR-MLR}}
+
+
+
+\subsection{Regression Diagnostics}
+
+
+
+\section{Analysis Using \R{}}
+
+\subsection{Estimating the Age of the Universe}
+
+Prior to applying a simple regression to the data it will 
+be useful to look at a plot to assess their major features.
+The \R{} code given in Figure~\ref{MLR-hubble-plot} produces
+a scatterplot of velocity and distance.
+\begin{figure}
+\begin{center}
+<<MLR-hubble-plot, echo = TRUE, fig = TRUE>>=
+plot(velocity ~ distance, data = hubble)
+@
+\caption{Scatterplot of velocity and distance. \label{MLR-hubble-plot}}
+\end{center}
+\end{figure}
+The diagram shows a clear, strong relationship between velocity
+and distance. The next step is to fit a simple linear regression model
+to the data, but in this case the nature of the data requires a model
+without intercept because if distance is zero so is relative speed.
+So the model to be fitted to these data is 
+\begin{eqnarray*}
+\text{velocity} = \beta_1 \text{distance} + \varepsilon.
+\end{eqnarray*}
+This is essentially what astronomers call Hubble's Law and
+$\beta_1$ is known as Hubble's constant; $\beta_1^{-1}$ gives
+an approximate age of the universe.
+
+To fit this model we are estimating $\beta_1$ using formula 
+(\ref{MLR:beta1}). Although this
+operation is rather easy
+<<MLR-hubble-beta1, echo = TRUE>>=
+sum(hubble$distance * hubble$velocity) / 
+    sum(hubble$distance^2)
+@
+it is more convenient to apply \R's linear modeling function
+<<MLR-hubble-lm, echo = TRUE>>=
+hmod <- lm(velocity ~ distance - 1, data = hubble)
+@
+Note that the model formula specifies a model without intercept.
+We can now extract the estimated model coefficients via
+<<MLR-hubble-lm, echo = TRUE>>=
+coef(hmod)
+@
+and add this estimated regression line to the scatterplot; the
+result is shown in Figure~\ref{MLR-hubble-lmplot}. In addition,
+we produce a scatterplot of the residuals $y_i - \hat{y}_i$ against
+fitted values $\hat{y}_i$ to assess the quality of the model fit.
+It seems that for higher distance values the variance of velocity
+increases; however, we are interested in only the estimated
+parameter $\hat{\beta}_1$ which remains valid under variance 
+heterogeneity (in contrast to $t$-tests and associated $p$-values).
+
+
+Now we can use the estimated value of $\beta_1$ to find an approximate value 
+for the age of the universe. The Hubble constant itself has units of 
+$\text{km} \times \text{sec}^{-1} \times \text{Mpc}^{-1}$. A mega-parsec (Mpc) 
+is $3.09 \times 10^{19}$km, so we need to divide the estimated value of $\beta_1$ 
+by this amount in order to obtain Hubble's constant with units of $\text{sec}^{-1}$. 
+The approximate age of the universe in seconds will then be the inverse of 
+this calculation. Carrying out the necessary computations
+<<MLR-hubble-age, echo = TRUE>>=
+Mpc <- 3.09 * 10^19
+ysec <- 60^2 * 24 * 365.25
+Mpcyear <- Mpc / ysec
+1 / (coef(hmod) / Mpcyear)
+@
+gives an estimated age of roughly $12.8$ billion years.
+
+\begin{figure}
+\begin{center}
+<<MLR-hubble-lmplot, echo = TRUE, fig = TRUE, height = 4>>=
+layout(matrix(1:2, ncol = 2))
+plot(velocity ~ distance, data = hubble)
+abline(hmod)
+plot(hmod, which = 1)
+@
+\caption{Scatterplot of velocity and distance with estimated
+         regression line (left) and plot of residuals against fitted values (right). 
+         \label{MLR-hubble-lmplot}}
+\end{center}
+\end{figure}
+
+
+\subsection{Cloud Seeding}
+
+
+Again, a graphical display highlighting the most important
+aspects of the data will be helpful.
+Here we will construct boxplots of the rainfall in each category 
+of the dichotomous explanatory variables and scatterplots of 
+rainfall against each of the continuous explanatory variables.
+
+\begin{figure}
+\begin{center}
+<<MLR-clouds-boxplots, echo = TRUE, eval = FALSE>>=
+data("clouds", package = "HSAUR3")
+layout(matrix(1:2, nrow = 2))
+bxpseeding <- boxplot(rain ~ seeding, data = clouds, 
+    ylab = "Rainfall", xlab = "Seeding")
+bxpecho <- boxplot(rain ~ EM, data = clouds, 
+    ylab = "Rainfall", xlab = "Echo Motion")
+@
+<<MLR-clouds-boxplots, echo = FALSE, fig = TRUE, height = 7, width = 5>>=
+layout(matrix(1:2, nrow = 2))
+bxpseeding <- boxplot(rain ~ seeding, data = clouds, 
+    ylab = "Rainfall", xlab = "Seeding")
+bxpecho <- boxplot(rain ~ EM, data = clouds, 
+    ylab = "Rainfall", xlab = "Echo Motion")
+@
+\caption{Boxplots of \Robject{rain}. \label{MLR-rainfall-boxplot}}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+<<MLR-clouds-scatterplots, echo = TRUE, fig = TRUE, width = 7, height = 7>>=
+layout(matrix(1:4, nrow = 2))
+plot(rain ~ time, data = clouds)
+plot(rain ~ cloudc, data = clouds)
+plot(rain ~ sne, data = clouds, xlab="S-Ne criterion")
+plot(rain ~ prewet, data = clouds)
+@
+\caption{Scatterplots of \Robject{rain} against the continuous
+covariates. \label{MLR-rainfall-scplot}}
+\end{center}
+\end{figure}
+
+Both the boxplots (Figure~\ref{MLR-rainfall-boxplot}) and the scatterplots 
+(Figure~\ref{MLR-rainfall-scplot}) show some evidence 
+of outliers. The row names of the extreme observations in the
+\Robject{clouds} \Rclass{data.frame} can be identified via
+<<MLR-clouds-outliers, echo = TRUE>>=
+rownames(clouds)[clouds$rain %in% c(bxpseeding$out, 
+                                    bxpecho$out)]
+@
+where \Robject{bxpseeding} and \Robject{bxpecho} are variables 
+created by \Rcmd{boxplot} in Figure~\ref{MLR-rainfall-boxplot}.
+Now we shall not remove these observations but bear 
+in mind during the modeling process that they may cause problems.
+
+In this example it is sensible to assume that the effect of
+some of the other explanatory variables is modified by seeding 
+and therefore consider a model that includes seeding as
+covariate and, furthermore, allows interaction terms 
+\index{Interaction}
+for \Robject{seeding} with each of the covariates except \Robject{time}.
+This model can be described by the \Rclass{formula}
+<<MLR-clouds-formula, echo = TRUE>>=
+clouds_formula <- rain ~ seeding + 
+    seeding:(sne + cloudc + prewet + EM) + 
+    time
+@
+and the design matrix $\X^\star$ can be computed via
+<<MLR-clouds-modelmatrix, echo = TRUE>>=
+Xstar <- model.matrix(clouds_formula, data = clouds)
+@
+By default, treatment contrasts have been applied to the dummy codings of
+the factors \Robject{seeding} and \Robject{EM} as can be seen from
+the inspection of the \Robject{contrasts} attribute of the model matrix
+<<MLR-clouds-contrasts, echo = TRUE>>=
+attr(Xstar, "contrasts")
+@
+The default contrasts can be changed via the \Rarg{contrasts.arg}
+argument to \Rcmd{model.matrix} or the \Robject{contrasts} argument to the
+fitting function, for example \Rcmd{lm} or \Rcmd{aov} as shown in 
+\Sexpr{ch("ANOVA")}.
+
+However, such internals are hidden and performed by high-level model-fitting
+functions such as \Rcmd{lm} which will be used to fit the linear model
+defined by the \Rclass{formula} \Robject{clouds\_formula}:
+<<MLR-clouds-lm, echo = TRUE>>=
+clouds_lm <- lm(clouds_formula, data = clouds)
+class(clouds_lm)
+@
+The result of the model fitting is an object of class \Rclass{lm} for which
+a \Rcmd{summary} method showing the conventional regression analysis
+output is available. The output in Figure~\ref{MLR-clouds-summary}
+shows the estimates $\hat{\beta}^\star$ with corresponding standard errors
+and $t$-statistics as well as the $F$-statistic with associated $p$-value.
+
+\renewcommand{\nextcaption}{\R{} output of the linear model fit  
+                            for the \Robject{clouds} data.
+                            \label{MLR-clouds-summary}}
+\SchunkLabel
+<<MLR-clouds-summary, echo = TRUE>>=
+summary(clouds_lm)
+@
+\SchunkRaw
+
+Many methods are available for extracting components of the fitted model.
+The estimates $\hat{\beta}^\star$ can be assessed via
+
+\newpage
+
+<<MLR-clouds-coef, echo = TRUE>>=
+betastar <- coef(clouds_lm)
+betastar
+@
+and the corresponding covariance matrix $\Cov(\hat{\beta}^\star)$ is available
+from the \Rcmd{vcov} method
+<<MLR-clouds-vcov, echo = TRUE>>=
+Vbetastar <- vcov(clouds_lm)
+@
+where the square roots of the diagonal elements are the standard errors as
+shown in Figure~\ref{MLR-clouds-summary}
+<<MLR-clouds-sd, echo = TRUE>>=
+sqrt(diag(Vbetastar))
+@
+
+
+\begin{figure}
+\begin{center}
+<<MLR-clouds-lmplot, echo = TRUE, fig = TRUE>>=
+psymb <- as.numeric(clouds$seeding)
+plot(rain ~ sne, data = clouds, pch = psymb, 
+     xlab = "S-Ne criterion")
+abline(lm(rain ~ sne, data = clouds, 
+          subset = seeding == "no"))
+abline(lm(rain ~ sne, data = clouds, 
+          subset = seeding == "yes"), lty = 2)  
+legend("topright", legend = c("No seeding", "Seeding"), 
+       pch = 1:2, lty = 1:2, bty = "n")
+@
+\caption{Regression relationship between S-Ne criterion and rainfall with
+and without seeding. \label{MLR-clouds-lmplot}}
+\end{center}
+\end{figure}
+
+
+
+In order to investigate the quality of the model fit, we need access to the
+residuals and the fitted values. The residuals can be found by the 
+\Rcmd{residuals} method and the fitted values of the response 
+from the \Rcmd{fitted} (or \Rcmd{predict}) method
+<<MLR-clouds-residfitted, echo = TRUE>>=
+clouds_resid <- residuals(clouds_lm)
+clouds_fitted <- fitted(clouds_lm)
+@
+Now the residuals and the fitted values 
+can be used to construct diagnostic plots; for example the residual
+plot in Figure~\ref{MLR-resid} where each observation is labelled by its
+number (using \Rcmd{textplot} from package \Rpackage{wordclouds}). 
+Observations $1$ and $15$ give rather large residual values and the
+data should perhaps be reanalysed after these two observations are removed.
+The normal probability plot of the residuals shown in Figure~\ref{MLR-qqplot} 
+shows a reasonable agreement between theoretical and sample
+quantiles, however, observations $1$ and $15$ are extreme again.
+
+\begin{figure}
+\begin{center}
+<<MLR-clouds-residplot, echo = TRUE, fig = TRUE>>=
+plot(clouds_fitted, clouds_resid, xlab = "Fitted values", 
+     ylab = "Residuals", type = "n", 
+     ylim = max(abs(clouds_resid)) * c(-1, 1))
+abline(h = 0, lty = 2)
+textplot(clouds_fitted, clouds_resid, 
+         words = rownames(clouds), new = FALSE)
+@
+\caption{Plot of residuals against fitted values for \Robject{clouds} seeding data.
+\label{MLR-resid}}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+<<MLR-clouds-qqplot, echo = TRUE, fig = TRUE>>=
+qqnorm(clouds_resid, ylab = "Residuals")
+qqline(clouds_resid)
+@
+\caption{Normal probability plot of residuals from cloud seeding model
+         \Robject{clouds\_lm}. \label{MLR-qqplot}}
+\end{center}
+\end{figure}
+
+
+An index plot of the Cook's distances for each observation %'
+(and many other plots including those constructed above from
+using the basic functions) can be found from applying the \Rcmd{plot} method 
+to the object that results from the application
+of the \Rcmd{lm} function. 
+\begin{figure}
+\begin{center}
+<<MLR-clouds-cook, echo = TRUE, eval = FALSE>>=
+plot(clouds_lm)
+@
+<<MLR-clouds-cook, echo = FALSE, fig = TRUE>>=
+plot(clouds_lm, which = 4, sub.caption = NULL)
+@
+\caption{Index plot of Cook's distances for cloud seeding data. %'
+         \label{MLR-cook}}
+\end{center}
+\end{figure}
+Figure~\ref{MLR-cook} suggests that observations 2 and 18 have undue
+influence on the 
+estimated regression coefficients, but the two outliers identified
+previously do not. Again it may be useful to look at the results
+after these two observations have been removed (see Exercise
+6.2).
+%% \ref{MLR-ex2})
+\index{Regression diagnostics|)}
+
+%%\bibliographystyle{LaTeXBibTeX/refstyle}
+%%\bibliography{LaTeXBibTeX/HSAUR}   
+\end{document}
+

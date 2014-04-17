@@ -1,0 +1,484 @@
+
+\input{HSAUR_title}
+
+\SweaveOpts{prefix.string=figures/HSAUR,eps=FALSE,keep.source=TRUE}
+
+<<setup, echo = FALSE, results = hide>>=
+source("setup.R")
+@
+
+
+\frame{
+\begin{center}
+\Large{Part 3: Simple Inference}
+\end{center}
+
+focuses on classical statistical test procedures for the
+Guessing Lengths, Wave Energy, Water Hardness, Piston Rings,
+                           and Rearrests of Juveniles examples.
+
+}
+
+
+\section{Introduction}
+
+<<SI-setup, echo = FALSE, results = hide>>=
+library("vcd")
+@
+
+\begin{frame}
+  \frametitle{roomwidth: Estimating Room Widths}
+
+Shortly after metric units of length were officially introduced
+in Australia in the 1970s, each of a group of 44 students was asked to guess,
+to the nearest metre, the width of the lecture hall in which
+they were sitting. Another group of 69 students in the same room
+was asked to guess the width in feet, to the nearest foot. 
+The main question is whether estimation in feet and in metres gives different
+results.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{waves: Bending Stress}
+
+In a design study for a device to generate electricity from
+wave power at sea, experiments were carried out on scale models
+in a wave tank to establish how the choice of mooring method
+for the system affected the bending stress produced in part of
+the device. The wave tank could simulate a wide range of sea
+states and the model system was subjected to the same sample
+of sea states with each of two mooring methods, one of which
+was considerably cheaper than the other. 
+The question of interest is whether bending stress differs
+for the two mooring methods.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{water: Mortality and Water Hardness}
+
+The data were collected in an investigation
+of environmental causes of disease. They show the annual mortality
+per 100,000 for males, averaged over the years 1958--1964, and
+the calcium concentration (in parts per million) in the drinking
+water for 61 large towns in England and Wales. The higher the
+calcium concentration, the harder the water. Towns at least
+as far north as Derby are identified in the table. Here there
+are several questions that might be of interest including: are
+mortality and water hardness related, and do either or both variables
+differ between northern and southern towns?
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{pistonrings: Piston-ring Failures}
+
+The two-way contingency table shows the number of
+piston-ring failures in each of three legs of four steam-driven compressors
+located in the same building.
+The compressors have identical design and are
+oriented in the same way. The question of interest is whether the two
+categorical variables (compressor and leg) are independent.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{rearrests: Rearrests of Juveniles}
+
+The data arise from a
+sample of juveniles convicted of felony in Florida in 1987.
+Matched
+pairs were formed using criteria such as age and the number of
+previous offences. For each pair, one subject was handled in
+the juvenile court and the other was transferred to the adult
+court. Whether or not the juvenile was rearrested by the end
+of 1988 was then noted. Here the question of interest is whether
+the true proportions rearrested were identical for the adult
+and juvenile court assignments?
+
+\end{frame}
+
+\section{Statistical Tests}
+
+\begin{frame}
+  \frametitle{Statistical Tests}
+
+Inference is the process of 
+\begin{itemize}
+\item drawing conclusions about a population
+\item on the basis of measurements or observations 
+\item made on a random (!) sample of individuals from the population.
+\end{itemize}
+In the following, we shall illustrate the application of the 
+most common statistical tests to the examples shown before.
+
+\end{frame}
+
+\subsection{Comparing Normal Populations: Student's $t$-Tests} %'
+
+\begin{frame}
+  \frametitle{Comparing Normal Populations}
+
+The independent samples $t$-test is used to test the null hypothesis
+that the means of two populations are the same: $H_0: \mu_1 = \mu_2$.
+
+The variable to be compared is assumed to have a normal
+distribution with the same standard deviation in both populations. 
+
+Test statistic:
+\begin{eqnarray*}
+t = \frac{\bar{y}_1 - \bar{y}_2}{s \sqrt{1 / n_1 + 1 / n_2}} \sim t_{n_1 + n_2 - 2}
+\end{eqnarray*}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Unequal Variances}
+
+If the two populations are suspected of having different variances (boxes in boxplots
+differ significantly), a
+modified form of the $t$ statistic, known as the Welch test, may be used:
+\begin{eqnarray*}
+t = \frac{\bar{y}_1 - \bar{y}_2}{\sqrt{s_1^2 / n_1 + s_2^2 / n_2}} \sim t_\nu.
+\end{eqnarray*}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Paired Observations}
+
+A paired $t$-test is used to compare the means of two populations
+when samples from the populations are available, in which each
+individual in one sample is paired with an individual in the
+other sample or each individual in the sample is observed twice.
+
+If the values of the variable of interest, $y$,
+for the members of the $i$th pair in groups $1$ and $2$ are denoted
+as $y_{1i}$ and $y_{2i}$, then the differences $d_i = y_{1i} - y_{2i}$ are
+assumed to have a normal distribution with mean $\mu$ and the null
+hypothesis here is that the mean difference is zero, i.e., $H_0: \mu = 0$.
+
+The paired $t$-statistic is
+\begin{eqnarray*}
+t = \frac{\bar{d}}{s / \sqrt{n}} \sim t_{n-1}.
+\end{eqnarray*}
+
+\end{frame}
+
+\subsection{Non-parametric Analogues of Independent Samples and Paired
+            $t$-Tests}
+
+\begin{frame}
+  \frametitle{Wilcoxon-Mann-Whitney Test}
+
+For two independent groups, the Wilcoxon Mann-Whitney
+rank sum test applies the $t$-statistic to the joint ranks of all
+measurements in both groups instead of the original measurements. The null
+hypothesis to be tested is that the two populations
+being compared have identical distributions. 
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Wilcoxon-Signed-Rank Test}
+
+The Wilcoxon
+signed-rank statistic is based on the ranks of the absolute differences $|d_i|$. The
+statistic is defined as the sum of the ranks associated with positive
+difference $d_i > 0$. 
+
+It should be noted that this test is only valid when the differences $d_i$ are
+symmetrically distributed.
+
+\end{frame}
+
+\subsection{Testing Independence in Contingency Tables}
+
+\begin{frame}
+  \frametitle{Contingency Tables}
+
+When a sample of $n$ observations in two nominal (categorical) variables are
+available, they can be arranged into a cross-classification
+\input{tables/SI_rtimesc}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{$\chi^2$-Test}
+
+Under the null hypothesis of independence of the row variable $x$ and the
+column variable $y$, estimated expected
+values $E_{jk}$ for cell $(j, k)$ can be computed from the corresponding
+margin totals $E_{jk} = n_{j\cdot} n_{\cdot k} / n$. The test statistic
+is 
+\begin{eqnarray*}
+X^2 = \sum_{j = 1}^r \sum_{k = 1}^c \frac{(n_{jk} - E_{jk})^2}{E_{jk}} \sim \chi^2_{(r-1)(c-1)}
+\end{eqnarray*}
+
+\end{frame}
+
+\subsection{McNemar's Test} %'
+
+\begin{frame}
+  \frametitle{McNemar's Test}
+
+Often categorical
+data arise from \stress{paired} observations, for example,
+cases matched with controls on variables such as sex, age and
+so on, or observations made on the same subjects on two occasions:
+\input{tables/SI_mcnemar}
+Under the hypothesis that the two populations do not differ in their
+probability of having the characteristic present, the test statistic
+\begin{eqnarray*}
+X^2 = \frac{ (c - b)^2}{c + b} \sim \chi^2_1.
+\end{eqnarray*}
+
+\end{frame}
+
+\section{Analysis Using R}
+\subsection{Estimating the Width of a Room}
+
+\begin{frame}[fragile]
+  \frametitle{Estimating the Width of a Room}
+
+The first step should be to convert the metre estimates into feet:
+<<SI-roomwidth-convert, echo = TRUE>>=
+convert <- ifelse(roomwidth$unit == "feet", 1, 3.28)
+@
+Now, we get the usual summary statistics by
+<<SI-roomwidth-summary, echo = TRUE>>=
+tapply(roomwidth$width * convert, 
+    roomwidth$unit, summary)
+@
+
+\end{frame}
+
+\begin{frame}[fragile] 
+  \frametitle{Boxplots}
+\begin{center}
+<<SI-roomwidth-boxplot, echo = FALSE, fig = TRUE, height = 7>>=
+layout(matrix(c(1,2,1,3), nrow = 2, ncol = 2, byrow = FALSE))
+boxplot(I(width * convert) ~ unit, data = roomwidth,
+        ylab = "Estimated width (feet)",
+        var.width = TRUE, names = c("Estimates in feet",
+        "Estimates in metres (converted to feet)"))
+feet <- roomwidth$unit == "feet"
+qqnorm(roomwidth$width[feet], ylab = "Estimated width (feet)")
+qqline(roomwidth$width[feet])
+qqnorm(roomwidth$width[!feet], ylab = "Estimated width (metres)")
+qqline(roomwidth$width[!feet])
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile] 
+  \frametitle{Test for Differences}
+
+The two-sample test problem is specified by a \Rclass{formula} and the $t$-test reads
+<<SI-roomwidth-tt-T-hide, echo = TRUE>>=
+t.test(I(width * convert) ~ unit, data = roomwidth, 
+    var.equal = TRUE)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Test for Differences}
+
+The Welch-test can be computed via
+<<SI-roomwidth-tt-T, echo = TRUE>>=
+t.test(I(width * convert) ~ unit, data = roomwidth, 
+    var.equal = FALSE)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Test for Differences}
+
+The Wilcoxon Mann-Whitney test as one alternative test procedure:
+<<SI-roomwidth-wt, echo = TRUE>>=
+wilcox.test(I(width * convert) ~ unit, 
+    data = roomwidth, conf.int = TRUE)
+@
+
+\end{frame}
+
+\subsection{Wave Energy Device Mooring}
+
+\begin{frame}[fragile]
+  \frametitle{Wave Energy Device Mooring}
+
+The \Robject{waves} data set requires the use of a matched pairs
+$t$-test.
+This test assumes that the differences between the matched
+observations have a normal distribution so we can begin by checking
+this assumption by constructing a boxplot and a normal probability
+plot
+
+\end{frame}
+
+\begin{frame}
+
+\begin{center}
+<<SI-wavese-boxplot, echo = FALSE, fig = TRUE, height = 4>>=
+mooringdiff <- waves$method1 - waves$method2
+layout(matrix(1:2, ncol = 2))
+boxplot(mooringdiff, ylab = "Differences (Newton metres)", main = "Boxplot")
+abline(h = 0, lty = 2)
+qqnorm(mooringdiff, ylab = "Differences (Newton metres)")
+qqline(mooringdiff)
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Test for Zero Mean}
+
+The paired-$t$-test is performed via
+<<SI-waves-tt, echo = TRUE>>=
+t.test(mooringdiff)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Test for Zero Median}
+
+<<SI-waves-wt, echo = TRUE>>=
+wilcox.test(mooringdiff)
+@
+
+\end{frame}
+
+\subsection{Mortality and Water Hardness}
+
+\begin{frame}[fragile]
+  \frametitle{Mortality and Water Hardness}
+
+We will construct a scatterplot
+of the data enhanced somewhat by the addition of information
+about the marginal distributions of water hardness (calcium concentration)
+and mortality, and by adding the estimated linear regression
+fit for mortality on hardness.
+
+The scatterplot shows that as hardness increases mortality decreases, and the
+histogram for the water hardness shows it has a rather skewed distribution.
+
+\end{frame}
+
+\begin{frame}
+
+\begin{center}
+<<SI-water-plot, echo = FALSE, fig = TRUE>>=
+nf <- layout(matrix(c(2, 0, 1, 3), 2, 2, byrow = TRUE),
+             c(2, 1), c(1, 2), TRUE)
+psymb <- as.numeric(water$location)
+plot(mortality ~ hardness, data = water, pch = psymb)
+abline(lm(mortality ~ hardness, data = water))
+legend("topright", legend = levels(water$location), pch = c(1,2), bty = "n")
+hist(water$hardness)
+boxplot(water$mortality)
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Testing Correlation}   
+
+We can both calculate the Pearson's correlation coefficient %'
+between the two variables and test whether it differs significantly
+for zero by using
+<<SI-water-cor, echo = TRUE>>=
+cor.test(~ mortality + hardness, data = water)
+@
+
+\end{frame}
+
+\subsection{Piston-ring Failures}
+
+\begin{frame}[fragile]
+  \frametitle{Piston-ring Failures}   
+
+The first step in the analysis of the \Robject{pistonrings} data is
+to apply the chi-squared test for independence.
+This we can do
+in \R{} using
+<<SI-pistonrings-chisq, echo = TRUE>>=
+chisq.test(pistonrings)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Inspection Deviations}   
+
+Rather than looking
+at the simple differences of observed and expected values for
+each cell it
+is preferable to consider a \stress{standardised residual}:
+<<SI-pistonrings-resid, echo = TRUE>>=
+chisq.test(pistonrings)$residuals
+@
+
+\end{frame}
+
+\begin{frame}
+
+\begin{center}
+<<SI-assoc-plot, echo = FALSE, fig = TRUE>>=
+library("vcd")
+assoc(pistonrings)
+@
+\end{center}
+
+\end{frame}
+
+\subsection{Rearrests of Juveniles}
+
+\begin{frame}[fragile]
+  \frametitle{Rearrests of Juveniles}   
+
+In \Robject{rearrests} the counts in the four cells refer
+to the matched pairs of subjects; for example, in $\Sexpr{rearrests[1,1]}$
+pairs both
+members of the pair were rearrested. Here, we use McNemar's test:
+<<SI-arrests-mcnemar, echo = TRUE>>=
+mcnemar.test(rearrests, correct = FALSE)
+binom.test(rearrests[2], 
+    n = sum(rearrests[c(2,3)]))$p.value
+@
+
+\end{frame}
+
+\section*{Exercises}
+
+\begin{frame}[fragile]
+  \frametitle{Exercises} 
+
+\begin{itemize}
+\item
+After the students had made the estimates of the width of
+the lecture hall the room width was accurately
+measured and found to be $13.1$ metres ($43.0$ feet). Use this additional
+information to determine which of the two types of estimates
+was more precise.
+
+\item 
+For the mortality and water hardness data calculate the correlation
+between the two variables in each region, north and south.
+
+\item 
+For the data in table \Robject{rearrests} estimate the difference between
+the probability of being rearrested after being tried in an adult
+court and in a juvenile court, and find a $95\%$ confidence interval
+for the population difference.
+\end{itemize}
+
+\end{frame}
+
+\end{document}

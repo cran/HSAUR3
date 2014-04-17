@@ -1,0 +1,679 @@
+
+
+\input{HSAUR_title}
+
+\SweaveOpts{prefix.string=figures/HSAUR,eps=FALSE,keep.source=TRUE}
+
+<<setup, echo = FALSE, results = hide>>=
+source("setup.R")
+@
+
+\frame{
+\begin{center}
+\Large{Part 8: Density Estimation}
+\end{center}
+
+focuses on estimating uni- and multivariate densities.
+
+}
+
+
+<<DE-setup, echo = FALSE, results = hide>>=
+x <- library("KernSmooth")
+x <- library("flexmix")
+x <- library("boot")
+data("CYGOB1", package = "HSAUR3")
+@
+
+\section{Introduction}
+
+\begin{frame}
+  \frametitle{Erupting Geysers}
+
+Old Faithful is the most popular
+attraction of Yellowstone National Park, although it is not the
+largest or grandest geyser in the park. Old Faithful can vary
+in height from 100--180 feet with an average near 130--140 feet.
+Eruptions normally last between $1.5$ to $5$ minutes.
+From August 1 to August 15, 1985, Old Faithful
+was observed and the waiting times between successive eruptions
+noted. There were $300$ eruptions observed, so $299$ waiting times were
+(in minutes) recorded.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Star Clusters}
+
+
+The Hertzsprung-Russell (H-R) diagram forms the basis of
+the theory of stellar evolution. The diagram is essentially a
+plot of the energy output of stars plotted against their surface
+temperature. Data from the H-R diagram of Star Cluster CYG OB1,
+calibrated according to \cite{HSAUR:VanismaGreve1972} are given
+in \Robject{CYGOB1}.
+
+\end{frame}
+
+\section{Density Estimation}
+
+\begin{frame}
+  \frametitle{Density Estimation}
+
+The goal of density estimation is to approximate the probability
+density function of a random variable (univariate or multivariate)
+given a sample of observations of the variable. 
+
+Univariate histograms
+are a simple example of a density estimate; they are often used
+for two purposes, counting and displaying the distribution of
+a variable, but according to \cite{HSAUR:Wilkinson1992}, they are effective
+for neither. 
+
+For bivariate data, two-dimensional histograms can
+be constructed, but for small and moderate sized data
+sets that is not of any real use for estimating the bivariate
+density function, simply because most of the `boxes' in the histogram %'
+will contain too few observations, or if the number of boxes
+is reduced the resulting histogram will be too coarse a representation
+of the density function.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Density Estimation}
+
+If we are willing to assume a particular form for the variable's %'
+distribution, for example, Gaussian, density estimation would
+be reduced to estimating the parameters of the assumed distribution.
+More commonly, however, we wish to allow the data to speak for
+themselves and so one of a variety of non-parametric estimation
+procedures that are now available might be used. 
+
+One of the most popular class of procedures is the kernel density
+estimators, which we now briefly describe for univariate and
+bivariate data.
+
+\end{frame}
+
+\subsection{Kernel Density Estimators}
+
+\begin{frame}
+  \frametitle{Kernel Density Estimators}
+
+From the definition of a probability density, if the random $X$ has a
+density $f$,
+\begin{eqnarray*}
+f(x) = \lim_{h \rightarrow 0} \frac{1}{2h} \P(x - h < X < x + h).
+\end{eqnarray*}
+
+For any given $h$ a na{\"\i}ve estimator is 
+\begin{eqnarray*}
+\hat{f}(x) = \frac{1}{2hn} \sum_{i = 1}^n I(x_i \in (x - h, x + h)),
+\end{eqnarray*}
+i.e., the number of $x_1, \dots, x_n$ falling in the interval $(x - h, x +
+h)$ divided by $2hn$. 
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Kernel Density Estimators}
+
+
+If we introduce a weight function $W$ given by
+\begin{eqnarray*}
+W(x) = \left\{\begin{array}{lcl} \frac{1}{2} & & |x| < 1 \\\\ %end
+                                 0 & & \text{else} \end{array} \right .
+\end{eqnarray*}
+then the na{\"\i}ve estimator can be rewritten as %"
+\begin{eqnarray*}
+\hat{f}(x) = \frac{1}{n} \sum_{i = 1}^n \frac{1}{h} W\left(\frac{x -
+x_i}{h}\right).
+\end{eqnarray*}
+but is unfortunately not continuous function.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Kernel Density Estimators}
+
+Better:
+\begin{eqnarray*}
+\hat{f}(x) = \frac{1}{hn} \sum_{i = 1}^n K\left(\frac{x -
+x_i}{h}\right)
+\end{eqnarray*}
+where $K$ is known as the \stress{kernel function}
+and $h$ as the \stress{bandwidth} or \stress{smoothing parameter}.
+
+The kernel function must satisfy the condition
+\begin{eqnarray*}
+\int_{-\infty}^\infty K(x)dx = 1.
+\end{eqnarray*}
+Usually, but not always, the kernel function will be a symmetric
+density function for example, the normal.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Kernel Functions}
+
+\begin{description}
+\item[rectangular:]
+\begin{eqnarray*}
+K(x) = \left\{\begin{array}{lcl} \frac{1}{2} & & |x| < 1 \\\\ %end
+0 & & \text{else}
+\end{array} \right .
+\end{eqnarray*}
+\item[triangular:]
+\begin{eqnarray*}
+K(x) = \left\{\begin{array}{lcl} 1 - |x| & & |x| < 1 \\\\ %end
+0 & & \text{else}
+\end{array} \right .
+\end{eqnarray*}
+\item[Gaussian:]
+\begin{eqnarray*}
+K(x) = \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2}x^2}
+\end{eqnarray*}
+\end{description}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Kernel Functions}
+
+\begin{center}
+<<DE-kernel-figs, echo = FALSE, fig = TRUE>>=
+rec <- function(x) (abs(x) < 1) * 0.5
+tri <- function(x) (abs(x) < 1) * (1 - abs(x))
+gauss <- function(x) 1/sqrt(2*pi) * exp(-(x^2)/2)
+x <- seq(from = -3, to = 3, by = 0.001)
+plot(x, rec(x), type = "l", ylim = c(0,1), lty = 1,
+     ylab = expression(K(x)))
+lines(x, tri(x), lty = 2)
+lines(x, gauss(x), lty = 3)
+legend(-3, 0.8, legend = c("Rectangular", 
+       "Triangular", "Gaussian"), lty = 1:3, 
+       title = "kernel functions", bty = "n")
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Kernel Functions}
+
+The kernel estimator $\hat{f}$ is a sum of `bumps' placed at the observations. %'
+The kernel function determines the shape of the bumps while the
+window width $h$ determines their width.
+We look at 
+the individual bumps $n^{-1}h^{-1} K((x - x_i) / h)$, as well as the estimate $\hat{f}$
+obtained by adding them up for an artificial set of data points
+<<DE-x-bumps-data, echo = TRUE>>=
+x <- c(0, 1, 1.1, 1.5, 1.9, 2.8, 2.9, 3.5)
+n <- length(x)
+xgrid <- seq(from = min(x) - 1, to = max(x) + 1, 
+             by = 0.01)
+h <- 0.4
+bumps <- sapply(x, function(a) 
+                gauss((xgrid - a)/h)/(n * h))
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Kernel Functions}
+
+\small
+\begin{center}
+<<DE-x-bumps, echo = TRUE, fig = TRUE, leftpar = TRUE>>=
+plot(xgrid, rowSums(bumps),  type = "l", xlab = "x",
+     ylab = expression(hat(f)(x)), lwd = 2)
+rug(x, lwd = 2)
+out <- apply(bumps, 2, function(b) lines(xgrid, b))
+@
+\end{center}
+\normalsize
+
+\end{frame}
+
+\subsection{Bivariate Density Estimation}
+
+\begin{frame}
+  \frametitle{Bivariate Density Estimation}
+
+The kernel density estimator considered as a sum of `bumps'  %'
+centred at the observations has a simple extension to two dimensions
+(and similarly for more than two dimensions). The bivariate estimator
+for data $(x_1, y_1)$, $(x_2, y_2)$, $\dots$, $(x_n, y_n)$
+is defined as
+\begin{eqnarray*}
+\hat{f}(x, y) = \frac{1}{nh_xh_y} \sum_{i = 1}^n K\left(\frac{x - x_i}{h_x},
+\frac{y - y_i}{h_y}\right).
+\end{eqnarray*}
+In this estimator each coordinate direction has its own smoothing parameter
+$h_x$ and $h_y$. An alternative is to scale the data equally for both dimensions
+and use a single smoothing parameter.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Bivariate Kernels}
+
+\begin{description}
+\item[Bivariate Normal kernel:]
+\begin{eqnarray*}
+K(x, y) = \frac{1}{2 \pi}e^{-\frac{1}{2} (x^2 + y^2)}.
+\end{eqnarray*}
+\item[Bivariate Epanechnikov kernel:]
+\begin{eqnarray*}
+K(x, y) = \left\{\begin{array}{lcl}
+\frac{2}{\pi}(1 - x^2 - y^2) & & x^2 + y^2 < 1 \\\\ %end
+0 & & \text{else}
+\end{array} \right.
+\end{eqnarray*}
+\end{description}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Epanechnikov}
+
+\begin{center}
+<<DE-epakernel-fig, echo = FALSE, fig = TRUE>>=
+epa <- function(x, y)
+    ((x^2 + y^2) < 1) * 2/pi * (1 - x^2 - y^2)
+x <- seq(from = -1.1, to = 1.1, by = 0.05)
+epavals <- sapply(x, function(a) epa(a, x))
+persp(x = x, y = x, z = epavals, xlab = "x", 
+      ylab = "y", zlab = expression(K(x, y)), 
+      theta = -35, axes = TRUE, box = TRUE)
+@
+\end{center}
+
+\end{frame}
+
+\section{Analysis Using R}
+
+\begin{frame}[fragile]
+  \frametitle{Old Faithful}
+
+\begin{center}
+<<DE-faithful-density, echo = FALSE, fig = TRUE, height = 4>>=
+data("faithful", package = "datasets")
+x <- faithful$waiting
+layout(matrix(1:3, ncol = 3))
+hist(x, xlab = "Waiting times (in min.)", ylab = "Frequency",
+     probability = TRUE, main = "Gaussian kernel",
+     border = "gray")
+lines(density(x, width = 12), lwd = 2)
+rug(x)
+hist(x, xlab = "Waiting times (in min.)", ylab = "Frequency",
+     probability = TRUE, main = "Rectangular kernel",
+     border = "gray")
+lines(density(x, width = 12, window = "rectangular"), lwd = 2)
+rug(x)
+hist(x, xlab = "Waiting times (in min.)", ylab = "Frequency",
+     probability = TRUE, main = "Triangular kernel",
+     border = "gray")
+lines(density(x, width = 12, window = "triangular"), lwd = 2)
+rug(x)
+@
+\end{center}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Star Clusters}
+
+\small
+\begin{center}
+<<DE-CYGOB1-contour, echo = TRUE, fig = TRUE>>=
+CYGOB1d <- bkde2D(CYGOB1, bandwidth = sapply(CYGOB1, dpik))
+contour(x = CYGOB1d$x1, y = CYGOB1d$x2, 
+    z = CYGOB1d$fhat, xlab = "log surface temperature",
+    ylab = "log light intensity")
+@
+\end{center}
+\normalsize
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Star Clusters}
+
+\begin{center}
+<<DE-CYGOB1-persp, echo = TRUE, fig = TRUE>>=
+persp(x = CYGOB1d$x1, y = CYGOB1d$x2, z = CYGOB1d$fhat,
+      xlab = "log surface temperature",
+      ylab = "log light intensity",
+      zlab = "estimated density",
+      theta = -35, axes = TRUE, box = TRUE)
+@
+\end{center}
+
+\end{frame}
+
+\subsection{A Parametric Density Estimate for the Old Faithful Data}
+
+\begin{frame}
+  \frametitle{Parametric Old Faithful}
+
+Two-component normal mixture distribution
+\begin{eqnarray*}
+f(x) = p \phi(x, \mu_1, \sigma_1^2) + (1 - p) \phi(x, \mu_2, \sigma^2_2)
+\end{eqnarray*}
+where $\phi(x, \mu, \sigma^2)$ denotes the normal density.
+
+This distribution had five parameters to estimate, the mixing
+proportion, $p$, and the mean and variance of each component
+normal distribution. Pearson 100 years ago heroically attempted this by the
+method of moments, which required solving a polynomial equation
+of the 9$^{\text{th}}$ degree. Nowadays the preferred estimation approach
+is maximum likelihood. 
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Maximum Likelihood Estimation}
+
+<<DE-faithful-optim, echo = TRUE, results = hide>>=
+logL <- function(param, x) {
+    d1 <- dnorm(x, mean = param[2], sd = param[3])
+    d2 <- dnorm(x, mean = param[4], sd = param[5])
+    -sum(log(param[1] * d1 + (1 - param[1]) * d2))
+}
+startparam <- c(p = 0.5, mu1 = 50, sd1 = 3, mu2 = 80, 
+                sd2 = 3)
+opp <- optim(startparam, logL, x = faithful$waiting,
+             method = "L-BFGS-B",
+             lower = c(0.01, rep(1, 4)),
+             upper = c(0.99, rep(200, 4)))
+opp
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Maximum Likelihood Estimation}
+
+<<DE-faithful-optim-print, echo = FALSE>>=
+print(opp[names(opp) != "message"])
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Maximum Likelihood Estimation}
+
+Optimising the appropriate likelihood `by hand' %'
+is not very convenient. In fact, (at least) two packages offer high-level
+functionality for estimating mixture models. The first one is package
+\Rpackage{mclust} \citep{PKG:mclust} implementing the methodology described
+in \cite{HSAUR:FraleyRaftery2002}. Here, a Bayesian information criterion
+(BIC) is applied to choose the form of the mixture model:
+<<DE-attach-mclust, echo = FALSE, results = hide>>=
+library("mclust")
+@
+<<DE-faithful-mclust, echo = TRUE>>=
+library("mclust")
+mc <- Mclust(faithful$waiting)
+mc
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Maximum Likelihood Estimation}
+
+
+The estimated means are
+<<DE-faithful-mclust-mu, echo = TRUE>>=
+mc$parameters$mean
+@
+with estimated standard deviation (found to be equal within both groups)
+<<DE-faithful-mclust-para, echo = TRUE>>=
+sqrt(mc$parameters$variance$sigmasq)
+@
+The proportion is $\hat{p} = \Sexpr{round(mc$parameters$pro[1], 2)}$. 
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Maximum Likelihood Estimation}
+
+The second package is called
+\Rpackage{flexmix}:
+<<DE-faithful-flexmix, echo = TRUE>>=
+library("flexmix")
+fl <- flexmix(waiting ~ 1, data = faithful, k = 2)
+@
+with $\hat{p} = \Sexpr{round(fl@prior, 2)}$ and estimated parameters
+<<DE-faithful-flexmix-parameters, echo = TRUE>>=
+parameters(fl, component = 1)
+parameters(fl, component = 2)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Maximum Likelihood Estimation}
+
+\small
+\begin{center}
+<<DE-faithful-2Dplot, echo = FALSE, fig = TRUE>>=
+opar <- as.list(opp$par)
+rx <- seq(from = 40, to = 110, by = 0.1)
+d1 <- dnorm(rx, mean = opar$mu1, sd = opar$sd1)
+d2 <- dnorm(rx, mean = opar$mu2, sd = opar$sd2)
+f <- opar$p * d1 + (1 - opar$p) * d2
+hist(x, probability = TRUE, xlab = "Waiting times (in min.)",
+     border = "gray", xlim = range(rx), ylim = c(0, 0.06),
+     main = "")
+lines(rx, f, lwd = 2)
+lines(rx, dnorm(rx, mean = mean(x), sd = sd(x)), lty = 2,
+      lwd = 2)
+legend(50, 0.06, lty = 1:2, bty = "n",
+       legend = c("Fitted two-component mixture density",
+                  "Fitted single normal density"))
+@
+\end{center}
+
+\normalsize
+
+\end{frame}
+
+\section{Bootstrap}
+
+\begin{frame}[fragile]
+  \frametitle{The Bootstrap}
+
+
+We can get standard errors for the five parameter estimates
+by using a bootstrap approach \citep[see][]{HSAUR:EfronTibshirani1993}.
+
+First, we define a function that,
+for a bootstrap sample \Robject{indx}, fits a two-component mixture model
+and returns $\hat{p}$ and the estimated means 
+<<DE-faithful-boot, echo = TRUE>>=
+library("boot")
+fit <- function(x, indx) {
+    a <- Mclust(x[indx], minG = 2, maxG = 2)$parameters
+    if (a$pro[1] < 0.5)
+        return(c(p = a$pro[1], mu1 = a$mean[1],
+                               mu2 = a$mean[2]))
+    return(c(p = 1 - a$pro[1], mu1 = a$mean[2],
+                               mu2 = a$mean[1]))
+}
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{The Bootstrap}
+
+The function \Rcmd{fit} can now be fed into the \Rcmd{boot} function \citep{PKG:boot}
+for bootstrapping (here $1000$ bootstrap samples are drawn)
+\begin{Schunk}
+\begin{Sinput}
+R> bootpara <- boot(faithful$waiting, fit, R = 1000)
+\end{Sinput}
+\end{Schunk}
+
+<<DE-faithful-bootrun, echo = FALSE>>=
+bootparafile <- file.path(.find.package("HSAUR3"), "cache", "DE-bootpara.rda")
+if (file.exists(bootparafile)) {
+    load(bootparafile)
+} else {
+    bootpara <- boot(faithful$waiting, fit, R = 1000)
+}
+@
+
+Variability of our estimates $\hat{p}$ (BCa confidence intervals):
+<<DE-faithful-p-ci, echo = TRUE>>=
+boot.ci(bootpara, type = "bca", index = 1)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{The Bootstrap}
+
+We see that there is a reasonable variability in the mixture model, however,
+the means in the two components are rather stable, as can be seen from
+<<DE-faithful-mu1-ci, echo = TRUE>>=
+boot.ci(bootpara, type = "bca", index = 2)
+@
+for $\hat{\mu}_1$ 
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{The Bootstrap}
+
+and for $\hat{\mu}_2$ from
+<<DE-faithful-mu2-ci, echo = TRUE>>=
+boot.ci(bootpara, type = "bca", index = 3)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{The Bootstrap}
+
+Bootstrap-distribution of $\hat{\mu}_1$ and $\hat{\mu}_2$ with BCa confidence intervals:
+
+<<DE-bootplot, echo = FALSE>>=
+bootplot <- function(b, index, main = "") {
+    dens <- density(b$t[,index])
+    ci <- boot.ci(b, type = "bca", index = index)$bca[4:5]
+    est <- b$t0[index]
+    plot(dens, main = main)
+    y <- max(dens$y) / 10
+    segments(ci[1], y, ci[2], y, lty = 2)
+    points(ci[1], y, pch = "(")
+    points(ci[2], y, pch = ")")
+    points(est, y, pch = 19)
+}
+@
+
+\begin{figure}
+\begin{center}
+<<DE-faithful-boot-plot, echo = FALSE, fig = TRUE, height = 4>>=
+layout(matrix(1:2, ncol = 2))
+bootplot(bootpara, 2, main = expression(mu[1]))
+bootplot(bootpara, 3, main = expression(mu[2]))
+@
+\end{center}
+\end{figure}
+
+\end{frame}
+
+\section{Summary}
+
+\begin{frame}
+  \frametitle{Summary}
+
+
+Histograms and scatterplots are frequently used to give
+graphical representations of univariate and bivariate data. But
+both can often be improved and made more helpful by adding some
+form of density estimate. For scatterplots in particular adding
+a contour plot of the estimated bivariate density can be particularly
+useful in aiding in the identification of clusters, gaps
+and outliers.
+
+\end{frame}
+
+\section*{Exercises}
+
+\begin{frame}
+  \frametitle{Exercises}
+
+\begin{itemize}
+
+\item
+The \Robject{galaxies} data 
+are the velocities of $82$ galaxies
+from six well-separated conic sections of space
+\citep{HSAUR:Postmanetal1986,HSAUR:Roeder1990}. The data are
+intended to shed light on whether or not the observable universe
+contains superclusters of galaxies surrounded by large voids.
+The evidence for the existence of superclusters would be the
+multimodality of the distribution of velocities. Construct a
+histogram of the data and add a variety of kernel estimates of
+the density function. What do you conclude about the possible
+existence of superclusters of galaxies?
+
+\item
+The \Robject{birthdeathrates} data 
+give the birth and death rates
+for 69 countries \citep[from][]{HSAUR:Hartigan1975}.
+Produce a scatterplot of the data that shows
+a contour plot of the estimated bivariate density. Does the plot
+give you any interesting insights into the possible structure
+of the data?
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Exercises}
+
+\begin{itemize}
+
+\item
+A sex difference in the age of onset of schizophrenia was
+noted by \cite{HSAUR:Kraepelin1919}. Subsequent epidemiological studies
+of the disorder have consistently shown an earlier onset in men
+than in women. One model that has been suggested to explain this
+observed difference is known as the \stress{subtype model}
+which postulates two types of schizophrenia, one characterised by early
+onset, typical symptoms and poor premorbid competence, and the
+other by late onset, atypical symptoms and good premorbid competence.
+The early onset type is assumed to be largely a disorder of men
+and the late onset largely a disorder of women. By fitting finite
+mixtures of normal densities separately to the onset data for
+men and women given in \Robject{schizophrenia}
+see if you can produce some
+evidence for or against the subtype model.
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{References}
+\tiny
+<<bibfiles, echo = FALSE, results = tex>>=   
+src <- system.file(package = "HSAUR3")
+style <- file.path(src, "LaTeXBibTeX", "refstyle")
+bst <- file.path(src, "LaTeXBibTeX", "HSAUR")
+cat(paste("\\bibliographystyle{", style, "}", sep = ""), "\n \n")
+cat(paste("\\bibliography{", bst, "}", sep = ""), "\n \n")
+@
+
+\end{frame}
+
+\end{document}

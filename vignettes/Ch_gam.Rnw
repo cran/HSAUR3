@@ -1,0 +1,696 @@
+
+
+\documentclass{chapman}
+
+%%% copy Sweave.sty definitions
+
+%%% keeps `sweave' from adding `\usepackage{Sweave}': DO NOT REMOVE
+%\usepackage{Sweave} 
+
+
+\RequirePackage[T1]{fontenc}
+\RequirePackage{graphicx,ae,fancyvrb}
+\IfFileExists{upquote.sty}{\RequirePackage{upquote}}{}
+\usepackage{relsize}
+
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{fontfamily=courier,
+                                              fontshape=it,
+                                              fontsize=\relsize{-1}}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{}
+\newenvironment{Schunk}{}{}
+
+%%% environment for raw output
+\newcommand{\SchunkRaw}{\renewenvironment{Schunk}{}{}
+    \DefineVerbatimEnvironment{Soutput}{Verbatim}{fontfamily=courier,
+                                                  fontshape=it,
+                                                  fontsize=\small}
+    \rawSinput
+}
+
+%%% environment for labeled output
+\newcommand{\nextcaption}{}
+\newcommand{\SchunkLabel}{
+  \renewenvironment{Schunk}{\begin{figure}[ht] }{\caption{\nextcaption}
+  \end{figure} }
+  \DefineVerbatimEnvironment{Sinput}{Verbatim}{frame = topline}
+  \DefineVerbatimEnvironment{Soutput}{Verbatim}{frame = bottomline, 
+                                                samepage = true,
+                                                fontfamily=courier,
+                                                fontshape=it,
+                                                fontsize=\relsize{-1}}
+}
+
+
+%%% S code with line numbers
+\DefineVerbatimEnvironment{Sinput}
+{Verbatim}
+{
+%%  numbers=left
+}
+
+\newcommand{\numberSinput}{
+    \DefineVerbatimEnvironment{Sinput}{Verbatim}{numbers=left}
+}
+\newcommand{\rawSinput}{
+    \DefineVerbatimEnvironment{Sinput}{Verbatim}{}
+}
+
+
+%%% R / System symbols
+\newcommand{\R}{\textsf{R}}
+\newcommand{\rR}{{R}}
+\renewcommand{\S}{\textsf{S}}
+\newcommand{\SPLUS}{\textsf{S-PLUS}}
+\newcommand{\rSPLUS}{{S-PLUS}}
+\newcommand{\SPSS}{\textsf{SPSS}}
+\newcommand{\EXCEL}{\textsf{Excel}}
+\newcommand{\ACCESS}{\textsf{Access}}
+\newcommand{\SQL}{\textsf{SQL}}
+%%\newcommand{\Rpackage}[1]{\hbox{\rm\textit{#1}}}
+%%\newcommand{\Robject}[1]{\hbox{\rm\texttt{#1}}}
+%%\newcommand{\Rclass}[1]{\hbox{\rm\textit{#1}}}
+%%\newcommand{\Rcmd}[1]{\hbox{\rm\texttt{#1}}}
+\newcommand{\Rpackage}[1]{\index{#1 package@{\fontseries{b}\selectfont #1} package} {\fontseries{b}\selectfont #1}}
+\newcommand{\rpackage}[1]{{\fontseries{b}\selectfont #1}}
+\newcommand{\Robject}[1]{\texttt{#1}}
+\newcommand{\Rclass}[1]{\index{#1 class@\textit{#1} class}\textit{#1}}
+\newcommand{\Rcmd}[1]{\index{#1 function@\texttt{#1} function}\texttt{#1}}
+\newcommand{\Roperator}[1]{\texttt{#1}}
+\newcommand{\Rarg}[1]{\texttt{#1}}
+\newcommand{\Rlevel}[1]{\texttt{#1}}
+
+
+%%% other symbols
+\newcommand{\file}[1]{\hbox{\rm\texttt{#1}}}
+%%\newcommand{\stress}[1]{\index{#1}\textit{#1}} 
+\newcommand{\stress}[1]{\textit{#1}} 
+\newcommand{\booktitle}[1]{\textit{#1}} %%'
+
+%%% Math symbols
+\usepackage{amstext}
+\usepackage{amsmath}
+\newcommand{\E}{\mathsf{E}}   
+\newcommand{\Var}{\mathsf{Var}}   
+\newcommand{\Cov}{\mathsf{Cov}}   
+\newcommand{\Cor}{\mathsf{Cor}}   
+\newcommand{\x}{\mathbf{x}}   
+\newcommand{\y}{\mathbf{y}}   
+\renewcommand{\a}{\mathbf{a}}
+\newcommand{\W}{\mathbf{W}}   
+\newcommand{\C}{\mathbf{C}}   
+\renewcommand{\H}{\mathbf{H}}   
+\newcommand{\X}{\mathbf{X}}   
+\newcommand{\B}{\mathbf{B}}   
+\newcommand{\V}{\mathbf{V}}   
+\newcommand{\I}{\mathbf{I}}   
+\newcommand{\D}{\mathbf{D}}   
+\newcommand{\bS}{\mathbf{S}}   
+\newcommand{\N}{\mathcal{N}}   
+\renewcommand{\L}{L}   
+\renewcommand{\P}{\mathsf{P}}   
+\newcommand{\K}{\mathbf{K}}
+\newcommand{\m}{\mathbf{m}}
+\newcommand{\argmin}{\operatorname{argmin}\displaylimits}
+\newcommand{\argmax}{\operatorname{argmax}\displaylimits}
+
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\bbeta}{\mathbf{\beta}}
+
+
+%%% links
+\usepackage{hyperref}
+
+\hypersetup{%
+  pdftitle = {A Handbook of Statistical Analyses Using R (3rd Edition)},
+  pdfsubject = {Book},
+  pdfauthor = {Torsten Hothorn and Brian S. Everitt},
+  colorlinks = {black},
+  linkcolor = {black},
+  citecolor = {black},
+  urlcolor = {black},
+  hyperindex = {true},
+  linktocpage = {true},
+}
+
+
+%%% captions & tables
+%% <FIXME>: conflics with figure definition in chapman.cls
+%%\usepackage[format=hang,margin=10pt,labelfont=bf]{caption}
+%% </FIMXE>
+\usepackage{longtable}
+\usepackage[figuresright]{rotating}
+
+%%% R symbol in chapter 1
+\usepackage{wrapfig}
+
+%%% Bibliography
+\usepackage[round,comma]{natbib}
+\renewcommand{\refname}{References \addcontentsline{toc}{chapter}{References}}
+\citeindexfalse
+
+%%% texi2dvi complains that \newblock is undefined, hm...
+\def\newblock{\hskip .11em plus .33em minus .07em}
+
+%%% Example sections
+\newcounter{exercise}[chapter]
+\setcounter{exercise}{0}
+\newcommand{\exercise}{\stepcounter{exercise} \item{Ex.~\arabic{chapter}.\arabic{exercise} }}
+
+
+%% URLs
+\newcommand{\curl}[1]{\begin{center} \url{#1} \end{center}}
+
+%%% for manual corrections
+%\renewcommand{\baselinestretch}{2}
+
+%%% plot sizes
+\setkeys{Gin}{width=0.95\textwidth}
+
+%%% color
+\usepackage{color}
+
+%%% hyphenations
+\hyphenation{drop-out}
+\hyphenation{mar-gi-nal}
+
+%%% new bidirectional quotes need 
+\usepackage[utf8]{inputenc}
+
+%\usepackage{setspace}
+\definecolor{sidebox_todo}{rgb}{1,1,0.2}
+\newcommand{\todo}[1]{
+        \hspace{0pt}%
+        \marginpar{% 
+                        \fcolorbox{black}{sidebox_todo}{%
+                                \parbox{\marginparwidth} {
+
+\raggedright\sffamily\footnotesize{TODO: #1}%
+                                }
+                        }%
+        }
+}
+\begin{document}
+
+%% Title page
+
+\title{A Handbook of Statistical Analyses Using \R{} --- 3rd Edition}
+
+\author{Torsten Hothorn and Brian S. Everitt}
+
+\maketitle
+%%\VignetteIndexEntry{Generalized Additive Models}
+%%\VignetteDepends{mgcv,rpart,wordcloud,mboost}
+\setcounter{chapter}{9}
+
+
+
+\SweaveOpts{prefix.string=figures/HSAUR,eps=FALSE,keep.source=TRUE} 
+
+<<setup, echo = FALSE, results = hide>>=
+rm(list = ls())
+s <- search()[-1]
+s <- s[-match(c("package:base", "package:stats", "package:graphics", "package:grDevices",
+                "package:utils", "package:datasets", "package:methods", "Autoloads"), s)]
+if (length(s) > 0) sapply(s, detach, character.only = TRUE)
+if (!file.exists("tables")) dir.create("tables")
+if (!file.exists("figures")) dir.create("figures")
+set.seed(290875)
+options(prompt = "R> ", continue = "+  ",
+    width = 63, # digits = 4, 
+    show.signif.stars = FALSE,
+    SweaveHooks = list(leftpar = function() 
+        par(mai = par("mai") * c(1, 1.05, 1, 1)),
+        bigleftpar = function()
+        par(mai = par("mai") * c(1, 1.7, 1, 1))))
+HSAURpkg <- require("HSAUR3")
+if (!HSAURpkg) stop("cannot load package ", sQuote("HSAUR2"))
+rm(HSAURpkg)
+ ### </FIXME> hm, R-2.4.0 --vanilla seems to need this
+a <- Sys.setlocale("LC_ALL", "C")
+ ### </FIXME>
+book <- TRUE
+refs <- cbind(c("AItR", "DAGD", "SI", "CI", "ANOVA", "MLR", "GLM", 
+                "DE", "RP", "GAM", "SA", "ALDI", "ALDII", "SIMC", "MA", "PCA", 
+                "MDS", "CA"), 1:18)
+ch <- function(x) {
+    ch <- refs[which(refs[,1] == x),]
+    if (book) {
+        return(paste("Chapter~\\\\ref{", ch[1], "}", sep = ""))
+    } else {
+        return(paste("Chapter~", ch[2], sep = ""))
+    }
+}
+if (file.exists("deparse.R"))
+    source("deparse.R")
+
+setHook(packageEvent("lattice", "attach"), function(...) {
+    lattice.options(default.theme = 
+        function()
+            standard.theme("pdf", color = FALSE))
+    })
+@
+
+\pagestyle{headings}
+<<singlebook, echo = FALSE, results = hide>>=
+book <- FALSE
+@
+
+<<packages, echo = FALSE, results = hide>>=
+library("mgcv")
+library("mboost")
+library("rpart")
+library("wordcloud")
+@
+
+\chapter[Scatterplot Smoothers and Additive Models]{Scatterplot 
+  Smoothers and Generalized Additive Models: The Men's Olympic 1500m, 
+  Air Pollution in the US, Risk Factors for Kyphosis, and Women's Role in %'
+  Society \label{GAM}}
+
+\section{Introduction}
+
+
+\section{Scatterplot Smoothers and Generalized Additive Models}
+
+
+\section{Analysis Using \R{}}
+
+\subsection{Olympic 1500m Times}
+
+To begin we will construct a scatterplot of winning time 
+against the year the games were held. The \R{} code and the resulting plot 
+are shown in Figure~\ref{GAM-men1500m-plot}.  There is a very clear downward trend in 
+the times over the years, and, in addition there is a very clear 
+outlier namely the winning time for 1896. We shall remove this 
+time from the data set and now concentrate on the remaining times. 
+First we will fit a simple linear regression to the data and 
+plot the fit onto the scatterplot. The code and the resulting 
+plot are shown in Figure~\ref{GAM-men1500m-lm}. Clearly the linear regression 
+model captures in general terms the downward trend in the times. 
+Now we can add the fits given by the lowess smoother and by a 
+cubic spline smoother; the resulting graph and the extra \R{} code 
+needed are shown in Figure~\ref{GAM-men1500m-smooth}. 
+
+
+Both non-parametric fits suggest some distinct departure from 
+linearity, and clearly point to a quadratic model being more 
+sensible than a linear model here. And fitting a parametric model 
+that includes both a linear and a quadratic effect for the year gives a 
+prediction curve very similar to the non-parametric curves; see Figure~\ref{GAM-men1500m-quad}.
+
+Here use of the non-parametric smoothers has effectively diagnosed 
+our linear model and pointed the way to using a more suitable 
+parametric model; this is often how such non-parametric models can be used most 
+effectively. For these data, of course, it is clear that the simple linear 
+model cannot be suitable if the investigator is interested in predicting 
+future times since even the most basic knowledge of human physiology 
+will tell us that times cannot continue to go down. There must be some 
+lower limit to the time man can run 1500m. But in other situations 
+use of the non-parametric smoothers may point to a parametric model 
+that could not have been identified \emph{a priori}. 
+
+\begin{figure}
+\begin{center}
+<<GAM-men1500m-plot, echo = TRUE, fig = TRUE, height = 5>>=
+plot(time ~ year, data = men1500m, xlab = "Year",
+     ylab = "Winning time (sec)")
+@
+\caption{Scatterplot of year and winning time. \label{GAM-men1500m-plot}}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+<<GAM-men1500m-lm, echo = TRUE, fig = TRUE, height = 5>>=
+men1500m1900 <- subset(men1500m, year >= 1900)
+men1500m_lm <- lm(time ~ year, data = men1500m1900)
+plot(time ~ year, data = men1500m1900, xlab = "Year",
+     ylab = "Winning time (sec)")
+abline(men1500m_lm)
+@
+\caption{Scatterplot of year and winning time with fitted values from
+         a simple linear model. \label{GAM-men1500m-lm}}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+<<GAM-men1500m-smooth, echo = TRUE, fig = TRUE, height = 5>>=
+x <- men1500m1900$year
+y <- men1500m1900$time
+men1500m_lowess <- lowess(x, y)
+plot(time ~ year, data = men1500m1900, xlab = "Year",
+     ylab = "Winning time (sec)")
+lines(men1500m_lowess, lty = 2)
+men1500m_cubic <- gam(y ~ s(x, bs = "cr"))
+lines(x, predict(men1500m_cubic), lty = 3)
+@
+\caption{Scatterplot of year and winning time with fitted values from a smooth
+         non-parametric model. \label{GAM-men1500m-smooth}}
+\end{center}
+\end{figure}
+
+
+\begin{figure}
+\begin{center}
+<<GAM-men1500m-quad, echo = TRUE, fig = TRUE, height = 5>>=
+men1500m_lm2 <- lm(time ~ year + I(year^2), 
+                   data = men1500m1900)
+plot(time ~ year, data = men1500m1900, xlab = "Year",
+     ylab = "Winning time (sec)")
+lines(men1500m1900$year, predict(men1500m_lm2))
+@
+\caption{Scatterplot of year and winning time with fitted values from a 
+         quadratic model. \label{GAM-men1500m-quad}}
+\end{center}
+\end{figure}
+
+
+It is of some interest to look at the predictions of winning 
+times in future Olympics from both the linear and quadratic models. 
+For example, for 2008 and 2012 the predicted times and their $95\%$ 
+confidence intervals can be found using the following code
+
+\newpage
+
+<<GAM-men1500m-pred, echo = TRUE>>=
+predict(men1500m_lm, 
+        newdata = data.frame(year = c(2008, 2012)), 
+        interval = "confidence")
+predict(men1500m_lm2, 
+        newdata = data.frame(year = c(2008, 2012)), 
+        interval = "confidence")
+@
+
+\newpage
+
+For predictions far into the future both 
+the quadratic and the linear model fail; we leave readers to get 
+some more predictions to see what happens. We can compare
+the first prediction with the time actually recorded by the winner
+of the men's 1500m in Beijing 2008, 
+Rashid Ramzi from Brunei, who won the event in $212.94$ seconds. The confidence
+interval obtained from the simple linear model does not include this value
+but the confidence interval for the prediction 
+derived from the quadratic model does.
+
+
+\subsection{Air Pollution in US Cities}
+
+Unfortunately, we cannot fit an additive model for
+describing the $\text{SO}_2$ concentration based on all six
+covariates because this leads to more parameters than cities, 
+i.e., more parameters than observations when using the
+default parameterization of \Rpackage{mgcv}. Thus, before we can apply
+the \Rcmd{gam} function from package \Rpackage{mgcv}, we have
+to decide which covariates should enter the model and which
+subset of these covariates should be allowed to deviate from
+a linear regression relationship.
+
+As briefly discussed in Section~\ref{GAM:VS}, we can
+fit an additive model using the iterative boosting algorithm
+as described by \cite{HSAUR:BuehlmannHothorn2007}. The complexity
+of the model is determined by an AIC criterion, which can also be used
+to determine an appropriate number of boosting iterations to choose.
+The methodology is available
+from package \Rpackage{mboost} \citep{PKG:mboost}. We start 
+with a small number of boosting iterations ($100$ by default) and
+compute the AIC of the corresponding $100$ models:
+<<GAM-USairpollution-boost, echo = TRUE>>=
+library("mboost")
+USair_boost <- gamboost(SO2 ~ ., data = USairpollution)
+USair_aic <- AIC(USair_boost)
+USair_aic
+@
+The AIC suggests that the boosting algorithm should be stopped
+after $\Sexpr{mstop(USair_aic)}$ iterations. The partial contributions of each
+covariate to the predicted $\text{SO}_2$ concentration
+are given in Figure~\ref{GAM-USairpollution-boostplot}.
+The plot indicates that all six covariates enter the model and
+the selection of a subset of covariates for modeling 
+isn't appropriate in this case. However, the number of manufacturing
+enterprises seems to add linearly to the $\text{SO}_2$ concentration, which
+simplifies the model. Moreover, the average annual precipitation
+contribution seems to deviate from zero only for some extreme observations
+and one might refrain from using the covariate at all.
+
+\begin{figure}
+\begin{center}
+<<GAM-USairpollution-boostplot, echo = TRUE, fig = TRUE, height = 4>>=
+USair_gam <- USair_boost[mstop(USair_aic)]
+layout(matrix(1:6, ncol = 3))
+plot(USair_gam, ask = FALSE)
+@
+\caption{Partial contributions of six exploratory covariates
+         to the predicted $\text{SO}_2$ concentration. \label{GAM-USairpollution-boostplot}}
+\end{center}
+\end{figure}
+
+As always, an inspection of the model fit via a residual plot
+is worth the effort. Here, we plot the fitted values against the residuals
+and label the points with the name of the corresponding city using the \Rcmd{textplot} function from package \Rpackage{wordcloud}.
+Figure~\ref{GAM-USairpollution-residplot} shows at least two
+extreme observations. Chicago has a very large observed and fitted 
+$\text{SO}_2$ concentration, which is due to the huge number of inhabitants and
+manufacturing plants (see Figure~\ref{GAM-USairpollution-boostplot} also).
+One smaller city, Providence, is associated with a rather large
+positive residual indicating that the actual $\text{SO}_2$ concentration
+is underestimated by the model. In fact, this small town has
+a rather high $\text{SO}_2$ concentration which is hardly explained
+by our model. Overall, the model doesn't fit the data very well,
+so we should avoid overinterpreting the model structure 
+too much. In addition, since each of the six covariates
+contributes to the model, we aren't able to select a smaller subset
+of the covariates for modeling and thus fitting a model using
+\Rcmd{gam} is still complicated (and will not add much knowledge anyway).
+
+\begin{figure}
+\begin{center}
+<<GAM-USairpollution-residplot, echo = TRUE, fig = TRUE>>=
+SO2hat <- predict(USair_gam)
+SO2 <- USairpollution$SO2
+plot(SO2hat, SO2 - SO2hat, type = "n",         
+     xlim = c(-20, max(SO2hat) * 1.1),
+     ylim = range(SO2 - SO2hat) * c(2, 1))
+textplot(SO2hat, SO2 - SO2hat, rownames(USairpollution), 
+         show.lines = FALSE, new = FALSE)
+abline(h = 0, lty = 2, col = "grey")
+@
+\caption{Residual plot of $\text{SO}_2$ concentration. 
+         \label{GAM-USairpollution-residplot}}
+\end{center}
+\end{figure}
+
+
+\subsection{Risk Factors for Kyphosis}
+
+\index{Spinogram}
+Before modeling the relationship between kyphosis and
+the three exploratory variables age, starting vertebral level of
+the surgery, and number of vertebrae involved, we investigate the
+partial associations by so-called \stress{spinograms}, as
+introduced in \Sexpr{ch("DAGD")}. The
+numeric exploratory covariates are discretized and their
+empirical relative frequencies are plotted against the
+conditional frequency of kyphosis in the corresponding
+group. Figure~\ref{GAM-kyphosis-plot} shows that kyphosis
+is absent in very young or very old children, children
+with a small starting vertebral level, and high number of vertebrae 
+involved.
+
+\begin{figure}
+\begin{center}
+<<GAM-kyphosis-plot, echo = TRUE, fig = TRUE, height = 4, width = 7>>=
+layout(matrix(1:3, nrow = 1))
+spineplot(Kyphosis ~ Age, data = kyphosis, 
+          ylevels = c("present", "absent"))
+spineplot(Kyphosis ~ Number, data = kyphosis, 
+          ylevels = c("present", "absent"))
+spineplot(Kyphosis ~ Start, data = kyphosis, 
+         ylevels = c("present", "absent"))
+@
+\caption{Spinograms of the three exploratory variables and response variable
+         \Robject{kyphosis}. \label{GAM-kyphosis-plot}}
+\end{center}
+\end{figure}
+
+The logistic additive model needed to describe the conditional
+probability of kyphosis given the exploratory variables
+can be fitted using function \Rcmd{gam}. Here, the dimension
+of the basis ($k$) has to be modified for \Robject{Number} and
+\Robject{Start} since these variables are heavily tied. As for
+generalized linear models, the \Robject{family} argument determines
+the type of model to be fitted, a logistic model in our case:
+<<GAM-kyphosis-gam, echo = TRUE>>=
+(kyphosis_gam <- gam(Kyphosis ~ s(Age, bs = "cr") + 
+    s(Number, bs = "cr", k = 3) + s(Start, bs = "cr", k = 3),
+    family = binomial, data = kyphosis))
+@
+The partial contributions of each covariate to the conditional
+probability of kyphosis with confidence bands are shown in 
+Figure~\ref{GAM-kyphosis-gamplot}. In essence, the same conclusions
+as drawn from Figure~\ref{GAM-kyphosis-plot} can be stated here.
+The risk of kyphosis being present decreases with higher
+starting vertebral level and lower number of vertebrae involved.
+Children about $100$ months old are under higher risk compared
+to younger or older children.
+
+\begin{figure}
+\begin{center}
+<<GAM-kyphosis-gamplot, echo = TRUE, fig = TRUE, height = 4, width = 7>>=
+trans <- function(x) 
+    binomial()$linkinv(x)
+layout(matrix(1:3, nrow = 1))
+plot(kyphosis_gam, select = 1, shade = TRUE, trans = trans)
+plot(kyphosis_gam, select = 2, shade = TRUE, trans = trans)
+plot(kyphosis_gam, select = 3, shade = TRUE, trans = trans)
+@
+\caption{Partial contributions of three exploratory variables
+         with confidence bands. \label{GAM-kyphosis-gamplot}}
+\end{center}
+\end{figure}
+
+\subsection{Women's Role in Society} %'
+
+In Chapter~\ref{GLM}, we saw that a logistic regression with an interaction between
+gender and level of education described the data better than a main-effects only
+model. Using an additive logistic regression model, we can fit separate, possibly
+nonlinear, functions of levels of education to both genders:
+<<GAM-womensrole-gam, echo = TRUE>>= 
+data("womensrole", package = "HSAUR3")
+fm1 <- cbind(agree, disagree) ~ s(education, by = gender)
+womensrole_gam <- gam(fm1, data = womensrole, 
+                      family = binomial())
+@
+The resulting model is best inspected by a plot
+(Figure~\ref{GAM-womensrole-gamplot}).  For males, the log-odds of agreement
+decreases linearly with each additional year of education.  For females,
+the log-odds is more or less constant up to five years of education and only
+then begins to decrease.  After 15 years, there seems to be no further
+impact on the log-odds.  When we plot the resulting fitted probabilities in
+a way similar to Figure~\ref{GLM-role2plot}, we see that the interaction is
+even more pronounced in the additive compared to the linear model.  The flat
+curve for women with less than five years of education can be explained by
+the rather large variability of the answers in this area but the plateau to 
+the right is due to two groups of highly educated women with a rather 
+large proportion of agreement.
+
+
+\begin{figure}
+\begin{center}
+<<GAM-womensrole-gamplot, echo = TRUE, fig = TRUE, height = 4, width = 7>>=
+layout(matrix(1:2, nrow = 1))
+plot(womensrole_gam, select = 1, shade = TRUE)
+plot(womensrole_gam, select = 1, shade = TRUE)
+@
+\caption{Effects of level of education for males (right) and females (left)
+         on the log-odds scale derived from an additive logistic regression model.
+         The shaded area denotes confidence bands. \label{GAM-womensrole-gamplot}}
+\end{center}
+\end{figure}
+
+<<GAM-plot-setup, echo = FALSE>>=  
+myplot <- function(role.fitted)  {    
+    f <- womensrole$gender == "Female"
+    plot(womensrole$education, role.fitted, type = "n",
+         ylab = "Probability of agreeing",
+         xlab = "Education", ylim = c(0,1))
+    lines(womensrole$education[!f], role.fitted[!f], lty = 1)
+    lines(womensrole$education[f], role.fitted[f], lty = 2)
+    lgtxt <- c("Fitted (Males)", "Fitted (Females)")
+    legend("topright", lgtxt, lty = 1:2, bty = "n")
+    y <-  womensrole$agree / (womensrole$agree +
+                              womensrole$disagree)
+    size <- womensrole$agree + womensrole$disagree
+    size <- size - min(size)
+    size <- (size / max(size)) * 3 + 1
+    text(womensrole$education, y, ifelse(f, "\\VE", "\\MA"),
+         family = "HersheySerif", cex = size)
+} 
+@
+
+
+\begin{figure}
+\begin{center}
+<<GAM-womensrole-probplot, echo = TRUE, fig = TRUE>>=
+myplot(predict(womensrole_gam, type = "response"))
+@
+\caption{Effects of level of education for males (right) and females (left)
+         on the log-odds scale derived from an additive logistic regression model.
+         The shaded area denotes confidence bands. \label{GAM-womensrole-probplot}}
+\end{center}
+\end{figure}
+
+
+\section{Summary of Findings}
+
+\begin{description}
+\item[Olympic 1500m times]
+Here the use of a generalized additive model suggested that a quadratic
+model might best describe the data.  When such a model was fitted it made
+reasonable predictions of the winner's times in the Olympic Games of 2008
+and 2012.
+\item[Air pollution data]
+Finding a suitable model for these data was problematic because of the
+outliers in the data and the high correlations between some pairs of
+explanatory variables.  Except for wind, the fitted partial contributions
+are well approximated by a linear function for most of the observations and
+it might be questioned if the more complex additive model is really needed.
+\item[Kyphosis]
+The risk of kyphosis being present decreases with higher starting vertebral
+level and lower number of vertebrae involved.  Children about 100 months old
+are under higher risk compared to younger or older children.
+\item[Women's role in society]
+For males, the log-odds of agreement decreases linearly with each
+additional year of education.  For females, the log-odds is more or less
+constant up to five years of education and only then begins to decrease. 
+After $15$ years, there seems to be no further impact on the log-odds.
+\end{description}
+
+
+\section{Final Comments}
+
+Additive models offer flexible modeling tools for regression
+problems. They stand between generalized linear models, where
+the regression relationship is assumed to be linear, and
+more complex models like random forests (see \Sexpr{ch("RP")})
+where the regression relationship remains unspecified. Smooth
+functions describing the influence of covariates on the response
+can be easily interpreted. Variable
+selection is a technically difficult problem in this class
+of models; boosting methods are one possibility to deal with this
+problem.
+
+\section*{Exercises}
+
+\begin{description}
+
+\exercise 
+Consider the body fat data introduced in \Sexpr{ch("RP")}, 
+Table~\ref{RP-bodyfat-tab}. First fit a generalized additive
+model assuming normal errors using function \Rcmd{gam}. Are 
+all potential covariates informative? Check the results
+against a generalized additive model that underwent
+AIC-based variable selection (fitted using function \Rcmd{gamboost}).
+
+\exercise
+Again fit an additive model to the body fat data, but this time for
+a log-transformed response. Compare the two models, which one is more appropriate?
+
+\exercise
+Try to fit a logistic additive model to the glaucoma data
+discussed in \Sexpr{ch("RP")}. Which covariates should enter the
+model and how is their influence on the probability of 
+suffering from glaucoma?
+
+\exercise
+Investigate the use of different types of scatterplot smoothers on the
+Hubble data in Table~\ref{MLR-hubble-tab} in Chapter~\ref{MLR-hubble-tab}.
+
+\end{description}
+
+
+\bibliographystyle{LaTeXBibTeX/refstyle}
+\bibliography{LaTeXBibTeX/HSAUR}
+\end{document}

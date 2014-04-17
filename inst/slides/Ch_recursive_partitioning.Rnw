@@ -1,0 +1,457 @@
+
+
+\input{HSAUR_title}
+
+\SweaveOpts{prefix.string=figures/HSAUR,eps=FALSE,keep.source=TRUE}
+
+<<setup, echo = FALSE, results = hide>>=
+source("setup.R")
+library("randomForest")
+library("partykit")
+@
+
+\frame{
+\begin{center}
+\Large{Part 9: Recursive Partitioning}
+\end{center}
+
+explains how to fit regression models via simple recursive partitioning methods.
+
+}
+
+\section{Introduction}
+\begin{frame}
+  \frametitle{Introduction}
+
+The Forbes 2000 list of the world's biggest industrial companies was %%'
+introduced in detail in Part~1. Here, our interest is to construct a
+model explaining the profit of a company based on assets, sales and the
+market value.
+
+The second set of data involves the investigation reported in
+\cite{HSAUR:Mardinetal2003} of whether laser scanner images of the eye
+background can be used to classify a patient's eye as suffering %'
+from glaucoma or not. 
+
+Glaucoma is a neuro-degenerative disease of the optic nerve
+and is one of the major reasons for blindness in elderly people. 
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Glaucoma Data}
+
+For $196$
+people, $98$ patients suffering glaucoma and $98$ controls which have been
+matched by age and sex, $62$ numeric variables derived from the laser
+scanning images are available. The data are available as \Robject{GlaucomaM}
+\index{GlaucomaM data@\Robject{GlaucomaM} data}
+from package \Rpackage{TH.data}.
+The variables describe the morphology of the
+optic nerve head, i.e., measures of volumes and areas in certain regions of
+the eye background. Those regions have been manually outlined by a
+physician. Our aim is to construct a prediction model which is able to
+decide whether an eye is affected by glaucomateous changes based on the
+laser image data.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Candidate Models}
+
+Both sets of data described above could be analysed using the regression
+models described in Parts~5 and 6, i.e.,
+regression models for numeric and binary
+response variables
+based on a linear combination of the covariates.
+
+But here we shall employ an alternative approach known as \stress{recursive
+partitioning}, where the resulting models are usually called
+\stress{regression or classification trees}.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Recursive Partitioning}
+
+This method was originally
+invented to deal with possible non-linear relationships between covariates and
+response. The basic idea is to partition
+the covariate space and to compute simple statistics of the dependent
+variable, like the mean or median, inside each cell.
+
+There exist many algorithms for the construction of classification or
+regression trees but the majority of algorithms follow a simple general
+rule:
+First partition the observations by univariate splits
+in a recursive way and
+second fit a constant model in each cell of the resulting partition. 
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Recursive Partitioning}
+
+For the first step, one selects a
+covariate $x_j$ from the $q$ available
+covariates $x_1, \dots, x_q$ and estimates a split point which separates
+the response values $y_i$ into two groups. For an ordered
+covariate $x_j$ a split point is a number $\xi$ dividing the observations
+into two groups. The first group consists of all observations with $x_j \le
+\xi$ and
+the second group contains the observations satisfying $x_j > \xi$. 
+
+Once that the splits $\xi$ or $A$ for some selected covariate
+$x_j$ have been estimated, one applies the
+procedure sketched above for all observations in the first group and,
+recursively, splits this set of observations further. The same happens for
+all observations in the second group. The recursion is stopped when some
+stopping criterion is fulfilled.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Ensemble Methods}
+
+When the underlying relationship between covariate
+and response is smooth, such a split point estimate will be affected by high
+variability. This problem is addressed by so called \stress{ensemble
+methods}.
+Here, multiple trees are grown on perturbed instances of the
+data set and their predictions are averaged. The simplest representative of
+such a procedure is called \stress{bagging} \citep{HSAUR:Breiman1996}.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Bagging}      
+
+We draw $B$ bootstrap samples from the original data set,
+i.e., we draw $n$ out of $n$ observations with replacement from our $n$
+original observations. For each of those bootstrap samples we grow a very large
+tree. When we are interested in the prediction for a new observation, we
+pass this observation through all $B$ trees and average their predictions.
+It has been shown that the goodness of the predictions for future cases can
+be improved dramatically by this or similar simple procedures. More details
+can be found in \cite{HSAUR:Buehlmann2004}.
+
+\end{frame}
+
+\section{Analysis using R}
+
+\begin{frame}[fragile]
+  \frametitle{Analysis using R: Forbes 2000}
+
+The \Rcmd{rpart} function from \Rpackage{rpart} can be used to grow a
+regression tree. The response variable and the covariates are defined by a
+model formula in the same way as for \Rcmd{lm}, say. By default, a large
+initial tree is grown.
+<<RP-Forbes-rpart, echo = TRUE>>=
+library("rpart")
+data("Forbes2000", package = "HSAUR3")
+Forbes2000 <- subset(Forbes2000, !is.na(profits))
+fm <- profits ~ assets + marketvalue + sales
+forbes_rpart <- rpart(fm, data = Forbes2000)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Plot Tree}
+
+\begin{center}
+<<RP-Forbes-initial, echo = TRUE, fig = TRUE, width = 10, height = 6>>=
+plot(as.party(forbes_rpart))
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Inspect Tree Complexity}  
+
+<<RP-Forbes-cp, echo = TRUE>>=
+print(forbes_rpart$cptable)
+opt <- which.min(forbes_rpart$cptable[,"xerror"])
+cp <- forbes_rpart$cptable[opt, "CP"]
+forbes_prune <- prune(forbes_rpart, cp = cp)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Plot Pruned Tree}
+
+\small
+\begin{center}
+<<RP-Forbes-plot, echo = TRUE, fig = TRUE>>=
+plot(as.party(forbes_prune))
+@
+\end{center}
+\normalsize
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Glaucoma Data}
+
+Here, we are primarily interested in the construction of a predictor. The relationship between the
+$62$ covariates and the glaucoma status itself is not very interesting.
+We start with a large initial tree and prune back branches according to the
+cross-validation criterion.
+
+\small
+<<RP-seed-again, echo = FALSE, results = hide>>=
+set.seed(290875)
+@
+<<RP-glaucoma-rpart, echo = TRUE>>=
+data("GlaucomaM", package = "TH.data")
+glaucoma_rpart <- rpart(Class ~ ., data = GlaucomaM,
+              control = rpart.control(xval = 100))
+glaucoma_rpart$cptable
+opt <- which.min(glaucoma_rpart$cptable[,"xerror"])
+cp <- glaucoma_rpart$cptable[opt, "CP"]
+glaucoma_prune <- prune(glaucoma_rpart, cp = cp)
+@
+\normalsize
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Pruned Tree for Glaucoma Data}
+
+\small
+\begin{center}
+<<RP-glaucoma-plot, echo = TRUE, fig = TRUE>>=
+plot(as.party(glaucoma_prune))
+@
+\end{center}
+\normalsize
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Problem: Instability}
+
+<<RP-glaucoma-cp, echo = TRUE>>=
+nsplitopt <- vector(mode = "integer", length = 25)
+for (i in 1:length(nsplitopt)) {
+    cp <- rpart(Class ~ ., data = GlaucomaM)$cptable
+    nsplitopt[i] <- cp[which.min(cp[,"xerror"]), 
+        "nsplit"]
+}
+table(nsplitopt)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Bagging: Grow a Forest}
+
+<<RP-glaucoma-bagg, echo = TRUE>>=
+trees <- vector(mode = "list", length = 25)
+n <- nrow(GlaucomaM)
+bootsamples <- rmultinom(length(trees), n, rep(1, n)/n)
+mod <- rpart(Class ~ ., data = GlaucomaM, 
+    control = rpart.control(xval = 0))
+for (i in 1:length(trees))
+    trees[[i]] <- update(mod, weights = bootsamples[,i])
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Bagging: Prediction}
+
+Estimate the conditional probability of suffering from glaucoma given the
+covariates for each observation in the original data set by
+<<RP-glaucoma-baggpred, echo = TRUE>>=
+classprob <- matrix(0, nrow = n, ncol = length(trees))
+for (i in 1:length(trees)) {
+    classprob[,i] <- predict(trees[[i]], 
+        newdata = GlaucomaM)[,1]
+    classprob[bootsamples[,i] > 0,i] <- NA
+}
+@
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Estimate Misclassification Error}
+
+\small
+<<RP-glaucoma-avg, echo = TRUE>>=
+avg <- rowMeans(classprob, na.rm = TRUE)
+predictions <- factor(ifelse(avg > 0.5, "glaucoma", "normal"))
+predtab <- table(predictions, GlaucomaM$Class)
+predtab
+@
+\normalsize
+An honest estimate of the probability of
+a glaucoma prediction when the patient is actually suffering from glaucoma is
+\small
+<<RP-glaucoma-sens, echo = TRUE>>=
+round(predtab[1,1] / colSums(predtab)[1] * 100)
+@
+\normalsize
+per cent. 
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Visualizing a Forest of Trees}
+
+\small
+<<RP-glaucoma-baggplot, eval = FALSE, echo = TRUE>>=
+library("lattice")
+gdata <- data.frame(avg = rep(avg, 2),
+    class = rep(as.numeric(GlaucomaM$Class), 2),
+    obs = c(GlaucomaM[["varg"]], GlaucomaM[["vari"]]),
+    var = factor(c(rep("varg", nrow(GlaucomaM)), 
+                   rep("vari", nrow(GlaucomaM)))))
+panelf <- function(x, y) {
+    panel.xyplot(x, y, pch = gdata$class)
+    panel.abline(h = 0.5, lty = 2)
+}
+print(xyplot(avg ~ obs | var, data = gdata,
+      panel = panelf,
+      scales = "free", xlab = "",
+      ylab = "Estimated Class Probability Glaucoma"))
+@
+\normalsize
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Visualizing a Forest of Trees}
+
+\begin{center}
+<<RP-glaucoma-baggplot, echo = FALSE, fig = TRUE, height = 4>>=
+library("lattice")
+gdata <- data.frame(avg = rep(avg, 2),
+                    class = rep(as.numeric(GlaucomaM$Class), 2),
+                    obs = c(GlaucomaM[["varg"]], GlaucomaM[["vari"]]),
+                    var = factor(c(rep("varg", nrow(GlaucomaM)), rep("vari", nrow(GlaucomaM)))))
+panelf <- function(x, y) {
+           panel.xyplot(x, y, pch = gdata$class)
+           panel.abline(h = 0.5, lty = 2)
+       }
+print(xyplot(avg ~ obs | var, data = gdata,
+       panel = panelf,
+       scales = "free", xlab = "",
+       ylab = "Estimated Class Probability Glaucoma"))
+@
+\end{center}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+  \frametitle{Random Forest}
+
+The \stress{bagging} procedure is a special case of a more general approach
+called \stress{random forest} \citep{HSAUR:Breiman2001b}. The package
+\Rpackage{randomForest} \citep{PKG:randomForest}
+can be used to compute such ensembles via
+<<RP-glaucoma-rf, echo = TRUE>>=
+library("randomForest")
+rf <- randomForest(Class ~ ., data = GlaucomaM)
+@
+and we obtain out-of-bag estimates for the prediction error via
+<<RP-glaucoma-rf-oob, echo = TRUE>>=
+table(predict(rf), GlaucomaM$Class)
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Unbiased Trees}
+
+Another approach to recursive partitioning, making a connection to classical
+statistical test problems. In each node of those trees,
+a significance test on independence between any of the covariates and the response is
+performed and a split is established when the $p$-value
+is smaller than a pre-specified nominal level $\alpha$. 
+
+This approach has
+the advantage that one does not need to prune back large initial trees since we have
+a statistically motivated stopping criterion -- the $p$-value -- at hand.
+
+Such \stress{conditional inference trees} are implemented in the \Rpackage{partykit} package
+\citep{HSAUR:Hothorn:2006:JCGS}.
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Unbiased Trees}
+
+For the glaucoma data, such a conditional inference tree can be computed using
+<<RP-glaucoma-ctree, echo = TRUE>>=
+glaucoma_ctree <- ctree(Class ~ ., data = GlaucomaM)
+@
+A convenient display is available.
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Classification Tree for Glaucoma Data}
+
+\begin{center}
+<<RP-glaucoma-ctree-plot, echo = TRUE, fig = TRUE, width = 12, height = 8>>=
+plot(glaucoma_ctree)
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Summary}
+
+Recursive partitioning procedures are rather simple non-parametric tools for
+regression modelling. The main structures of regression relationship can be
+visualised in a straightforward way. However, one should bear in mind that
+the nature of those models is very simple and can only serve as a rough
+approximation to reality. When multiple simple models are averaged,
+powerful predictors can be constructed.
+
+\end{frame}
+
+\begin{frame}         
+  \frametitle{Exercises}
+\begin{itemize}
+\item
+Construct a classification tree for the Boston Housing data
+which are available as
+\Rclass{data.frame} \Robject{BostonHousing} from package \Rpackage{mlbench}. 
+Compare the predictions of the tree with the predictions
+obtained from \Rcmd{randomForest}. Which method is more accurate?
+\item
+For each possible cutpoint in \Robject{varg} of the
+glaucoma data, compute the test statistic of the chi-square test of
+independence and plot them against the values of
+\Robject{varg}. Is a simple cutpoint for this variable
+appropriate for discriminating between healthy and glaucomateous eyes?
+\item
+Compare the tree models fitted to the glaucoma data with a logistic
+regression model.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{References}
+
+\tiny
+<<bibfiles, echo = FALSE, results = tex>>=   
+src <- system.file(package = "HSAUR3")
+style <- file.path(src, "LaTeXBibTeX", "refstyle")
+bst <- file.path(src, "LaTeXBibTeX", "HSAUR")
+cat(paste("\\bibliographystyle{", style, "}", sep = ""), "\n \n")
+cat(paste("\\bibliography{", bst, "}", sep = ""), "\n \n")
+@
+\normalsize
+
+\end{frame}
+
+\end{document}

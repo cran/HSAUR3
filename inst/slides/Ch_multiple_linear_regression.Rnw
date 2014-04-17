@@ -1,0 +1,494 @@
+
+\input{HSAUR_title}
+
+\SweaveOpts{prefix.string=figures/HSAUR,eps=FALSE,keep.source=TRUE}
+
+<<setup, echo = FALSE, results = hide>>=
+source("setup.R")
+@
+
+\frame{
+\begin{center}
+\Large{Part 6: Multiple Linear Regression}
+\end{center}
+
+focuses on the analysis of cloud seeding experiments.
+
+}
+
+\begin{frame}
+  \frametitle{clouds: Cloud Seeding}
+
+The data were collected in the summer
+of 1975 from an experiment to investigate the use of massive
+amounts of silver iodide ($100$ to $1000$ grams per cloud) in cloud
+seeding to increase rainfall.
+
+In the experiment 24 days were judged suitable for seeding
+on the basis that a measured suitability criterion. 
+
+On suitable days, a decision was taken at random as to whether
+to seed or not. 
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Could Seeding Variables} 
+
+\begin{description}
+\item[\Robject{seeding}]: a factor indicating whether seeding action occured (yes or no),
+\item[\Robject{time}]: number of days after the first day of the experiment,
+\item[\Robject{cloudcover}]: the percentage cloud cover in the experimental area,
+                  measured using radar,
+\item[\Robject{prewetness}]: the total rainfall in the target area one hour before seeding,
+\item[\Robject{echomotion}]: a factor showing whether the radar echo was moving or
+                             stationary,
+\item[\Robject{rainfall}]: the amount of rain,
+\item[\Robject{sne}]: suitability criterion.
+\end{description}
+The objective in analysing these data is to see how rainfall
+is related to the explanatory variables and, in particular, to
+determine the effectiveness of seeding.
+
+\end{frame}
+
+\section{Multiple Linear Regression}
+
+\begin{frame}
+  \frametitle{Multiple Linear Regression}
+
+Assume $y_i$ represents the value of the response variable on the $i$th
+individual, and that $x_{i1}, x_{i2}, \dots, x_{iq}$ represents the
+individual's values on $q$ explanatory variables, with $i = 1, \dots, n$. 
+
+The multiple linear regression model is given by
+\begin{eqnarray*}
+y_i = \beta_0 + \beta_1 x_{i1} + \dots + \beta_q x_{iq} + \varepsilon_i.
+\end{eqnarray*}
+
+The residual or error terms $\varepsilon_i$, $i = 1, \dots, n$, are assumed
+to be independent random variables having a normal distribution with mean
+zero and constant variance $\sigma^2$. 
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Multiple Linear Regression}
+
+Consequently, the distribution of the
+random response variable, $y$, is also normal with expected value given by
+the linear combination of the explanatory variables
+\begin{eqnarray*}
+\E(y | x_1, \dots, x_q) = \beta_0 + \beta_1 x_{1} + \dots + \beta_q x_{q}
+\end{eqnarray*}
+and with variance $\sigma^2$.
+
+The parameters of the model $\beta_k$, $k = 1, \dots, q$, are known as
+regression coefficients with $\beta_0$ corresponding to the overall mean.
+
+The multiple linear regression model can be written most conveniently for
+all $n$ individuals by using matrices and vectors as 
+\begin{eqnarray*}
+\y = \X \beta + \varepsilon
+\end{eqnarray*}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Model Matrix}
+
+The \stress{design} or \stress{model matrix} $\X$
+\index{Design matrix}
+\index{Model matrix}
+consists of the $q$ continuously measured
+explanatory variables and a column of ones corresponding to
+the \stress{intercept} term
+\input{tables/MLR-Xtab}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Nominal Variables}
+
+In case one or more of the explanatory variables are nominal or ordinal
+variables, they are represented by a zero-one dummy coding.
+
+Assume that
+$x_1$ is a factor at $k$ levels, the submatrix of $\X$
+corresponding to $x_1$ is a
+$n \times k$ matrix of zeros and ones, where the $j$th element in the $i$th
+row is one when $x_{i1}$ is at the $j$th level.
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Estimation}
+
+The least squares estimator of the parameter vector $\beta$
+can be calculated by $\hat{\beta} = (\X^\top\X)^{-1} \X^\top
+\y$ with 
+\begin{eqnarray*}
+\E(\hat{\beta}) & = & \beta \\
+& \text{ and } & \\
+\Var(\hat{\beta}) & = & \sigma^2 (\X^\top\X)^{-1}
+\end{eqnarray*}
+when the cross-product $\X^\top\X$ is non-singular.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Estimation}
+
+If the cross-product $\X^\top\X$ is singular we need to reformulate the
+model to $\y = \X \C \beta^\star + \varepsilon$ such that $\X^\star = \X \C$
+has full rank. The matrix $\C$ is called \stress{contrast matrix} in \S{}
+and \R{} and the result of the model fit is an estimate $\hat{\beta}^\star$. 
+
+For the
+theoretical details we refer to \cite{HSAUR:Searle1971}, the implementation
+of contrasts in \S{} and \R{} is discussed by
+\cite{HSAUR:Chambers+Hastie:1992} and \cite{HSAUR:VenablesRipley2002}.
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Inference}
+
+$\hat{y}_i$ is the predicted value of the response variable for the
+$i$th individual $\hat{y}_i = \hat{\beta}_0 + \hat{\beta}_1 x_{i1} + \dots +
+\hat{\beta}_q x_{q1}$ and $\bar{y} = \sum_{i = 1}^n y_i / n $ is the mean of the response variable.
+
+The mean square ratio
+\begin{eqnarray*}
+F = \frac{\sum\limits_{i = 1}^n (\hat{y}_i - \bar{y})^2 / q}{
+           \sum\limits_{i = 1}^n (\hat{y}_i - y_i)^2 / (n - q - 1)} \sim F_{q, n - q - 1}
+\end{eqnarray*}
+provides an $F$-test of the general hypothesis
+\begin{eqnarray*}
+H_0: \beta_1 = \dots = \beta_q = 0.
+\end{eqnarray*}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Variance Estimation}
+
+An estimate of the variance $\sigma^2$ is
+\begin{eqnarray*}
+\hat{\sigma}^2 = \frac{1}{n - q - 1} \sum_{i = 1}^n (y_i - \hat{y_i})^2.
+\end{eqnarray*}
+
+Individual regression coefficients can be assessed by using the
+ratio $t$-statistics $t_j = \hat{\beta}_j / \sqrt{\Var(\hat{\beta})_{jj}}$,
+although these ratios should only be used as rough guides to the `significance' %'
+of the coefficients. 
+
+The problem of selecting the `best' subset %'
+of variables to be included in a model is one of the most delicate ones in
+statistics and we refer to \cite{HSAUR:Miller2002} for the theoretical
+details and practical limitations.
+
+\end{frame}
+
+\section{Analysis Using R}
+
+\begin{frame}
+  \frametitle{Cloud Seeding}
+
+Prior to applying multiple regression to the data it will
+be useful to look at some graphics to assess their major features.
+
+Here we will construct boxplots of the rainfall in each category
+of the dichotomous explanatory variables and scatterplots of
+rainfall against each of the continuous explanatory variables.
+
+\end{frame}
+
+\begin{frame}
+
+\begin{center}
+<<MLR-clouds-boxplots, echo = FALSE, fig = TRUE, width = 8>>=
+data("clouds", package = "HSAUR3")
+layout(matrix(1:2, nrow = 1))
+bxpseeding <- boxplot(rainfall ~ seeding, data = clouds, ylab = "Rainfall",
+        xlab = "Seeding")
+bxpecho <- boxplot(rainfall ~ echomotion, data = clouds, ylab = "Rainfall",
+        xlab = "Echo Motion")
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{center}
+<<MLR-clouds-scatterplots, echo = FALSE, fig = TRUE, width = 7, height = 7>>=
+layout(matrix(1:4, nrow = 2))
+plot(rainfall ~ time, data = clouds)
+plot(rainfall ~ sne, data = clouds, xlab="S-NE criterion")
+plot(rainfall ~ cloudcover, data = clouds)
+plot(rainfall ~ prewetness, data = clouds)
+@
+\end{center}
+
+\end{frame}
+
+\subsection{Fitting a Linear Model}
+
+\begin{frame}[fragile]
+  \frametitle{Fitting a Linear Model} 
+
+It is sensible to assume that the effect that
+some of the other explanatory variables is modified by seeding
+and therefore consider a model that allows interaction terms
+for \Robject{seeding} with each of the covariates except \Robject{time}.
+
+This model can be described by the \Rclass{formula}
+<<MLR-clouds-formula, echo = TRUE>>=
+clouds_formula <- rainfall ~ seeding * (sne + 
+    cloudcover + prewetness + echomotion) + time
+@
+and the design matrix $\X^\star$ can be computed via
+<<MLR-clouds-modelmatrix, echo = TRUE>>=
+Xstar <- model.matrix(clouds_formula, data = clouds)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Contrast Matrix}
+
+By default, treatment contrasts have been applied to the dummy codings of
+the factors \Robject{seeding} and \Robject{echomotion} as can be seen from
+the inspection of the \Robject{contrasts} attribute of the model matrix
+<<MLR-clouds-contrasts, echo = TRUE>>=
+attr(Xstar, "contrasts")
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Fitting a Linear Model}
+
+However, such internals are hidden and performed by high-level model fitting
+functions such as \Rcmd{lm} which will be used to fit the linear model
+defined by the \Rclass{formula} \Robject{clouds\_formula}:
+<<MLR-clouds-lm, echo = TRUE>>=
+clouds_lm <- lm(clouds_formula, data = clouds)
+class(clouds_lm)
+@
+A \Rcmd{summary} method can be used to show the conventional regression analysis
+output.
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Inspecting Results}
+
+The estimates $\hat{\beta}^\star$ can be assessed via
+<<MLR-clouds-coef, echo = TRUE, eval = FALSE>>=
+coef(clouds_lm)
+@
+<<MLR-clouds-coef, echo = FALSE>>=
+coef(clouds_lm)[1:5]
+cat("...\n")
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Inspecting Results}
+
+The corresponding covariance matrix $\Cov(\hat{\beta}^\star)$ is available via
+<<MLR-clouds-vcov, echo = TRUE, eval = FALSE>>=
+vcov(clouds_lm)
+@
+<<MLR-clouds-vcov, echo = FALSE>>=
+vcov(clouds_lm)[1:5,1:5]
+cat("...\n")
+@
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Inspecting Results}
+
+The results of the linear model fit
+suggest the interaction of seeding with cloud coverage
+significantly affects rainfall. 
+
+A suitable graph will help in the interpretation of
+this result. We can plot the relationship between rainfall and
+S-Ne criterion for seeding and non-seeding days.
+
+\end{frame}
+
+\begin{frame}
+
+\begin{center}
+<<MLR-clouds-lmplot, echo = FALSE, fig = TRUE>>=
+psymb <- as.numeric(clouds$seeding)
+plot(rainfall ~ sne, data = clouds, pch = psymb)
+abline(lm(rainfall ~ sne, data = clouds, subset = seeding == "no"))
+abline(lm(rainfall ~ sne, data = clouds, subset = seeding == "yes"), lty = 2)
+legend("topright", legend = c("No seeding", "Seeding"), pch = 1:2, lty = 1:2, bty = "n")
+@
+\end{center}
+
+\end{frame}
+
+\subsection{Regression Diagnostics}
+
+\begin{frame}
+  \frametitle{Regression Diagnostics}
+
+The possible influence of outliers and the checking of assumptions
+made in fitting the multiple regression model, i.e., constant
+variance and normality of error terms, can both be undertaken
+using a variety of diagnostic tools, of which the simplest and
+most well known are the estimated residuals, i.e., the differences
+between the observed values of the response and the fitted values of the
+response. 
+
+So, after estimation, the next stage in the analysis
+should be an examination of
+such residuals from fitting the chosen model to check on the normality
+and constant variance assumptions and to identify outliers. 
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Diagnostic Plots}
+
+\begin{itemize}
+\item A plot of residuals against each explanatory variable in
+      the model. The presence of a non-linear relationship, for example,
+      may suggest that a higher-order term, in the explanatory variable
+      should be considered.
+\item A plot of residuals against fitted values. If the variance
+      of the residuals appears to increase with predicted value, a
+      transformation of the response variable may be in order.
+\item A normal probability plot of the residuals. After
+      all the systematic variation has been removed from the data,
+      the residuals should look like a sample from a standard normal
+      distribution. A plot of the ordered residuals against the expected
+      order statistics from a normal distribution provides a graphical
+      check of this assumption.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Residuals and Fitted Values}
+
+We need access to the
+residuals and the fitted values. The residuals can be found by the
+\Rcmd{residuals} method and the fitted values of the response
+from the \Rcmd{fitted} method
+<<MLR-clouds-residfitted, echo = TRUE>>=
+clouds_resid <- residuals(clouds_lm)
+clouds_fitted <- fitted(clouds_lm)
+@
+
+\end{frame}
+
+\begin{frame}
+
+\begin{center}
+<<MLR-clouds-residplot, echo = FALSE, fig = TRUE>>=
+plot(clouds_fitted, clouds_resid, xlab = "Fitted values",
+     ylab = "Residuals", ylim = max(abs(clouds_resid)) * c(-1, 1),
+     type = "n")
+abline(h = 0, lty = 2)
+text(clouds_fitted, clouds_resid, labels = rownames(clouds))
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{center}
+<<MLR-clouds-qqplot, echo = FALSE, fig = TRUE>>=
+qqnorm(clouds_resid, ylab = "Residuals")
+qqline(clouds_resid)
+@
+\end{center}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Cook's Distance}
+
+
+A further diagnostic that is often very useful is an index
+plot of the Cook's distances for each observation. This statistic %'
+\index{Cook's distance} %%'
+is defined as
+\begin{eqnarray*}
+D_k = \frac{1}{(q + 1)\hat{\sigma}^2} \sum_{i=1}^n (\hat{y}_{i(k)} - y_i)^2
+\end{eqnarray*}
+where $\hat{y}_{i(k)}$
+is the fitted value of the $i$th observation when
+the $k$th observation is omitted from the model.
+
+The
+values of $D_k$ assess the impact of the $k$th
+observation
+on the estimated regression coefficients. Values of $D_k$
+greater than one are suggestive that the corresponding observation
+has undue influence on the estimated regression coefficients.
+
+\end{frame}
+
+\begin{frame}
+
+\begin{center}
+<<MLR-clouds-cook, echo = FALSE, fig = TRUE>>=
+plot(clouds_lm, which = 4, sub.caption = NULL)
+@
+\end{center}
+
+\end{frame}
+
+\section*{Exercises}
+
+\begin{frame}
+  \frametitle{Exercises}
+
+\begin{itemize}
+
+\item
+Investigate refitting the cloud seeding data after removing
+any observations which may give cause for concern.
+
+\item 
+Show how the analysis of variance for the data \Robject{weightgain}
+data 
+can be constructed from the results of applying an appropriate
+multiple linear regression to the data.
+
+\item 
+Investigate the use of the \Rcmd{leaps} function from package
+\Rpackage{leaps} for the selecting the `best' %%'
+set of variables predicting rainfall in the cloud seeding data.
+
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{References}
+\tiny
+<<bibfiles, echo = FALSE, results = tex>>=   
+src <- system.file(package = "HSAUR3")
+style <- file.path(src, "LaTeXBibTeX", "refstyle")
+bst <- file.path(src, "LaTeXBibTeX", "HSAUR")
+cat(paste("\\bibliographystyle{", style, "}", sep = ""), "\n \n")
+cat(paste("\\bibliography{", bst, "}", sep = ""), "\n \n")
+@
+
+\end{frame}
+
+\end{document}
