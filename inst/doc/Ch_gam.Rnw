@@ -199,7 +199,7 @@
 \author{Torsten Hothorn and Brian S. Everitt}
 
 \maketitle
-%%\VignetteIndexEntry{Generalized Additive Models}
+%%\VignetteIndexEntry{Chapter Generalized Additive Models}
 %%\VignetteDepends{mgcv,rpart,wordcloud,mboost}
 \setcounter{chapter}{9}
 

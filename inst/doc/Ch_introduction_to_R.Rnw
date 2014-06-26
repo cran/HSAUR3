@@ -199,7 +199,7 @@
 \author{Torsten Hothorn and Brian S. Everitt}
 
 \maketitle
-%%\VignetteIndexEntry{Chapter An Introduction to R}
+%%\VignetteIndexEntry{An Introduction to R}
 %%\VignetteDepends{sandwich}
 \setcounter{chapter}{0}
 

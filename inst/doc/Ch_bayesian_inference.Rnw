@@ -201,7 +201,7 @@
 \author{Torsten Hothorn and Brian S. Everitt}
 
 \maketitle
-%%\VignetteIndexEntry{Bayesian Inference}
+%%\VignetteIndexEntry{Chapter Bayesian Inference}
 %%\VignetteDepends{rmeta,coin}
 \setcounter{chapter}{17}
 

@@ -1662,7 +1662,7 @@
 
 @article{HSAUR:Coronary1976,
     author = {{Coronary Drug Project Group}},
-    title = {Asprin in coronary heart disease},
+    title = {Aspirin in coronary heart disease},
     year = 1976,
     journal = {Journal of Chronic Diseases},
     volume = 29, 
@@ -1671,7 +1671,7 @@
 
 @article{HSAUR:ElwoodSweetman1979,
     author = {P. C. Elwood and P. M. Sweetman},
-    title = {Asprin and secondary mortality after myocardial infarction},
+    title = {Aspirin and secondary mortality after myocardial infarction},
     year = 1979,
     journal = {Lancet},
     volume = 2,
