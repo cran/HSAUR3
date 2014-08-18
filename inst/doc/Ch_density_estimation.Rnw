@@ -279,7 +279,7 @@ are plotted using the \R{} statements in lines 5--11 (Figure~\ref{DE-kernel-fig}
 \numberSinput
 \begin{figure}
 \begin{center}
-<<DE-kernel-figs, echo = TRUE, fig = TRUE, pdf = FALSE, png = TRUE>>=
+<<DE-kernel-figs, echo = TRUE, fig = TRUE, pdf = FALSE, png = TRUE, resolution = 100>>=
 rec <- function(x) (abs(x) < 1) * 0.5
 tri <- function(x) (abs(x) < 1) * (1 - abs(x))
 gauss <- function(x) 1/sqrt(2*pi) * exp(-(x^2)/2)

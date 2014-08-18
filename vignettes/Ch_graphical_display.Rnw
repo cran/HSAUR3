@@ -482,7 +482,7 @@ in good agreement with our earlier results.
 
 \begin{figure}  
 \begin{center}
-<<DAGD-USmelanoma-long-lat, echo = TRUE, fig = TRUE, height = 4>>=
+<<DAGD-USmelanoma-long-lat, echo = TRUE, fig = TRUE, height = 4, pdf = FALSE, png = TRUE>>=
 spplot(us2, "mortality", col.regions = rev(grey.colors(100)))
 @
 \caption{Map of the United States of America showing 
@@ -606,7 +606,7 @@ cdplot(R_happy ~ log(R_income + 1), data = CHFLS,
 
 @
 \caption{Spinogram (left)
-         and conditional density plot (right) of happiness depending on log-income
+         and conditional density plot (right) of happiness depending on log-income.
          \label{DAGD-CHFLS-happy_income}}
 \end{figure}
 
@@ -637,7 +637,7 @@ scatterplot will be produced. The plots are directly comparable since
 the axes remain the same for all plots. 
 
 \begin{figure}
-<<DAGD-CHFLS-RAincome3, echo = TRUE, eval = FALSE>>=
+<<DAGD-CHFLS-RAincome3, echo = TRUE, eval = FALSE, pdf = FALSE, png = TRUE>>=
 library("lattice")
 xyplot(jitter(log(R_income + 0.5)) ~ 
        jitter(log(A_income + 0.5)) | R_edu, data = CHFLS,

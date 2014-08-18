@@ -304,7 +304,7 @@ for the more populated areas in the plot.
 
 \begin{figure}
 \begin{center}
-<<QR-db-plot, echo = TRUE, fig = TRUE, pdf = FALSE, png = TRUE, height = 4>>=
+<<QR-db-plot, echo = TRUE, fig = TRUE, pdf = FALSE, png = TRUE, height = 4, resolution = 100>>=
 db$cut <- cut(db$age, breaks = c(2, 9, 23), 
               labels = c("2-9 yrs", "9-23 yrs"))
 xyplot(head ~ age | cut, data = db, xlab = "Age (years)", 
@@ -451,7 +451,7 @@ homogeneity that we're going to drop now.
 
 \begin{figure}
 \begin{center}
-<<QR-db-lm-plot, echo = TRUE, fig = TRUE, pdf = FALSE, png = TRUE, height = 4>>=
+<<QR-db-lm-plot, echo = TRUE, fig = TRUE, pdf = FALSE, png = TRUE, height = 4, resolution = 100>>=
 pfun <- function(x, y, ...) {
     panel.xyplot(x = x, y = y, ...)
     if (max(x) <= 9) {
@@ -526,7 +526,7 @@ circumference.
 
 \begin{figure}
 \begin{center}
-<<QR-db-rq-plot, echo = TRUE, fig = TRUE, pdf = FALSE, png = TRUE, height = 4>>=
+<<QR-db-rq-plot, echo = TRUE, fig = TRUE, pdf = FALSE, png = TRUE, height = 4, resolution = 100>>=
 pfun <- function(x, y, ...) {
     panel.xyplot(x = x, y = y, ...)
     if (max(x) <= 9) {
@@ -624,7 +624,7 @@ are hardly dramatic for the head circumference data.
 
 \begin{figure}
 \begin{center}
-<<QR-db-rqss-plot, echo = TRUE, fig = TRUE, pdf = FALSE, png = TRUE, height = 4>>=
+<<QR-db-rqss-plot, echo = TRUE, fig = TRUE, pdf = FALSE, png = TRUE, height = 4, resolution = 100>>=
 pfun <- function(x, y, ...) {
     panel.xyplot(x = x, y = y, ...)
     apply(p, 2, function(x) panel.lines(gage, x))

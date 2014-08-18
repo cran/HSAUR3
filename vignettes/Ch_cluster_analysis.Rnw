@@ -302,7 +302,7 @@ library("lattice")
 levelplot(as.matrix(pottery_dist), xlab = "Pot Number", 
           ylab = "Pot Number")
 @
-<<CA-pottery-distplot, echo = FALSE, fig = TRUE, width = 8, height = 8, pdf = FALSE, png = TRUE>>=
+<<CA-pottery-distplot, echo = FALSE, fig = TRUE, width = 8, height = 8, pdf = FALSE, png = TRUE, resolution = 100>>=
 trellis.par.set(standard.theme(color = FALSE))
 plot(levelplot(as.matrix(pottery_dist), xlab = "Pot Number", ylab = "Pot Number"))
 @

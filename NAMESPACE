@@ -2,6 +2,7 @@
 export(HSAURtable)
 
 import(utils)
+importFrom("tools", "delimMatch")
 
 S3method(HSAURtable, table)
 S3method(HSAURtable, data.frame)

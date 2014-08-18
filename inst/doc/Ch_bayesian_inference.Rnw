@@ -348,22 +348,23 @@ toLatex(HSAURtable(x, xname = "Smoking_DollHill1950"),
 
 Although the design of the studies by \cite{HSAUR:Mueller1940} and
 \cite{HSAUR:SchairerSchoeninger1944}, especially the selection of their
-control groups, can be criticized \citep[see][for a detailed discussion]{HSAUR:Morabia2013}
-and the study by \cite{HSAUR:DollHill1950} was larger than the older
-studies and more detailed information on the smoking behavior was obtained
-by direct patient interviews, the information provided by the earlier
-studies was not taken into account by \cite{HSAUR:DollHill1950}.  They cite
-\cite{HSAUR:Mueller1940} in their introduction, but did not compare their
-findings with his results.  It is remarkable to see that both
-\cite{HSAUR:SchairerSchoeninger1944} and \cite{HSAUR:Wassink1945}
-extensively made use of the report by \cite{HSAUR:Mueller1940} and go as far
-as analyzing the merged data \citep[Grafiek I, E, and F,
-in][]{HSAUR:Wassink1945}.  In an informal way, these authors wanted to use
-the already available information, in today's terms called `prior
-knowledge', to make a stronger case with the new data.  Formal statistical
-methods to incorporate prior knowledge into data analysis as part of the`Bayesian' way of doing statistical analyses were developed in the second half of the last century, and we will focus on them in
-the present chapter.
-\index{Smoking and lung cancer|)}
+control groups, can be criticized \citep[see][for a detailed
+discussion]{HSAUR:Morabia2013} and the study by \cite{HSAUR:DollHill1950}
+was larger than the older studies and more detailed information on the
+smoking behavior was obtained by direct patient interviews, the information
+provided by the earlier studies was not taken into account by
+\cite{HSAUR:DollHill1950}.  They cite \cite{HSAUR:Mueller1940} in their
+introduction, but did not compare their findings with his results.  It is
+remarkable to see that both \cite{HSAUR:SchairerSchoeninger1944} and
+\cite{HSAUR:Wassink1945} extensively made use of the report by
+\cite{HSAUR:Mueller1940} and go as far as analyzing the merged data
+\citep[Grafiek I, E, and F, in][]{HSAUR:Wassink1945}.  In an informal way,
+these authors wanted to use the already available information, in today's
+terms called `prior knowledge', to make a stronger case with the new data. 
+Formal statistical methods to incorporate prior knowledge into data analysis
+as part of the `Bayesian' way of doing statistical analyses were developed
+in the second half of the last century, and we will focus on them in the
+present chapter.  \index{Smoking and lung cancer|)}
 
 
 \section{Bayesian Inference}

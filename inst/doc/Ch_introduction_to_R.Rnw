@@ -1277,7 +1277,7 @@ plot(log(marketvalue) ~ log(sales), data = Forbes2000,
 
 \begin{figure}
 \begin{center}
-<<AItR-Forbes2000-marketvalue-sales-shading, echo = TRUE, fig = TRUE, pdf = FALSE, png = TRUE>>=
+<<AItR-Forbes2000-marketvalue-sales-shading, echo = TRUE, fig = TRUE, pdf = FALSE, png = TRUE, resolution = 100>>=
 plot(log(marketvalue) ~ log(sales), data = Forbes2000, 
      col = rgb(0,0,0,0.1), pch = 16)
 @
