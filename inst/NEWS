@@ -1,4 +1,8 @@
 
+1.0-4 (2015-03-09)
+
+ o wgs84 -> WGS84
+
 1.0-3 (2015-01-05)
  
  o remove platform-dependent Makefiles

@@ -1,5 +1,18 @@
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 \documentclass{chapman}
 
 %%% copy Sweave.sty definitions
@@ -485,19 +498,6 @@ plot(heptathlon$score, heptathlon_pca$x[,1])
 first principal component. \label{PCA-heptathlonscore}}
 \end{center}
 \end{figure}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 %%\bibliographystyle{LaTeXBibTeX/refstyle} 

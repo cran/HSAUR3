@@ -1,6 +1,19 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 \documentclass{chapman}
 
 %%% copy Sweave.sty definitions
@@ -274,12 +287,6 @@ residuals <- function(object) {
 
 
 \section{Analyzing Longitudinal Data}
-
-
-
-
-
-
 
 
 \section{Analysis Using \R{}}

@@ -1,6 +1,19 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 \documentclass{chapman}
 
 %%% copy Sweave.sty definitions
@@ -675,8 +688,6 @@ intellectually stimulating and practically very useful framework where such
 assumptions can be relaxed.  At a more basic level, one should always ask
 \stress{Am I really interested in the mean?} before using the regression models
 discussed in other chapters of this book.
-
-
 
 
 \bibliographystyle{LaTeXBibTeX/refstyle}

@@ -1,5 +1,18 @@
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 \documentclass{chapman}
 
 %%% copy Sweave.sty definitions
@@ -470,7 +483,7 @@ object. We first create a \Rclass{SpatialPolygons} object from the map in the
 correct reference system (WGS84, in our case) and then merge the polygons with the data
 <<DAGD-USmelanoma-long-lat-sp, echo = TRUE>>=          
 us1 <- map2SpatialPolygons(states, IDs=IDs,
-    proj4string = CRS("+proj=longlat +datum=wgs84"))
+    proj4string = CRS("+proj=longlat +datum=WGS84"))
 us2 <- SpatialPolygonsDataFrame(us1, USmelanoma)
 @
 The resulting object \Robject{us2} can now be plotted using the

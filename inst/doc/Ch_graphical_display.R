@@ -137,7 +137,7 @@ rownames(USmelanoma) <- tolower(rownames(USmelanoma))
 ### code chunk number 12: DAGD-USmelanoma-long-lat-sp
 ###################################################
 us1 <- map2SpatialPolygons(states, IDs=IDs,
-    proj4string = CRS("+proj=longlat +datum=wgs84"))
+    proj4string = CRS("+proj=longlat +datum=WGS84"))
 us2 <- SpatialPolygonsDataFrame(us1, USmelanoma)
 
 
