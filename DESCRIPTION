@@ -1,8 +1,8 @@
 Package: HSAUR3
 Title: A Handbook of Statistical Analyses Using R (3rd Edition)
-Date: 2015-03-09
-Version: 1.0-4
-Author: Brian S. Everitt and Torsten Hothorn
+Date: 2015-07-28
+Version: 1.0-5
+Author: Torsten Hothorn and Brian S. Everitt
 Maintainer: Torsten Hothorn <Torsten.Hothorn@R-project.org>
 Description: Functions, data sets, analyses and examples from the 
   third edition of the book 
@@ -31,7 +31,7 @@ Suggests: boot (>= 1.3-9), lattice (>= 0.20-23), MASS (>= 7.3-29), mgcv
 LazyData: yes
 License: GPL-2
 Encoding: UTF-8
-Packaged: 2015-03-09 13:56:31 UTC; hothorn
 NeedsCompilation: no
+Packaged: 2015-07-29 08:35:32 UTC; hothorn
 Repository: CRAN
-Date/Publication: 2015-03-09 16:23:03
+Date/Publication: 2015-07-29 10:59:42

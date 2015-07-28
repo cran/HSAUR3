@@ -3,6 +3,7 @@ export(HSAURtable)
 
 import(utils)
 importFrom("tools", "delimMatch")
+importFrom("stats", "complete.cases")
 
 S3method(HSAURtable, table)
 S3method(HSAURtable, data.frame)
