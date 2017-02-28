@@ -6,6 +6,6 @@ set.seed(290875)
 options(prompt = "R> ", width = 55, # digits = 4,
     SweaveHooks = list(leftpar = function()
         par(mai = par("mai") * c(1, 1.05, 1, 1))))
-HSAURpkg <- require("HSAUR2")
-if (!HSAURpkg) stop("cannot load package ", sQuote("HSAUR"))
+HSAURpkg <- require("HSAUR3")
+if (!HSAURpkg) stop("cannot load package ", sQuote("HSAUR3"))
 rm(HSAURpkg)

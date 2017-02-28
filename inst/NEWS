@@ -1,4 +1,8 @@
 
+1.0-6 (2017-02-28)
+
+ o tm is not actually needed
+
 1.0-5 (2015-07-28)
 
  o NAMESPACE updates

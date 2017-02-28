@@ -521,7 +521,7 @@ R> bootpara <- boot(faithful$waiting, fit, R = 1000)
 \end{Schunk}
 
 <<DE-faithful-bootrun, echo = FALSE>>=
-bootparafile <- file.path(.find.package("HSAUR3"), "cache", "DE-bootpara.rda")
+bootparafile <- system.file("cache", "DE-bootpara.rda", package = "HSAUR3")
 if (file.exists(bootparafile)) {
     load(bootparafile)
 } else {

@@ -235,7 +235,7 @@ options(prompt = "R> ", continue = "+  ",
         bigleftpar = function()
         par(mai = par("mai") * c(1, 1.7, 1, 1))))
 HSAURpkg <- require("HSAUR3")
-if (!HSAURpkg) stop("cannot load package ", sQuote("HSAUR2"))
+if (!HSAURpkg) stop("cannot load package ", sQuote("HSAUR3"))
 rm(HSAURpkg)
  ### </FIXME> hm, R-2.4.0 --vanilla seems to need this
 a <- Sys.setlocale("LC_ALL", "C")
