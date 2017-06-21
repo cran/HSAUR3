@@ -331,22 +331,22 @@ the test statistic is computed and the fraction of whose being
 greater than the observed statistic defines the exact $p$-value:
 <<SA-glioma-exact, echo = TRUE>>=
 library("coin")
-surv_test(Surv(time, event) ~ group, data = g3, 
-          distribution = "exact")
+logrank_test(Surv(time, event) ~ group, data = g3, 
+             distribution = "exact")
 @
 which, in this case, confirms the above results. The same exercise can be
 performed for patients with grade IV glioma
 <<SA-glioma-g4, echo = TRUE>>=
-surv_test(Surv(time, event) ~ group, data = g4, 
-          distribution = "exact")
+logrank_test(Surv(time, event) ~ group, data = g4, 
+             distribution = "exact")
 @
 which shows a difference as well. However, it might be more appropriate to
 answer the question whether the novel therapy is superior for both groups
 of tumors simultaneously. This can be implemented by \stress{stratifying},
 or \stress{blocking}, with respect to tumor grading:
 <<SA-glioma-hist, echo = TRUE>>=
-surv_test(Surv(time, event) ~ group | histology, 
-    data = glioma, distribution = approximate(B = 10000))
+logrank_test(Surv(time, event) ~ group | histology, 
+             data = glioma, distribution = approximate(B = 10000))
 @
 Here, we need to approximate the exact conditional distribution since the
 exact distribution is hard to compute.

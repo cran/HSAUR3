@@ -1,4 +1,8 @@
 
+1.0-7 (2017-06-21)
+
+ o use logrank_test instead of surv_test (for coin 1.2-0)
+
 1.0-6 (2017-02-28)
 
  o tm is not actually needed
