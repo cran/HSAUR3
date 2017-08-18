@@ -1,4 +1,8 @@
 
+1.0-8 (2017-08-18)
+
+ o remove longtable.sty
+
 1.0-7 (2017-06-21)
 
  o use logrank_test instead of surv_test (for coin 1.2-0)
