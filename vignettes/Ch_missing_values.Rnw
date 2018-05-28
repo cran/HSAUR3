@@ -585,18 +585,18 @@ fit <- with(imp_ppm, lm(recovtime ~ bloodp + logdose))
                             \label{MV-bp-lm-cc-mice}}  
 \SchunkLabel
 <<MV-bp-lm-mice, echo = TRUE>>=
-summary(pool(fit))[, c("est", "se", "t", "Pr(>|t|)")]
+summary(pool(fit))
 @
 \SchunkRaw
 
 The result for blood pressure is similar to the previous complete data and
 mean-imputed results with the regression coefficient for this variable being
 highly significant 
-$(p = \Sexpr{round(summary(pool(fit))["bloodp", "Pr(>|t|)"], 3)})$.
+$(p = \Sexpr{round(summary(pool(fit))["bloodp", 5], 3)})$.
 But the result for log dose differs from
 those found previously; for the multiply imputed data the regression
 coefficient for log dose is not significant at the $5\%$ level 
-$(p = \Sexpr{round(summary(pool(fit))["logdose", "Pr(>|t|)"], 3)})$
+$(p = \Sexpr{round(summary(pool(fit))["logdose", 5], 3)})$
 whereas in both of the previous two analyses it was significant.  This
 finding reflects the greater variation of the value of the correlation
 between log dose and recovery time in the ten imputations noted
@@ -616,7 +616,7 @@ equivalent of the $t$-test by modeling recovery time minus $27$ with an
 intercept only and testing for zero intercept.  So the code needed is:
 <<MI-mice-t, echo = TRUE>>=
 fit <- with(imp_ppm, lm(I(recovtime - 27) ~ 1))
-summary(pool(fit))[, c("est", "se", "t", "Pr(>|t|)")]
+summary(pool(fit))
 @
 Looking at the results of the three analyses we see that the complete-case
 analysis fails to reject the hypothesis at the $5\%$ level whereas the other

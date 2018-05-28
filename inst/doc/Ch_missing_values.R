@@ -195,7 +195,7 @@ fit <- with(imp_ppm, lm(recovtime ~ bloodp + logdose))
 ###################################################
 ### code chunk number 22: MV-bp-lm-mice
 ###################################################
-summary(pool(fit))[, c("est", "se", "t", "Pr(>|t|)")]
+summary(pool(fit))
 
 
 ###################################################
@@ -209,7 +209,7 @@ with(imp, t.test(recovtime, mu = 27))$analyses[[1]]
 ### code chunk number 24: MI-mice-t
 ###################################################
 fit <- with(imp_ppm, lm(I(recovtime - 27) ~ 1))
-summary(pool(fit))[, c("est", "se", "t", "Pr(>|t|)")]
+summary(pool(fit))
 
 
 ###################################################
