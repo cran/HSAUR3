@@ -24,7 +24,7 @@
   }
 }
 \source{
-    \url{http://www.forbes.com}, assessed on November 26th, 2004.
+    \url{https://www.forbes.com}, assessed on November 26th, 2004.
 }
 \examples{
 data("Forbes2000", package = "HSAUR3")

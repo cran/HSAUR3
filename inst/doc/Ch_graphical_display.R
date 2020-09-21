@@ -1,5 +1,4 @@
 ### R code from vignette source 'Ch_graphical_display.Rnw'
-### Encoding: ASCII
 
 ###################################################
 ### code chunk number 1: setup
@@ -241,10 +240,10 @@ toLatex(HSAURtable(suicides2),
 ###################################################
 ### code chunk number 24: DAGD-banknote-tab
 ###################################################
-data("banknote", package = "alr3")
-banknote$Y <- NULL
+data("banknote", package = "mclust")
+banknote$Status <- NULL
 banknote <- banknote[c(1:5, 101:200),]
-toLatex(HSAURtable(banknote, pkg = "alr3", nrow = 10),
+toLatex(HSAURtable(banknote, pkg = "mclust", nrow = 10),
   caption = paste("Swiss bank note data."),
   label = "DAGD-banknote-tab", rownames = FALSE)
 

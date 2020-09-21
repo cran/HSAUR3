@@ -803,14 +803,14 @@ toLatex(HSAURtable(suicides2),
 \exercise
 \cite{HSAUR:FluryRiedwyl1988} report data that give various length 
 measurements on $200$ Swiss bank notes. The data are available
-from package \Rpackage{alr3} \citep{PKG:alr3}; a sample of 
+from package \Rpackage{mclust} \citep{PKG:mclust}; a sample of 
 ten bank notes is given in Table~\ref{DAGD-banknote-tab}.
 
 <<DAGD-banknote-tab, echo = FALSE, results = tex>>=
-data("banknote", package = "alr3")
-banknote$Y <- NULL
+data("banknote", package = "mclust")
+banknote$Status <- NULL
 banknote <- banknote[c(1:5, 101:200),]
-toLatex(HSAURtable(banknote, pkg = "alr3", nrow = 10),
+toLatex(HSAURtable(banknote, pkg = "mclust", nrow = 10),
   caption = paste("Swiss bank note data."),
   label = "DAGD-banknote-tab", rownames = FALSE)
 @	

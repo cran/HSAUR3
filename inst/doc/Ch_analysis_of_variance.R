@@ -1,5 +1,4 @@
 ### R code from vignette source 'Ch_analysis_of_variance.Rnw'
-### Encoding: ASCII
 
 ###################################################
 ### code chunk number 1: setup

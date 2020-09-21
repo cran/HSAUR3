@@ -1,5 +1,4 @@
 ### R code from vignette source 'Ch_introduction_to_R.Rnw'
-### Encoding: ASCII
 
 ###################################################
 ### code chunk number 1: setup

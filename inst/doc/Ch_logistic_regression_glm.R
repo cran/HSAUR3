@@ -1,5 +1,4 @@
 ### R code from vignette source 'Ch_logistic_regression_glm.Rnw'
-### Encoding: ASCII
 
 ###################################################
 ### code chunk number 1: setup

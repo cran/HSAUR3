@@ -1,5 +1,4 @@
 ### R code from vignette source 'Ch_principal_components_analysis.Rnw'
-### Encoding: ASCII
 
 ###################################################
 ### code chunk number 1: setup
