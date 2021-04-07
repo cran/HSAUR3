@@ -316,7 +316,7 @@ summary(Forbes2000[,"sales"])
 ###################################################
 ### code chunk number 42: AItR-Forbes2000-files
 ###################################################
-pkgpath <- system.file(package = "HSAUR3")
+pkgpath <- system.file(package = "HSAUR2")
 mywd <- getwd()
 filep <- file.path(pkgpath, "rawdata")
 setwd(filep)

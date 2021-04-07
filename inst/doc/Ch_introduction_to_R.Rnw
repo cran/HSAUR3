@@ -11,8 +11,6 @@
 
 
 
-
-
 \documentclass{chapman}
 
 %%% copy Sweave.sty definitions
@@ -785,7 +783,7 @@ Querying data bases is a nontrivial task and requires additional knowledge
 about querying languages, and we therefore refer to the \booktitle{\R{} Data
 Import/Export} manual -- see Section~\ref{AItR:HDN}. 
 <<AItR-Forbes2000-files, echo = FALSE>>=
-pkgpath <- system.file(package = "HSAUR3")
+pkgpath <- system.file(package = "HSAUR2")
 mywd <- getwd()
 filep <- file.path(pkgpath, "rawdata")
 setwd(filep)

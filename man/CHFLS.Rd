@@ -60,7 +60,7 @@ of 1534 women. The data have been extracted as given in the example section.
 }
 \source{
 
-  \url{https://www.src.uchicago.edu/datalib/chfls/data/chfls1.sav}
+  \url{https://sscs.uchicago.edu}
 
 }
 \references{
