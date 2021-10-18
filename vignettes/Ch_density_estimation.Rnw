@@ -266,6 +266,8 @@ setHook(packageEvent("lattice", "attach"), function(...) {
 <<singlebook, echo = FALSE>>=
 book <- FALSE
 @
+%% lower png resolution for vignettes
+\SweaveOpts{resolution = 100}
 
 <<DE-setup, echo = FALSE, results = hide>>=
 x <- library("KernSmooth")
@@ -290,7 +292,7 @@ are plotted using the \R{} statements in lines 5--11 (Figure~\ref{DE-kernel-fig}
 \numberSinput
 \begin{figure}
 \begin{center}
-<<DE-kernel-figs, echo = TRUE, fig = TRUE, pdf = FALSE, png = TRUE, resolution = 100>>=
+<<DE-kernel-figs, echo = TRUE, fig = TRUE, pdf = FALSE, png = TRUE>>=
 rec <- function(x) (abs(x) < 1) * 0.5
 tri <- function(x) (abs(x) < 1) * (1 - abs(x))
 gauss <- function(x) 1/sqrt(2*pi) * exp(-(x^2)/2)
@@ -361,7 +363,7 @@ out <- apply(bumps, 2, function(b) lines(xgrid, b))
 
 \begin{figure}
 \begin{center}
-<<DE-epakernel-fig, echo = TRUE, fig = TRUE, height = 5.5>>=
+<<DE-epakernel-fig, echo = TRUE, fig = TRUE, height = 5.5, pdf = FALSE, png = TRUE>>=
 epa <- function(x, y) 
     ((x^2 + y^2) < 1) * 2/pi * (1 - x^2 - y^2)
 x <- seq(from = -1.1, to = 1.1, by = 0.05)
@@ -411,7 +413,7 @@ of the data. \label{DE:faithfuldens}}
 
 \begin{figure}
 \begin{center}
-<<DE-CYGOB1-contour, echo = TRUE, fig = TRUE>>=
+<<DE-CYGOB1-contour, echo = TRUE, fig = TRUE, pdf = FALSE, png = TRUE>>=
 library("KernSmooth")
 data("CYGOB1", package = "HSAUR3")
 CYGOB1d <- bkde2D(CYGOB1, bandwidth = sapply(CYGOB1, dpik))
@@ -427,7 +429,7 @@ contour(x = CYGOB1d$x1, y = CYGOB1d$x2, z = CYGOB1d$fhat,
 
 \begin{figure}
 \begin{center}
-<<DE-CYGOB1-persp, echo = TRUE, fig = TRUE>>=
+<<DE-CYGOB1-persp, echo = TRUE, fig = TRUE, pdf = FALSE, png = TRUE>>=
 persp(x = CYGOB1d$x1, y = CYGOB1d$x2, z = CYGOB1d$fhat,
       xlab = "log surface temperature", 
       ylab = "log light intensity",

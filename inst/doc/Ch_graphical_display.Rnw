@@ -266,6 +266,8 @@ setHook(packageEvent("lattice", "attach"), function(...) {
 <<singlebook, echo = FALSE>>=
 book <- FALSE
 @
+%% lower png resolution for vignettes
+\SweaveOpts{resolution = 100}
 
 
 \chapter[Data Analysis Using Graphical Displays]{Data Analysis 
@@ -656,7 +658,7 @@ xyplot(jitter(log(R_income + 0.5)) ~
        ylab = "log(Wife's income + .5)",
        xlab = "log(Husband's income + .5)")
 @
-<<DAGD-CHFLS-RAincome3, echo = FALSE, fig = TRUE, width = 8>>=
+<<DAGD-CHFLS-RAincome3, echo = FALSE, fig = TRUE, width = 8, pdf = FALSE, png = TRUE>>=
 library("lattice")
 trellis.par.set(list(plot.symbol = list(col=1,pch=20, cex=0.7),
                      box.rectangle = list(col=1),
