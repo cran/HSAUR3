@@ -28,7 +28,7 @@
 \source{
 
     G. U. H. Seeber (1998), Poisson Regression. In: \emph{Encyclopedia of Biostatistics}
-    (P. Armitage and T. Colton, eds), John Wiley \& Sons, Chichester.
+    (P. Armitage and T. Colton, eds), John Wiley & Sons, Chichester.
 
 }
 \examples{

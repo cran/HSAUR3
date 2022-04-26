@@ -44,7 +44,7 @@
 
   C. Silagy (2003), Nicotine replacement therapy for smoking
   cessation (Cochrane Review). \emph{The Cochrane Library},
-  \bold{4}, John Wiley \& Sons, Chichester.
+  \bold{4}, John Wiley & Sons, Chichester.
 
 }
 \examples{

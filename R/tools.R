@@ -57,7 +57,7 @@ extRact <- function(file, what = "Robject") {
     gattach()
     for (cmd in cmds) {
         a <- try(eval(parse(text = cmd)))
-        if (class(a) == "try-error") print(a)
+        if (inherits(a, "try-error")) print(a)
     }
     cmds
 }

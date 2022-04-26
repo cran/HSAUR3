@@ -18,7 +18,7 @@
 \source{
 
     L. Kaufman and P. J. Rousseeuw (1990), \emph{Finding groups in data: 
-    an introduction to cluster analysis}, John Wiley \& Sons, New York.
+    an introduction to cluster analysis}, John Wiley & Sons, New York.
 
 }
 \examples{

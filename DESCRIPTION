@@ -1,7 +1,7 @@
 Package: HSAUR3
 Title: A Handbook of Statistical Analyses Using R (3rd Edition)
-Date: 2021-10-18
-Version: 1.0-12
+Date: 2022-04-25
+Version: 1.0-13
 Author: Torsten Hothorn and Brian S. Everitt
 Maintainer: Torsten Hothorn <Torsten.Hothorn@R-project.org>
 Description: Functions, data sets, analyses and examples from the 
@@ -30,6 +30,6 @@ LazyData: yes
 License: GPL-2
 Encoding: UTF-8
 NeedsCompilation: no
-Packaged: 2021-10-18 14:49:48 UTC; hothorn
+Packaged: 2022-04-25 10:18:10 UTC; hothorn
 Repository: CRAN
-Date/Publication: 2021-10-18 15:40:02 UTC
+Date/Publication: 2022-04-26 04:52:12 UTC

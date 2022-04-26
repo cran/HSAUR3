@@ -34,7 +34,7 @@
   \bold{328}(18), 1313--1316.
 
   S. Piantadosi (1997), \emph{Clinical Trials: A Methodologic Perspective}.
-  John Wiley \& Sons, New York.
+  John Wiley & Sons, New York.
 
 }
 \examples{
