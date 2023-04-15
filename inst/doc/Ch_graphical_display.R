@@ -120,8 +120,8 @@ subset(USmelanoma, latitude < 32)
 ### code chunk number 10: DAGD-USmelanoma-long-lat-data
 ###################################################
 library("sp")
+library("sf")
 library("maps")
-library("maptools")
 states <- map("state", plot = FALSE, fill = TRUE)
 
 
@@ -135,9 +135,8 @@ rownames(USmelanoma) <- tolower(rownames(USmelanoma))
 ###################################################
 ### code chunk number 12: DAGD-USmelanoma-long-lat-sp
 ###################################################
-us1 <- map2SpatialPolygons(states, IDs=IDs,
-    proj4string = CRS("+proj=longlat +datum=WGS84"))
-us2 <- SpatialPolygonsDataFrame(us1, USmelanoma)
+us1 <- merge(st_as_sf(states), USmelanoma)
+us2 <- as(us1, "Spatial")
 
 
 ###################################################

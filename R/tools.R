@@ -193,7 +193,7 @@ readBibtex <- function(file = NULL) {
 ### the subset of a BibTeX database actually used in `file'
 extractBibtex <- function(file, bibtex) {
 
-    if (class(bibtex) != "txtBibtex")
+    if (!inherits(bibtex, "txtBibtex"))
         bibtex <- readBibtex(bibtex)
     tex <- readLines(file)
     tex <- tex[grep("\\cite", tex)]

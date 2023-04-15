@@ -1,4 +1,8 @@
 
+1.0-14 (2023-04-14)
+
+ o package maptools will retire
+
 1.0-13 (2022-04-25)
 
  o don't escape &

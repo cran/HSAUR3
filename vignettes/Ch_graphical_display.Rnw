@@ -211,7 +211,7 @@
 
 \maketitle
 %%\VignetteIndexEntry{Chapter Data Analysis using Graphical Displays}
-%%\VignetteDepends{lattice, maps, maptools, sp}
+%%\VignetteDepends{lattice, maps, sf, sp}
 \setcounter{chapter}{1}
 
 
@@ -467,8 +467,8 @@ to set-up such a plot using the \Rpackage{sp} family of packages \citep{PKG:sp}.
 loading a map of the mainland states, basically a number of polygons:
 <<DAGD-USmelanoma-long-lat-data, echo = TRUE>>=
 library("sp")
+library("sf")
 library("maps")
-library("maptools")
 states <- map("state", plot = FALSE, fill = TRUE)
 @
 It is of course important to match the mortality rates to the corresponding
@@ -482,9 +482,8 @@ Now we are ready to merge these two objects into a so-called \Rclass{SpatialPoly
 object. We first create a \Rclass{SpatialPolygons} object from the map in the
 correct reference system (WGS84, in our case) and then merge the polygons with the data
 <<DAGD-USmelanoma-long-lat-sp, echo = TRUE>>=          
-us1 <- map2SpatialPolygons(states, IDs=IDs,
-    proj4string = CRS("+proj=longlat +datum=WGS84"))
-us2 <- SpatialPolygonsDataFrame(us1, USmelanoma)
+us1 <- merge(st_as_sf(states), USmelanoma)
+us2 <- as(us1, "Spatial")
 @
 The resulting object \Robject{us2} can now be plotted using the
 \Rcmd{spplot} function, see Figure~\ref{DAGD-USmelanoma-long-lat}.  The
