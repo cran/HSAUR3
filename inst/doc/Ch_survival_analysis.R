@@ -104,7 +104,7 @@ logrank_test(Surv(time, event) ~ group, data = g4,
 ### code chunk number 8: SA-glioma-hist
 ###################################################
 logrank_test(Surv(time, event) ~ group | histology, 
-             data = glioma, distribution = approximate(B = 10000))
+             data = glioma, distribution = approximate(10000))
 
 
 ###################################################

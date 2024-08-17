@@ -1,8 +1,12 @@
 Package: HSAUR3
 Title: A Handbook of Statistical Analyses Using R (3rd Edition)
-Date: 2023-04-14
-Version: 1.0-14
-Author: Torsten Hothorn and Brian S. Everitt
+Date: 2024-08-17
+Version: 1.0-15
+Authors@R: c(person("Torsten", "Hothorn", role = c("aut", "cre"),
+                 email = "Torsten.Hothorn@R-project.org", comment = c(ORCID = "0000-0001-8301-0471")),
+          person(given = c("Brian", "S."),
+                 family = "Everitt",
+                 role = "aut"))
 Maintainer: Torsten Hothorn <Torsten.Hothorn@R-project.org>
 Description: Functions, data sets, analyses and examples from the 
   third edition of the book 
@@ -13,8 +17,8 @@ Description: Functions, data sets, analyses and examples from the
   a vignette containing all data analyses is available. In addition,
   Sweave source code for slides of selected chapters is included in 
   this package (see HSAUR3/inst/slides). The publishers web page is 
-  '<http://www.crcpress.com/product/isbn/9781482204582>'.
-Depends: R (>= 3.0.0), tools
+  '<https://www.routledge.com/A-Handbook-of-Statistical-Analyses-using-R/Hothorn-Everitt/p/book/9781482204582>'.
+Depends: R (>= 3.0.0)
 Suggests: boot (>= 1.3-9), lattice (>= 0.20-23), MASS (>= 7.3-29), mgcv
         (>= 1.7-27), rpart (>= 4.1-4), survival (>= 2.37-4), ape (>=
         3.0-11), coin (>= 1.1-3), flexmix (>= 2.3-11), Formula (>=
@@ -24,12 +28,14 @@ Suggests: boot (>= 1.3-9), lattice (>= 0.20-23), MASS (>= 7.3-29), mgcv
         mice (>= 2.18), multcomp (>= 1.3-1), mvtnorm (>= 0.9-9996),
         partykit (>= 0.8-0), quantreg (>= 5.05), randomForest (>=
         4.6-7), rmeta (>= 2.16), sandwich (>= 2.3-0), scatterplot3d (>=
-        0.3-34), sf (>= 1.0-9), sp (>= 1.0-14), TH.data (>= 1.0-2), vcd
-        (>= 1.3-1), wordcloud (>= 2.4), HSAUR2
+        0.3-34), sf (>= 1.0-9), sp (>= 1.0-14), TH.data (>= 1.0-2),
+        tools, vcd (>= 1.3-1), wordcloud (>= 2.4), HSAUR2
 LazyData: yes
 License: GPL-2
 Encoding: UTF-8
 NeedsCompilation: no
-Packaged: 2023-04-14 16:29:28 UTC; hothorn
+Packaged: 2024-08-17 16:31:15 UTC; hothorn
+Author: Torsten Hothorn [aut, cre] (<https://orcid.org/0000-0001-8301-0471>),
+  Brian S. Everitt [aut]
 Repository: CRAN
-Date/Publication: 2023-04-15 07:10:02 UTC
+Date/Publication: 2024-08-17 17:30:01 UTC

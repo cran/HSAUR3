@@ -174,7 +174,7 @@ cmh_test(classification ~ treatment, data = Lanza,
 p <- cmh_test(classification ~ treatment, data = Lanza, 
          scores = list(classification = c(0, 1, 6, 17, 30)),
          subset = Lanza$study == "II", distribution =
-         approximate(B = 19999))
+         approximate(19999))
 pvalue(p)
 
 

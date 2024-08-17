@@ -344,7 +344,7 @@ of tumors simultaneously. This can be implemented by \stress{stratifying},
 or \stress{blocking}, with respect to tumor grading:
 <<SA-glioma-hist, echo = TRUE>>=
 logrank_test(Surv(time, event) ~ group | histology, 
-             data = glioma, distribution = approximate(B = 10000))
+             data = glioma, distribution = approximate(10000))
 @
 Here, we need to approximate the exact conditional distribution since the
 exact distribution is hard to compute.
