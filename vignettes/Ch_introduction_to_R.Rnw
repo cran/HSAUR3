@@ -315,7 +315,7 @@ implemented in add-on packages
 authored and maintained by a large group of  
 volunteers. The main source of information about the \R{} system is the World 
 Wide Web with the official home page of the \R{} project being 
-\curl{http://www.R-project.org} 
+\curl{https://www.R-project.org} 
 All resources are available from this page:
 the \R{} system itself, a collection of add-on packages, manuals,
 documentation, and more.
@@ -339,7 +339,7 @@ the base system and are organized in the form of \stress{packages}. A package is
 a collection of functions, examples, and documentation. The functionality of a
 package is often focused on a special statistical methodology. Both the base system
 and packages are distributed via the Comprehensive \R{} Archive 
-Network (CRAN) accessible under \curl{http://CRAN.R-project.org}
+Network (CRAN) accessible under \curl{https://CRAN.R-project.org}
 \index{Comprehensive R Archive Network (CRAN)@Comprehensive \R{} Archive Network (CRAN)}
 
 \subsection{The Base System and the First Steps \label{AItR:Base}}
@@ -349,7 +349,7 @@ various Unix systems, Windows platforms and Mac OS X.
 For the data analyst, it
 is sufficient to download the precompiled binary distribution and install it
 locally. Windows users follow the link
-\curl{http://CRAN.R-project.org/bin/windows/base/release.htm} 
+\curl{https://CRAN.R-project.org/bin/windows/base/release.htm} 
 download the
 corresponding file (currently named \file{\Sexpr{HSAUR3:::exename()}}), execute it
 locally, and follow the instructions given by the installer. 
@@ -438,7 +438,7 @@ for example for graphic systems, code analysis tools, graphical-user interfaces
 or other utilities.
 
 <<AItR-CRAN, echo = FALSE, results = hide>>=
-cp <- available.packages(contriburl = "http://CRAN.r-project.org/src/contrib")
+cp <- available.packages(contriburl = "https://CRAN.r-project.org/src/contrib")
 ncp <- sum(!rownames(cp) %in% pkgs)
 rm(cp, pkgs)
 @
@@ -450,7 +450,7 @@ fields of statistical methodology were available. Certain so-called `task views'
 for special topics, such as statistics in the social sciences, environmetrics,
 robust statistics, etc., describe important and helpful packages and
 are available from
-\curl{http://CRAN.R-project.org/web/views/}
+\curl{https://CRAN.R-project.org/web/views/}
 
 <<AItR-rm, echo = FALSE, results = hide>>=
 rm(ncp, colwidth, i)
@@ -474,7 +474,7 @@ by
 library("sandwich")
 @
 A comprehensive list of available packages can be obtained from 
-\curl{http://CRAN.R-project.org/web/packages/}
+\curl{https://CRAN.R-project.org/web/packages/}
 Note that on
 Windows operating systems, precompiled versions of packages are downloaded
 and installed. 
@@ -522,7 +522,7 @@ vignette("sandwich", package = "sandwich")
 @
 
 More extensive documentation is available electronically from the collection
-of manuals at \curl{http://CRAN.R-project.org/manuals.html} 
+of manuals at \curl{https://CRAN.R-project.org/manuals.html} 
 For the
 beginner, at least the first and the second document
 of the following four manuals
@@ -544,15 +544,15 @@ are \booktitle{Modern Applied Statistics with \S{}}
 \booktitle{Introductory Statistics with \R{}} \citep{HSAUR:Dalgaard2002},
 \booktitle{\R{} Graphics}
 \citep{HSAUR:Murrell2005} and the \R{} Newsletter, freely available from 
-\curl{http://CRAN.R-project.org/doc/Rnews/}
+\curl{https://CRAN.R-project.org/doc/Rnews/}
 In case the electronically available documentation and the answers to 
 frequently asked questions (FAQ), available from
-\curl{http://CRAN.R-project.org/faqs.html}
+\curl{https://CRAN.R-project.org/faqs.html}
 \index{Frequently asked questions (FAQ)}
 have been consulted but a problem or question remains unsolved, the
 \texttt{r-help} email list is the right place to get answers to well-thought-out
 questions. It is helpful to read the posting guide
-\curl{http://www.R-project.org/posting-guide.html} 
+\curl{https://www.R-project.org/posting-guide.html} 
 before starting to ask.
 \index{Help system|)}
 
@@ -563,7 +563,7 @@ The data handling and manipulation techniques explained in this chapter will
 be illustrated by means of a data set of $2000$ world leading companies, the
 Forbes 2000 list for the year 2004 collected by \booktitle{Forbes Magazine}.
 This list is originally available from
-\curl{http://www.forbes.com} 
+\curl{https://www.forbes.com} 
 and, as an \R{} data object, it is part of the \Rpackage{HSAUR3}
 package (\textit{Source}: From Forbes.com, New York, New York, 2004. With
 permission.). In a first step, we make the data available for computations within

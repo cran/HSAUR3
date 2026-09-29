@@ -302,5 +302,3 @@ meta.MH(ntrt = ntrtM, nctrl = nctrl,
          ptrt = ptrtM, pctrl = pctrl)
 meta.MH(ntrt = ntrtH, nctrl = nctrl, 
          ptrt = ptrtH, pctrl = pctrl)
-
-

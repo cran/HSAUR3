@@ -294,5 +294,3 @@ xyplot(head ~ age | cut, data = db, xlab = "Age (years)",
        scales = list(x = list(relation = "free")),
        layout = c(2, 1), col = rgb(.1, .1, .1, .1),
        panel = pfun)
-
-

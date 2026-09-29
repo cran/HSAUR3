@@ -157,5 +157,3 @@ plot(y[gr], 1/(sigma[gr]), xlim = range(y),
 funnelplot(smokingDSL$logs, smokingDSL$selogs, 
            summ = smokingDSL$logDSL, xlim = c(-1.7, 1.7))
 abline(v = 0, lty = 2)
-
-

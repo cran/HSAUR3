@@ -210,5 +210,3 @@ scatterplot3d(log(planets$mass), log(planets$period),
 ###################################################
 table(planet_mclust$classification)
 ccent(planet_mclust$classification)
-
-

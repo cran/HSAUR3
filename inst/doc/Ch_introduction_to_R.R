@@ -111,7 +111,7 @@ rm(ip, nrows)
 ###################################################
 ### code chunk number 10: AItR-CRAN
 ###################################################
-cp <- available.packages(contriburl = "http://CRAN.r-project.org/src/contrib")
+cp <- available.packages(contriburl = "https://CRAN.r-project.org/src/contrib")
 ncp <- sum(!rownames(cp) %in% pkgs)
 rm(cp, pkgs)
 
@@ -672,5 +672,3 @@ file.create("analysis.R")
 ### code chunk number 92: AItR-analysis3
 ###################################################
 file.remove("analysis.R")
-
-

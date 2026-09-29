@@ -280,5 +280,3 @@ CHFLS_ctree <- ctree(R_happy ~ ., data = CHFLS)
 ###################################################
 plot(CHFLS_ctree, ep_args = list(justmin = 10), 
      tp_args = list(id = FALSE))
-
-

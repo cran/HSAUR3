@@ -398,5 +398,3 @@ barchart(dens ~ R_happy | R_health, data = D,
 ###################################################
 ci <- round(exp(confint(plasma_glm_1, parm = "fibrinogen")), 2)
 ci <- paste("(", paste(ci, collapse = ","), ")", sep = "")
-
-

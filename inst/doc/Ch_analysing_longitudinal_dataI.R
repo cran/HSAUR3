@@ -154,5 +154,3 @@ for (i in 1:4) {
     points(rep(i, nrow(bdi)) + ifelse(dropout, 0.05, -0.05), 
            jitter(bdi[,i]), pch = ifelse(dropout, 20, 1))
 }
-
-

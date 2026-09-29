@@ -244,5 +244,3 @@ summary(manova(cbind(mb, bh, bl, nh) ~ epoch, data = skulls,
                subset = epoch %in% c("c4000BC", "c200BC")))
 summary(manova(cbind(mb, bh, bl, nh) ~ epoch, data = skulls, 
                subset = epoch %in% c("c4000BC", "cAD150")))
-
-

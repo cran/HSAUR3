@@ -190,5 +190,3 @@ confband <- function(subset, main) {
 layout(matrix(1:2, ncol = 2))
 confband(clouds$seeding == "no", main = "No seeding")
 confband(clouds$seeding == "yes", main = "Seeding")
-
-

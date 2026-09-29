@@ -214,5 +214,3 @@ cor(heptathlon$score, heptathlon_pca$x[,1])
 ### code chunk number 26: PCA-heptathlonscore
 ###################################################
 plot(heptathlon$score, heptathlon_pca$x[,1])
-
-

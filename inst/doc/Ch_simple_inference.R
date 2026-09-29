@@ -286,5 +286,3 @@ mcnemar.test(rearrests, correct = FALSE)
 ### code chunk number 30: SI-arrests-binom
 ###################################################
 binom.test(rearrests[2], n = sum(rearrests[c(2,3)]))
-
-

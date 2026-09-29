@@ -130,5 +130,3 @@ plot(voting_sh, pch = ".", xlab = "Dissimilarity",
      ylab = "Distance", xlim = range(voting_sh$x), 
      ylim = range(voting_sh$x))
 lines(voting_sh$x, voting_sh$yf, type = "S")
-
-

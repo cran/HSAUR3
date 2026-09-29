@@ -254,5 +254,3 @@ data("birds", package = "HSAUR3")
 toLatex(HSAURtable(birds), 
   caption = paste("Birds in paramo vegetation."), label = "DAGD-birds-tab",
   rownames = TRUE)
-
-

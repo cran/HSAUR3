@@ -176,5 +176,3 @@ GBSG2_ctree <- ctree(Surv(time, cens) ~ ., data = GBSG2)
 ### code chunk number 17: SA-GBSG2-ctree-plot
 ###################################################
 plot(GBSG2_ctree)
-
-

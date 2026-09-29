@@ -216,5 +216,3 @@ myplot <- function(role.fitted)  {
 ### code chunk number 18: GAM-womensrole-probplot
 ###################################################
 myplot(predict(womensrole_gam, type = "response"))
-
-

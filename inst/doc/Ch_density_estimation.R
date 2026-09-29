@@ -328,5 +328,3 @@ bootplot <- function(b, index, main = "") {
 layout(matrix(1:2, ncol = 2))
 bootplot(bootpara, 2, main = expression(mu[1]))
 bootplot(bootpara, 3, main = expression(mu[2]))
-
-

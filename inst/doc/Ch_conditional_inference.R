@@ -216,5 +216,3 @@ mh_test(anomalies)
 ### code chunk number 23: CI-anomalies-ordered
 ###################################################
 mh_test(anomalies, scores = list(response = c(0, 1, 2, 3)))
-
-

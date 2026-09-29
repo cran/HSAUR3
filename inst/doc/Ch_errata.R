@@ -50,5 +50,3 @@ setHook(packageEvent("lattice", "attach"), function(...) {
 ### code chunk number 2: singlebook
 ###################################################
 book <- FALSE
-
-

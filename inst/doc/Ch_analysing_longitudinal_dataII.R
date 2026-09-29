@@ -317,5 +317,3 @@ if (!interactive()) {
 ### code chunk number 28: ALDII-resp-lmer-summary
 ###################################################
 summary(resp_lmer)
-
-

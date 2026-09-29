@@ -218,5 +218,3 @@ data("UStemp", package = "HSAUR3")
 toLatex(HSAURtable(UStemp), 
     caption = "Lowest temperatures in Fahrenheit recorded in various months for cities in the US.",
     label = "MI-UStemp-tab", rownames = TRUE)
-
-

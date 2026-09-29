@@ -261,5 +261,3 @@ qqline(clouds_resid)
 ### code chunk number 29: MLR-clouds-cook
 ###################################################
 plot(clouds_lm, which = 4, sub.caption = NULL)
-
-
